@@ -95,7 +95,7 @@ if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(sitemap)) {
 }
 
 const publicationsPage = await fs.readFile(path.join(siteRoot, "publications", "index.html"), "utf8");
-for (const marker of ["Selected publications", "Publications checked", "Jonathan Abraham on PubMed", "Jump to year", "PDB", "EMDB", "Open access", "Print or save PDF"]) {
+for (const marker of ["<h1>Publications</h1>", "Publications checked", "Jonathan Abraham on PubMed", "Jump to year", "PDB", "EMDB", "Open access", "Print or save PDF"]) {
   if (!publicationsPage.includes(marker)) failures.push(`Publications page is missing "${marker}".`);
 }
 
