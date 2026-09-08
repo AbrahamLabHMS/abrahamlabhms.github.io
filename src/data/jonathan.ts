@@ -9,10 +9,10 @@ export const jonathanProfile = {
   overview:
     "Jonathan Abraham studies the molecular mechanisms of viral infection in medically important viruses.",
   biography: [
-    "Jonathan Abraham is Professor of Microbiology at Harvard Medical School and an Investigator of the Howard Hughes Medical Institute. He started the laboratory in 2017.",
+    "Jonathan Abraham started the laboratory at Harvard Medical School in 2017.",
     "His group uses structural biology and virology to study viral entry and antibody recognition. It also studies replication complexes and antiviral mechanisms.",
     "He earned a bachelor's degree in biochemical sciences from Harvard College and a PhD in biophysics from Harvard University. He earned an MD from Harvard Medical School through the Harvard-MIT MD-PhD Program.",
-    "He trained in internal medicine at Brigham and Women's Hospital and in infectious diseases through the combined Brigham and Women's Hospital and Massachusetts General Hospital program. He is an Associate Physician in the Division of Infectious Diseases at Brigham and Women's Hospital."
+    "He trained in internal medicine at Brigham and Women's Hospital. He completed infectious diseases training through the combined Brigham and Women's Hospital and Massachusetts General Hospital program."
   ],
   appointments: [
     {
@@ -29,7 +29,6 @@ export const jonathanProfile = {
     }
   ],
   distinctions: [
-    "HHMI Investigator",
     "Burroughs Wellcome Career Award for Medical Scientists",
     "NIH Director's Early Independence Award"
   ],

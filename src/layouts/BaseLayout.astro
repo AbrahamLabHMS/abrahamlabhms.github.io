@@ -61,15 +61,16 @@ const organizationData = {
   url: new URL(withBase("/"), siteData.url).toString(),
   description: siteData.description,
   parentOrganization: {
-    "@type": "CollegeOrUniversity",
-    name: "Harvard Medical School",
-    url: "https://hms.harvard.edu/"
+    "@type": "Organization",
+    name: "Department of Microbiology, Blavatnik Institute, Harvard Medical School",
+    url: "https://micro.hms.harvard.edu/",
+    parentOrganization: {
+      "@type": "CollegeOrUniversity",
+      name: "Harvard Medical School",
+      url: "https://hms.harvard.edu/"
+    }
   },
-  sameAs: [
-    "https://micro.hms.harvard.edu/",
-    "https://www.hhmi.org/scientists/jonathan-abraham",
-    siteData.social.x
-  ]
+  sameAs: [siteData.social.x]
 };
 const websiteData = {
   "@type": "WebSite",
@@ -129,7 +130,6 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
     <script is:inline define:vars={{ themeDefaultMode, themeColorLight, themeColorDark, themeColorHero, isHomePage }}>
       (() => {
         const root = document.documentElement;
-        root.classList.add("js");
         const themeMeta = document.querySelector('meta[name="theme-color"]');
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         const theme = themeDefaultMode === "system" ? (prefersDark ? "dark" : "light") : "light";
@@ -288,28 +288,31 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
         }
       }
 
+      root.classList.add("js");
+
       if (body.classList.contains("page-home")) {
         window.addEventListener("scroll", syncHeroHeader, { passive: true });
         window.addEventListener("resize", syncHeroHeader);
       }
 
       const revealNodes = document.querySelectorAll(".reveal");
-      if ("IntersectionObserver" in window && revealNodes.length) {
+      if ("IntersectionObserver" in window && revealNodes.length && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         const observer = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
               if (entry.isIntersecting) {
-                entry.target.classList.add("is-visible");
+                // Content stays readable even if motion never initializes.
+                if (entry.target.getBoundingClientRect().top > 0 && !entry.target.contains(document.activeElement)) {
+                  entry.target.classList.add("reveal-enter");
+                }
                 observer.unobserve(entry.target);
               }
             });
           },
-          { threshold: 0.16, rootMargin: "0px 0px -8% 0px" }
+          { threshold: 0, rootMargin: "0px 0px -4% 0px" }
         );
 
         revealNodes.forEach((node) => observer.observe(node));
-      } else {
-        revealNodes.forEach((node) => node.classList.add("is-visible"));
       }
     </script>
   </body>

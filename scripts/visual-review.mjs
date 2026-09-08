@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
 import { createStaticSiteTools, ForbiddenPathError, normalizeBasePath } from "./lib/static-site-server.mjs";
+import { collectFitSnapshot, inspectFit, waitForLocalImages, waitForSystemTheme } from "./lib/review-checks.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -25,6 +26,7 @@ const routes = [
 ];
 
 const viewports = [
+  { name: "320", width: 320, height: 800 },
   { name: "390", width: 390, height: 844 },
   { name: "430", width: 430, height: 932 },
   { name: "768", width: 768, height: 1024 },
@@ -218,15 +220,12 @@ async function run() {
           if (!response?.ok()) {
             pageFailures.push(`route returned ${response?.status() ?? "no response"}: ${url}`);
           }
-          await page.evaluate(async (activeTheme) => {
+          await waitForSystemTheme(page, theme);
+          await page.evaluate(async () => {
             if (document.fonts?.ready) {
               await document.fonts.ready;
             }
-            document.documentElement.dataset.theme = activeTheme;
-            document.documentElement.style.colorScheme = activeTheme;
-            document.querySelector(".site-nav")?.classList.remove("is-open");
-            document.querySelector(".nav-toggle")?.setAttribute("aria-expanded", "false");
-          }, theme);
+          });
 
           const pageHeight = await page.evaluate(() => document.documentElement.scrollHeight);
           for (let y = 0; y < pageHeight; y += Math.max(Math.floor(viewport.height * 0.72), 300)) {
@@ -235,22 +234,7 @@ async function run() {
           }
           await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
           await page.waitForTimeout(200);
-          try {
-            await page.waitForFunction(
-              () => [...document.images].every((img) => img.complete),
-              { timeout: 5000 }
-            );
-          } catch {
-            // The behavior check below reports any local image that still failed to load.
-          }
-          const revealCount = await page.locator(".reveal").count();
-          for (let index = 0; index < revealCount; index += 1) {
-            const reveal = page.locator(".reveal").nth(index);
-            if (!(await reveal.evaluate((node) => node.classList.contains("is-visible")))) {
-              await reveal.scrollIntoViewIfNeeded();
-              await page.waitForTimeout(120);
-            }
-          }
+          await waitForLocalImages(page, 5000);
           if (route.slug === "contact") {
             await page.locator(".map-widget").scrollIntoViewIfNeeded();
             const mapCheck = await page.evaluate(() => {
@@ -283,14 +267,17 @@ async function run() {
           await page.waitForTimeout(150);
 
           const behaviorCheck = await page.evaluate(() => ({
-            hiddenReveals: [...document.querySelectorAll(".reveal")].filter((node) => !node.classList.contains("is-visible")).length,
+            hiddenReveals: [...document.querySelectorAll(".reveal")].filter((node) => {
+              const style = getComputedStyle(node);
+              return style.display === "none" || style.visibility !== "visible" || Number(style.opacity) === 0 || node.getBoundingClientRect().height === 0;
+            }).length,
             documentOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth,
             brokenImages: [...document.images]
-              .filter((img) => img.src.startsWith(window.location.origin) && (!img.complete || img.naturalWidth === 0))
-              .map((img) => img.getAttribute("src"))
+              .filter((img) => new URL(img.currentSrc || img.src, location.href).origin === location.origin && (!img.complete || img.naturalWidth === 0))
+              .map((img) => img.currentSrc || img.getAttribute("src"))
           }));
           if (behaviorCheck.hiddenReveals) {
-            pageFailures.push(`${behaviorCheck.hiddenReveals} reveal elements did not activate while scrolling.`);
+            pageFailures.push(`${behaviorCheck.hiddenReveals} content sections remain hidden.`);
           }
           if (behaviorCheck.documentOverflow > 1) {
             pageFailures.push(`horizontal overflow of ${behaviorCheck.documentOverflow}px.`);
@@ -298,6 +285,9 @@ async function run() {
           if (behaviorCheck.brokenImages.length) {
             pageFailures.push(`broken local images: ${behaviorCheck.brokenImages.join(", ")}`);
           }
+          const fit = inspectFit(await page.evaluate(collectFitSnapshot));
+          for (const item of fit.parentCollisions) pageFailures.push(`content escapes parent: ${item.selector} in ${item.parent}`);
+          for (const item of fit.siblingCollisions) pageFailures.push(`in-flow content overlaps: ${item.first} / ${item.second}`);
 
           if (viewport.width <= 430 && route.slug === "home" && theme === "light") {
             await page.locator(".nav-toggle").click();
@@ -310,7 +300,6 @@ async function run() {
             }
           }
 
-          await page.evaluate(() => document.querySelectorAll(".reveal").forEach((node) => node.classList.add("is-visible")));
           await page.addStyleTag({
             content: `
               *, *::before, *::after {

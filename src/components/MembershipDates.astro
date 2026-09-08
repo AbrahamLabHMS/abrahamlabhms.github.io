@@ -1,0 +1,14 @@
+---
+interface Props { start?: string; end?: string }
+const { start, end } = Astro.props;
+const formatMonth = (value: string) => new Intl.DateTimeFormat("en-US", {
+  month: "long", year: "numeric", timeZone: "UTC"
+}).format(new Date(`${value}-01T00:00:00Z`));
+---
+{start && end ? (
+  <span><time datetime={start}>{formatMonth(start)}</time> – <time datetime={end}>{formatMonth(end)}</time></span>
+) : start ? (
+  <span>Started <time datetime={start}>{formatMonth(start)}</time></span>
+) : end ? (
+  <span>Ended <time datetime={end}>{formatMonth(end)}</time></span>
+) : null}

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import MembershipDates from "../../components/MembershipDates.astro";
 import { peopleData } from "../../data/people";
 import { siteData } from "../../data/site";
 import { groupPeople, withBase } from "../../lib/content";
@@ -7,20 +8,6 @@ import { groupPeople, withBase } from "../../lib/content";
 const groupedPeople = groupPeople(peopleData.currentMembers);
 const anchorFor = (label: string) =>
   label.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
-const formatLabMonth = (value: string) => {
-  const [year, month] = value.split("-");
-  return `${monthNames[Number(month) - 1]} ${year}`;
-};
-const formatLabDates = (entry: { labStart?: string; labEnd?: string }) => {
-  if (entry.labStart && entry.labEnd) return `${formatLabMonth(entry.labStart)} – ${formatLabMonth(entry.labEnd)}`;
-  if (entry.labStart) return `Started ${formatLabMonth(entry.labStart)}`;
-  if (entry.labEnd) return `Ended ${formatLabMonth(entry.labEnd)}`;
-  return null;
-};
 const directoryIndex = [
   ...groupedPeople.map((group) => ({ label: group.label, id: anchorFor(group.label) })),
   ...(peopleData.seasonalMembers.length
@@ -67,14 +54,16 @@ const directoryIndex = [
                   <a href={withBase("/jonathan-abraham/")}>View profile <span aria-hidden="true">→</span></a>
                 )}
               </div>
-              <p class="team-row__role">{person.title}</p>
-              <div class="team-row__details">
-                {person.programTags?.map((tag) => (
-                  <a href={siteData.trainingPrograms[tag]} target="_blank" rel="noreferrer">{tag} <span aria-hidden="true">↗</span></a>
-                ))}
-                {person.fellowships?.map((fellowship) => <span>{fellowship}</span>)}
+              <div class="team-row__appointment">
+                <p class="team-row__role">{person.title}</p>
+                {(person.programTags?.length || person.fellowships?.length) && <div class="team-row__details">
+                  {person.programTags?.map((tag) => (
+                    <a href={siteData.trainingPrograms[tag]} target="_blank" rel="noreferrer">{tag} <span aria-hidden="true">↗</span></a>
+                  ))}
+                  {person.fellowships?.map((fellowship) => <span>{fellowship}</span>)}
+                </div>}
               </div>
-              <div class="team-row__dates">{formatLabDates(person) && <time>{formatLabDates(person)}</time>}</div>
+              <div class="team-row__dates"><MembershipDates start={person.labStart} end={person.labEnd} /></div>
             </article>
           ))}
         </div>
@@ -88,11 +77,11 @@ const directoryIndex = [
           {peopleData.seasonalMembers.map((person) => (
             <article class="team-row reveal" role="listitem">
               <div class="team-row__identity"><h3>{person.name}</h3></div>
-              <p class="team-row__role">{person.title}</p>
-              <div class="team-row__details">
-                {person.program && <span>{person.program}</span>}
+              <div class="team-row__appointment">
+                <p class="team-row__role">{person.title}</p>
+                {person.program && <div class="team-row__details"><span>{person.program}</span></div>}
               </div>
-              <div class="team-row__dates">{formatLabDates(person) && <time>{formatLabDates(person)}</time>}</div>
+              <div class="team-row__dates"><MembershipDates start={person.labStart} end={person.labEnd} /></div>
             </article>
           ))}
         </div>
@@ -110,7 +99,7 @@ const directoryIndex = [
                 <li>
                   <span>{entry.name}</span>
                   <span class="alumni-group__details">
-                    {formatLabDates(entry) && <time>{formatLabDates(entry)}</time>}
+                    <MembershipDates start={entry.labStart} end={entry.labEnd} />
                     {entry.destination && <small>{entry.destination}</small>}
                   </span>
                 </li>

@@ -1,13 +1,18 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { publications } from "../../data/publications";
-import { formatDateLabel, groupPublicationsByYear } from "../../lib/content";
+import { formatDateLabel, groupPublicationsByYear, publicationAnchor } from "../../lib/content";
 import { siteData } from "../../data/site";
 import { jonathanProfile } from "../../data/jonathan";
 
 const groupedPublications = groupPublicationsByYear(publications);
 const pdbUrl = (id: string) => `https://www.rcsb.org/structure/${id}`;
 const emdbUrl = (id: string) => `https://www.ebi.ac.uk/emdb/${id}`;
+const isPrimaryDestination = (link: string, primary: string) => {
+  const left = new URL(link);
+  const right = new URL(primary);
+  return left.origin === right.origin && left.pathname.replace(/\/$/, "") === right.pathname.replace(/\/$/, "");
+};
 ---
 
 <BaseLayout
@@ -27,9 +32,8 @@ const emdbUrl = (id: string) => `https://www.ebi.ac.uk/emdb/${id}`;
       </div>
       <div class="page-intro__actions reveal">
         <p class="publication-status publication-status--intro">
-          <span>Publication record checked</span>
+          <span>Publications checked</span>
           <time datetime={siteData.publicationRecord.checkedAt}>{formatDateLabel(siteData.publicationRecord.checkedAt)}</time>
-          <small>{siteData.publicationRecord.sources.join(" + ")}</small>
         </p>
         <a class="publication-pubmed-link" href={jonathanProfile.pubmedUrl} target="_blank" rel="noreferrer">
           Jonathan Abraham on PubMed <span aria-hidden="true">↗</span>
@@ -57,7 +61,7 @@ const emdbUrl = (id: string) => `https://www.ebi.ac.uk/emdb/${id}`;
           <h2 id={`publications-${yearGroup.year}`}>{yearGroup.year}</h2>
           <ol>
             {yearGroup.entries.map((item) => (
-              <li class="publication-row reveal">
+              <li class="publication-row reveal" id={publicationAnchor(item)}>
                 <div class="publication-row__body">
                   <h3><a href={item.link} target="_blank" rel="noreferrer">{item.title}</a></h3>
                   <p class="publication-row__citation">{item.citation}</p>
@@ -109,10 +113,13 @@ const emdbUrl = (id: string) => `https://www.ebi.ac.uk/emdb/${id}`;
                 <div class="publication-row__meta">
                   {item.journal && <strong>{item.journal}</strong>}
                   <span class:list={["publication-row__type", item.articleType === "Preprint" && "publication-row__type--preprint"]}>{item.articleType}</span>
-                  {item.openAccess && <a class="publication-row__access" href={item.pmcid ? `https://pmc.ncbi.nlm.nih.gov/articles/${item.pmcid}/` : item.link} target="_blank" rel="noreferrer">Open access</a>}
-                  {item.doi && <a href={`https://doi.org/${item.doi}`} target="_blank" rel="noreferrer">DOI</a>}
-                  {item.pmid && <a href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}/`} target="_blank" rel="noreferrer">PMID</a>}
-                  {item.pmcid && <a href={`https://pmc.ncbi.nlm.nih.gov/articles/${item.pmcid}/`} target="_blank" rel="noreferrer">PMC</a>}
+                  {item.openAccess && <span class="publication-row__access">Open access</span>}
+                  <div class="publication-row__links">
+                    {item.pmid && !isPrimaryDestination(`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}/`, item.link) && <a href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}/`} target="_blank" rel="noreferrer" aria-label={`PubMed: ${item.title}`}>PubMed</a>}
+                    {item.pmcid && !isPrimaryDestination(`https://pmc.ncbi.nlm.nih.gov/articles/${item.pmcid}/`, item.link) && <a href={`https://pmc.ncbi.nlm.nih.gov/articles/${item.pmcid}/`} target="_blank" rel="noreferrer" aria-label={`Full text: ${item.title}`}>Full text</a>}
+                    <a href={`#${encodeURIComponent(publicationAnchor(item))}`} aria-label={`Link to citation: ${item.title}`}>Link to citation</a>
+                  </div>
+                  {item.doi && <span class="publication-row__print-doi">https://doi.org/{item.doi}</span>}
                 </div>
               </li>
             ))}

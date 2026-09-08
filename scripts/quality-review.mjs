@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
 import { createStaticSiteTools, normalizeBasePath } from "./lib/static-site-server.mjs";
+import { collectFitSnapshot, enlargeText, inspectFit, waitForLocalImages, waitForSystemTheme } from "./lib/review-checks.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -37,7 +38,8 @@ const compatibilityViewports = [
 ];
 
 const stressViewports = [
-  { name: "reflow-320", width: 320, height: 800 },
+  { name: "reflow-400-percent-equivalent", width: 320, height: 800 },
+  ...[599, 601, 819, 821, 1039, 1041].map((width) => ({ name: `breakpoint-${width}`, width, height: 960 })),
   { name: "narrow-window", width: 600, height: 960 },
   { name: "short-wide", width: 900, height: 600 },
   { name: "wide-desktop", width: 1600, height: 900 }
@@ -75,28 +77,18 @@ function annotation(message) {
 
 async function preparePage(page, theme) {
   await page.emulateMedia({ colorScheme: theme, reducedMotion: "reduce" });
-  await page.evaluate(async (activeTheme) => {
+  await waitForSystemTheme(page, theme);
+  await page.evaluate(async () => {
     if (document.fonts?.ready) await document.fonts.ready;
-    document.documentElement.dataset.theme = activeTheme;
-    document.documentElement.style.colorScheme = activeTheme;
-    document.querySelectorAll(".reveal").forEach((node) => node.classList.add("is-visible"));
-  }, theme);
+  });
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  try {
-    await page.waitForFunction(
-      () => [...document.images]
-        .filter((image) => image.src.startsWith(location.origin))
-        .every((image) => image.complete),
-      { timeout: 2500 }
-    );
-  } catch {
-    // The layout check below reports any local image that did not load.
-  }
+  await waitForLocalImages(page, 2500);
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
 async function inspectLayout(page) {
-  return page.evaluate(() => {
+  const fit = inspectFit(await page.evaluate(collectFitSnapshot));
+  const layout = await page.evaluate(() => {
     const selectorFor = (element) => {
       if (!(element instanceof Element)) return "unknown";
       if (element.id) return `#${element.id}`;
@@ -136,14 +128,19 @@ async function inspectLayout(page) {
       hasMain: Boolean(document.querySelector("main#main-content")),
       hasSkipTarget: Boolean(document.querySelector("#main-content")),
       documentOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth,
+      hiddenReveals: [...document.querySelectorAll(".reveal")].filter((node) => {
+        const style = getComputedStyle(node);
+        return style.display === "none" || style.visibility !== "visible" || Number(style.opacity) === 0 || node.getBoundingClientRect().height === 0;
+      }).length,
       brokenImages: [...document.images]
-        .filter((image) => image.src.startsWith(location.origin) && (!image.complete || image.naturalWidth === 0))
-        .map((image) => image.getAttribute("src")),
+        .filter((image) => new URL(image.currentSrc || image.src, location.href).origin === location.origin && (!image.complete || image.naturalWidth === 0))
+        .map((image) => image.currentSrc || image.getAttribute("src")),
       edgeCollisions,
       clippedText,
       duplicateIds: [...new Set(duplicateIds)]
     };
   });
+  return { ...layout, ...fit };
 }
 
 function addLayoutFailures(failures, label, check) {
@@ -151,10 +148,35 @@ function addLayoutFailures(failures, label, check) {
   if (check.h1Count !== 1) failures.push(`${label}: expected one main heading, found ${check.h1Count}.`);
   if (!check.hasMain || !check.hasSkipTarget) failures.push(`${label}: main landmark or skip-link target is missing.`);
   if (check.documentOverflow > 1) failures.push(`${label}: horizontal overflow of ${check.documentOverflow}px.`);
+  if (check.hiddenReveals) failures.push(`${label}: ${check.hiddenReveals} content sections remain hidden.`);
   if (check.brokenImages.length) failures.push(`${label}: broken local images: ${check.brokenImages.join(", ")}.`);
   if (check.edgeCollisions.length) failures.push(`${label}: text crosses the viewport edge at ${check.edgeCollisions.map((item) => item.selector).join(", ")}.`);
   if (check.clippedText.length) failures.push(`${label}: clipped text at ${check.clippedText.map((item) => item.selector).join(", ")}.`);
   if (check.duplicateIds.length) failures.push(`${label}: duplicate IDs: ${check.duplicateIds.join(", ")}.`);
+  if (check.parentCollisions.length) failures.push(`${label}: content escapes its parent: ${check.parentCollisions.map((item) => `${item.selector} in ${item.parent}`).join(", ")}.`);
+  if (check.siblingCollisions.length) failures.push(`${label}: in-flow content overlaps: ${check.siblingCollisions.map((item) => `${item.first} / ${item.second}`).join(", ")}.`);
+}
+
+async function checkTextEnlargement(browser, browserName, origin, failures, records) {
+  for (const width of [390, 1280]) {
+    const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: "reduce" });
+    try {
+      for (const route of primaryRoutes.filter((item) => ["home", "publications", "team", "contact"].includes(item.slug))) {
+        const page = await context.newPage();
+        const response = await page.goto(routeUrl(origin, route.path), { waitUntil: "domcontentloaded" });
+        const label = `${browserName} text-200-percent ${route.slug} ${width}`;
+        if (!response?.ok()) failures.push(`${label}: route did not load.`);
+        await preparePage(page, "light");
+        await page.evaluate(enlargeText);
+        const check = await inspectLayout(page);
+        addLayoutFailures(failures, label, check);
+        records.push({ browser: browserName, route: route.slug, viewport: { width, height: 900 }, mode: "text-200-percent", theme: "light", check });
+        await page.close();
+      }
+    } finally {
+      await context.close();
+    }
+  }
 }
 
 async function checkKeyboard(browser, browserName, origin, failures) {
@@ -485,6 +507,8 @@ async function writeReports({ failures, records, axeResults }) {
     `- Axe violations: ${axeViolationCount}`,
     `- Total failures: ${failures.length}`,
     "",
+    "Text enlargement uses doubled computed font sizes; the 320px reflow case models 1280px at 400% zoom. Native browser zoom and device checks remain manual.",
+    "",
     failures.length ? "## Failures" : "All automated release checks passed.",
     "",
     ...failures.map((failure) => `- ${failure}`)
@@ -524,6 +548,7 @@ async function run() {
         await checkKeyboard(browser, browserName, server.origin, failures);
         await checkMapFallback(browser, browserName, server.origin, failures);
         await runCompatibility(browser, browserName, server.origin, failures, records);
+        await checkTextEnlargement(browser, browserName, server.origin, failures, records);
         if (browserName === "chromium") {
           await checkTextSpacing(browser, server.origin, failures);
           await runAxe(browser, AxeBuilder, server.origin, failures, axeResults);

@@ -1,12 +1,14 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
+import { normalizeBasePath } from "./lib/site-paths.mjs";
+import { attribute, createBuildTargetValidator, elements } from "./lib/build-targets.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const siteRoot = path.join(repoRoot, "_site");
-const rawBase = String(process.env.SITE_BASE_PATH || "").trim();
-const basePath = rawBase ? `/${rawBase.replace(/^\/+|\/+$/g, "")}` : "";
+const basePath = normalizeBasePath(process.env.SITE_BASE_PATH);
+const targets = createBuildTargetValidator({ siteRoot, basePath, origin: process.env.SITE_URL || "https://abrahamlab.med.harvard.edu" });
 const failures = [];
 
 async function walk(directory) {
@@ -27,35 +29,6 @@ async function exists(filePath) {
   } catch {
     return false;
   }
-}
-
-function insideSiteRoot(candidate) {
-  const relative = path.relative(siteRoot, candidate);
-  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
-}
-
-async function resolveLocalTarget(htmlFile, rawTarget) {
-  const withoutFragment = rawTarget.split("#")[0].split("?")[0];
-  if (!withoutFragment) return true;
-
-  let targetPath;
-  if (withoutFragment.startsWith("/")) {
-    const withoutBase = basePath && (withoutFragment === basePath || withoutFragment.startsWith(`${basePath}/`))
-      ? withoutFragment.slice(basePath.length) || "/"
-      : withoutFragment;
-    targetPath = path.resolve(siteRoot, withoutBase.replace(/^\/+/, ""));
-  } else {
-    targetPath = path.resolve(path.dirname(htmlFile), withoutFragment);
-  }
-
-  if (!insideSiteRoot(targetPath)) return false;
-  if (await exists(targetPath)) {
-    const stats = await fs.stat(targetPath);
-    if (stats.isFile()) return true;
-    return exists(path.join(targetPath, "index.html"));
-  }
-  if (path.extname(targetPath)) return false;
-  return exists(path.join(targetPath, "index.html"));
 }
 
 const requiredPages = [
@@ -95,13 +68,7 @@ for (const htmlFile of htmlFiles) {
   if (!html.includes('property="og:image:width" content="1200"')) failures.push(`${relative} is missing the 1200px share-image width.`);
   if (!html.includes('property="og:image:height" content="630"')) failures.push(`${relative} is missing the 630px share-image height.`);
 
-  for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
-    const target = match[1];
-    if (/^(?:https?:|mailto:|tel:|data:|#)/i.test(target)) continue;
-    if (!await resolveLocalTarget(htmlFile, target)) {
-      failures.push(`${relative} has a broken local target: ${target}`);
-    }
-  }
+  failures.push(...(await targets.validateHtml(htmlFile, html)).map((failure) => `${relative}: ${failure}`));
 }
 
 if (allFiles.some((filePath) => filePath.includes(`${path.sep}assets${path.sep}images${path.sep}people${path.sep}`))) {
@@ -113,6 +80,8 @@ if (!allFiles.some((filePath) => filePath.endsWith(".woff2"))) {
 }
 
 const sitemap = await fs.readFile(path.join(siteRoot, "sitemap.xml"), "utf8");
+const robots = await fs.readFile(path.join(siteRoot, "robots.txt"), "utf8");
+failures.push(...await targets.validateSitemap(sitemap, robots));
 if (
   sitemap.includes("/research/") ||
   sitemap.includes("/people/") ||
@@ -126,7 +95,7 @@ if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(sitemap)) {
 }
 
 const publicationsPage = await fs.readFile(path.join(siteRoot, "publications", "index.html"), "utf8");
-for (const marker of ["Selected publications", "Jonathan Abraham on PubMed", "Jump to year", "PDB", "EMDB", "Open access", "Print or save PDF"]) {
+for (const marker of ["Selected publications", "Publications checked", "Jonathan Abraham on PubMed", "Jump to year", "PDB", "EMDB", "Open access", "Print or save PDF"]) {
   if (!publicationsPage.includes(marker)) failures.push(`Publications page is missing "${marker}".`);
 }
 
@@ -148,15 +117,21 @@ if (!contactPage.includes("Open in Google Maps")) failures.push("Contact needs d
 if (/map-widget__(?:grid|pin|fallback)/.test(contactPage)) failures.push("Contact still contains the decorative map fallback.");
 if (!contactPage.includes("z=14")) failures.push("Contact map must use the campus-scale zoom level.");
 if (contactPage.includes("Postdoctoral work")) failures.push("Contact page still contains the duplicate postdoctoral inquiry block.");
-if (!contactPage.includes("Graduate students join through Harvard training programs.")) {
-  failures.push("Contact page is missing graduate training guidance.");
+const contactNodes = elements(contactPage);
+const textContent = (node) => node.nodeName === "#text" ? node.value : (node.childNodes || []).map(textContent).join("");
+if (!contactNodes.some((node) => node.tagName === "h2" && textContent(node).trim() === "Harvard programs")) {
+  failures.push('Contact page is missing the "Harvard programs" heading.');
 }
+const programLinks = new Set(contactNodes
+  .filter((node) => node.tagName === "a" && node.parentNode?.tagName === "li" &&
+    node.parentNode.parentNode?.tagName === "ul" && textContent(node).trim())
+  .map((node) => attribute(node, "href")));
 for (const programUrl of [
   "https://virologyphd.hms.harvard.edu/",
   "https://bbsphd.hms.harvard.edu/",
   "https://biophysics.fas.harvard.edu/"
 ]) {
-  if (!contactPage.includes(programUrl)) failures.push(`Contact page is missing program link: ${programUrl}`);
+  if (!programLinks.has(programUrl)) failures.push(`Contact page is missing a labelled program list link: ${programUrl}`);
 }
 
 for (const [legacyPath, targetPath] of [
@@ -186,7 +161,6 @@ for (const dimensionMarker of ['width="405" height="53"', 'width="1918" height="
   if (!homePage.includes(dimensionMarker)) failures.push(`Homepage affiliation logo is missing fixed dimensions: ${dimensionMarker}`);
 }
 for (const marker of [
-  "Publication record checked",
   "arenavirus-gpc-figure-2-720.webp 720w",
   "arenavirus-gpc-figure-2-1200.webp 1200w",
   "arenavirus-gpc-figure-2-1800.webp 1800w"

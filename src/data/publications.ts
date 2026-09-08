@@ -3,6 +3,26 @@ import type { Publication } from "./types";
 export const publications: Publication[] = [
   {
     year: 2026,
+    title: "Structure and operating principles of a monkeypox virus replisome",
+    authors: "Yu Z, Sathyanarayana P, Tan JMJ, Hu S, Fan X, Gao A, Kranzusch PJ, Loparo JJ, Abraham J",
+    journal: "Nature",
+    publishedAt: "2026-09-02",
+    citation:
+      "Yu Z, Sathyanarayana P, Tan JMJ, Hu S, Fan X, Gao A, Kranzusch PJ, Loparo JJ, Abraham J. Nature. Published online September 2, 2026. doi:10.1038/s41586-026-10937-2.",
+    link: "https://www.nature.com/articles/s41586-026-10937-2",
+    doi: "10.1038/s41586-026-10937-2",
+    pmid: "42686903",
+    featured: true,
+    leadFeature: true,
+    homepageProof: true,
+    openAccess: true,
+    summary: "The study describes the structure of the machinery that copies the monkeypox virus genome.",
+    articleType: "Research article",
+    correspondingAuthor: true,
+    correspondenceSource: "https://www.nature.com/articles/s41586-026-10937-2#author-information"
+  },
+  {
+    year: 2026,
     title: "Orthoflaviviruses use diverse binding modes to engage LDLR family receptors",
     authors: "Ji C, Tjang LV, Das B, Huang QJ, Li R, Bradley CA, Oros J, Hu S, Li W, Fan X, Liu Z, Abraham J",
     journal: "bioRxiv",
@@ -12,7 +32,6 @@ export const publications: Publication[] = [
     link: "https://www.biorxiv.org/content/10.64898/2026.08.22.744730v1",
     doi: "10.64898/2026.08.22.744730",
     featured: true,
-    leadFeature: true,
     homepageProof: true,
     system: "Yellow fever virus and tick-borne encephalitis virus",
     methodCluster: "Cryo-EM, receptor binding, functional virology",
@@ -37,6 +56,8 @@ export const publications: Publication[] = [
       "Fan X, Li W, Plung JS, Plante JA, Hajovsky EM, Tapryal N, Diaz J, Hazell NC, Ji C, Liu Z, Hammond CE, Weaver SC, Plante KS, Abraham J. bioRxiv. 2026.",
     link: "https://www.biorxiv.org/content/10.64898/2026.07.28.741352v1",
     doi: "10.64898/2026.07.28.741352",
+    pmid: "42620031",
+    pmcid: "PMC13484082",
     featured: true,
     homepageProof: true,
     system: "Chikungunya virus",
@@ -55,15 +76,16 @@ export const publications: Publication[] = [
     year: 2026,
     title: "Lachesin is a mosquito receptor for multiple arthritogenic alphaviruses",
     authors:
-      "Plung JS, Mameli E, Li W, de Bruin ACM, Plante JA, Fan X, Das B, Willett BC, Hu Y, Hajovsky EM, Varnum H, Anekal PV, Sun X, Thornburg K, Brusic V, Hammond CE, Montero Llopis P, Viswanatha R, Shaw WR, Catteruccia F, Weaver SC, Plante KS, Perrimon N, Abraham J",
+      "Plung JS, Mameli E, Li W, de Bruin ACM, Plante JA, Fan X, Das B, Willett BC, Hu Y, Hajovsky EM, Varnum H, Anekal PV, Sun X, Thornburg K, Brusic V, Hammond CE, Montero Llopis P, Viswanatha R, Shaw WR, Catteruccia F, Weaver SC, Plante KS, Gerold G, Perrimon N, Abraham J",
     journal: "bioRxiv",
     publishedAt: "2026-07-28",
     citation:
-      "Plung JS, Mameli E, Li W, de Bruin ACM, Plante JA, Fan X, Das B, Willett BC, Hu Y, Hajovsky EM, Varnum H, Anekal PV, Sun X, Thornburg K, Brusic V, Hammond CE, Montero Llopis P, Viswanatha R, Shaw WR, Catteruccia F, Weaver SC, Plante KS, Perrimon N, Abraham J. bioRxiv. 2026.",
+      "Plung JS, Mameli E, Li W, de Bruin ACM, Plante JA, Fan X, Das B, Willett BC, Hu Y, Hajovsky EM, Varnum H, Anekal PV, Sun X, Thornburg K, Brusic V, Hammond CE, Montero Llopis P, Viswanatha R, Shaw WR, Catteruccia F, Weaver SC, Plante KS, Gerold G, Perrimon N, Abraham J. bioRxiv. 2026.",
     link: "https://www.biorxiv.org/content/10.64898/2026.07.28.741058v1",
     doi: "10.64898/2026.07.28.741058",
+    pmid: "42619960",
+    pmcid: "PMC13483993",
     featured: true,
-    homepageProof: true,
     system: "Arthritogenic alphaviruses",
     methodCluster: "CRISPR screening, receptor binding, functional virology",
     significanceLine:
@@ -80,11 +102,11 @@ export const publications: Publication[] = [
     year: 2026,
     title: "Mechanisms of HSV-1 helicase-primase inhibition and replication fork complex assembly",
     authors:
-      "Yu Z, Sathyanarayana P, Liu C, Tan JMJ, Yang P, Das B, Olal D, Hu S, Fan X, Ji C, Weller SK, Shekhar M, Coen DM, Kranzusch PJ, Loparo JJ, Abraham J",
+      "Yu Z, Sathyanarayana P, Liu C, Tan JMJ, Yang P, Das B, Hu S, Fan X, Ji C, Weller SK, Shekhar M, Coen DM, Kranzusch PJ, Loparo JJ, Abraham J",
     journal: "Cell",
     publishedAt: "2026-01-22",
     citation:
-      "Yu Z, Sathyanarayana P, Liu C, Tan JMJ, Yang P, Das B, Olal D, Hu S, Fan X, Ji C, Weller SK, Shekhar M, Coen DM, Kranzusch PJ, Loparo JJ, Abraham J. Cell. 2026;189(2):478-494.e18.",
+      "Yu Z, Sathyanarayana P, Liu C, Tan JMJ, Yang P, Das B, Hu S, Fan X, Ji C, Weller SK, Shekhar M, Coen DM, Kranzusch PJ, Loparo JJ, Abraham J. Cell. 2026;189(2):478-494.e18.",
     link: "https://pmc.ncbi.nlm.nih.gov/articles/PMC13082216/",
     doi: "10.1016/j.cell.2025.11.041",
     pmid: "41468884",
@@ -197,11 +219,11 @@ export const publications: Publication[] = [
     year: 2024,
     title: "Viral DNA polymerase structures reveal mechanisms of antiviral drug resistance",
     authors:
-      "Shankar S, Pan J, Yang P, Bian Y, Oroszán G, Yu Z, Mukherjee P, Filman DJ, Hogle JM, Shekhar M, Coen DM, Abraham J",
+      "Shankar S, Pan J, Yang P, Bian Y, Oroszlán G, Yu Z, Mukherjee P, Filman DJ, Hogle JM, Shekhar M, Coen DM, Abraham J",
     journal: "Cell",
     publishedAt: "2024-10-03",
     citation:
-      "Shankar S, Pan J, Yang P, Bian Y, Oroszán G, Yu Z, Mukherjee P, Filman DJ, Hogle JM, Shekhar M, Coen DM, Abraham J. Cell. 2024;187(20):5572-5586.e15.",
+      "Shankar S, Pan J, Yang P, Bian Y, Oroszlán G, Yu Z, Mukherjee P, Filman DJ, Hogle JM, Shekhar M, Coen DM, Abraham J. Cell. 2024;187(20):5572-5586.e15.",
     link: "https://pubmed.ncbi.nlm.nih.gov/39197451/",
     doi: "10.1016/j.cell.2024.07.048",
     pmid: "39197451",
@@ -311,11 +333,11 @@ export const publications: Publication[] = [
     year: 2022,
     title: "VLDLR and ApoER2 are receptors for multiple alphaviruses",
     authors:
-      "Clark LE, Clark SA, Lin CY, Liu J, Coscia AC, Nabel KG, Yang P, Neel DV, Lee H, Brusic V, Stryapunina I, Plante KS, Ahmed AA, Catteruccia F, Young-Pearse TL, Chiu IM, Montero Llopis P, Weaver SC, Abraham J",
+      "Clark LE, Clark SA, Lin C, Liu J, Coscia A, Nabel KG, Yang P, Neel DV, Lee H, Brusic V, Stryapunina I, Plante KS, Ahmed AA, Catteruccia F, Young-Pearse TL, Chiu IM, Montero Llopis P, Weaver SC, Abraham J",
     journal: "Nature",
     publishedAt: "2022-02-17",
     citation:
-      "Clark LE, Clark SA, Lin CY, Liu J, Coscia AC, Nabel KG, Yang P, Neel DV, Lee H, Brusic V, Stryapunina I, Plante KS, Ahmed AA, Catteruccia F, Young-Pearse TL, Chiu IM, Montero Llopis P, Weaver SC, Abraham J. Nature. 2022;602(7897):475-480.",
+      "Clark LE, Clark SA, Lin C, Liu J, Coscia A, Nabel KG, Yang P, Neel DV, Lee H, Brusic V, Stryapunina I, Plante KS, Ahmed AA, Catteruccia F, Young-Pearse TL, Chiu IM, Montero Llopis P, Weaver SC, Abraham J. Nature. 2022;602(7897):475-480.",
     link: "https://pubmed.ncbi.nlm.nih.gov/34929721/",
     doi: "10.1038/s41586-021-04326-0",
     pmid: "34929721",
@@ -329,11 +351,11 @@ export const publications: Publication[] = [
     year: 2022,
     title: "Structural basis for continued antibody evasion by the SARS-CoV-2 receptor-binding domain",
     authors:
-      "Nabel KG, Clark SA, Shankar S, Pan J, Clark LE, Yang P, Coscia A, McKay LGA, Varnum HH, Brusic V, Tolan NV, Zhou G, Desjardins M, Turbett SE, Kanjilal S, Sherman AC, Dighe A, LaRocque RC, Ryan ET, Tylek C, Cohen-Solal JF, Darcy AT, Clabers A, Fan Y, Griffiths A, Correia IR, Seagal J, Baden LR, Charles RC, Abraham J",
+      "Nabel KG, Clark SA, Shankar S, Pan J, Clark LE, Yang P, Coscia A, McKay LGA, Varnum HH, Brusic V, Tolan NV, Zhou G, Desjardins M, Turbett SE, Kanjilal S, Sherman AC, Dighe A, LaRocque RC, Ryan ET, Tylek C, Cohen-Solal JF, Darcy AT, Tavella D, Clabbers A, Fan Y, Griffiths A, Correia IR, Seagal J, Baden LR, Charles RC, Abraham J",
     journal: "Science",
     publishedAt: "2022-01-21",
     citation:
-      "Nabel KG, Clark SA, Shankar S, Pan J, Clark LE, Yang P, Coscia A, McKay LGA, Varnum HH, Brusic V, Tolan NV, Zhou G, Desjardins M, Turbett SE, Kanjilal S, Sherman AC, Dighe A, LaRocque RC, Ryan ET, Tylek C, Cohen-Solal JF, Darcy AT, Clabers A, Fan Y, Griffiths A, Correia IR, Seagal J, Baden LR, Charles RC, Abraham J. Science. 2022;375(6578):eabl6251.",
+      "Nabel KG, Clark SA, Shankar S, Pan J, Clark LE, Yang P, Coscia A, McKay LGA, Varnum HH, Brusic V, Tolan NV, Zhou G, Desjardins M, Turbett SE, Kanjilal S, Sherman AC, Dighe A, LaRocque RC, Ryan ET, Tylek C, Cohen-Solal JF, Darcy AT, Tavella D, Clabbers A, Fan Y, Griffiths A, Correia IR, Seagal J, Baden LR, Charles RC, Abraham J. Science. 2022;375(6578):eabl6251.",
     link: "https://pubmed.ncbi.nlm.nih.gov/34855508/",
     doi: "10.1126/science.abl6251",
     pmid: "34855508",
@@ -370,11 +392,11 @@ export const publications: Publication[] = [
     year: 2021,
     title: "Transferrin receptor targeting by de novo sheet extension",
     authors:
-      "Sahtoe DD, Coscia A, Mustafaoglu N, Miller LM, Olal D, Vulovic I, Yu TY, Goreshnik I, Lin YR, Clark L, Busch F, Steward L, Wysocki VH, Ingber DE, Abraham J, Baker D",
+      "Sahtoe DD, Coscia A, Mustafaoglu N, Miller LM, Olal D, Vulovic I, Yu TY, Goreshnik I, Lin YR, Clark L, Busch F, Stewart L, Wysocki VH, Ingber DE, Abraham J, Baker D",
     journal: "Proceedings of the National Academy of Sciences",
     publishedAt: "2021-04-27",
     citation:
-      "Sahtoe DD, Coscia A, Mustafaoglu N, Miller LM, Olal D, Vulovic I, Yu TY, Goreshnik I, Lin YR, Clark L, Busch F, Steward L, Wysocki VH, Ingber DE, Abraham J, Baker D. Proceedings of the National Academy of Sciences. 2021;118(17):e2021569118.",
+      "Sahtoe DD, Coscia A, Mustafaoglu N, Miller LM, Olal D, Vulovic I, Yu TY, Goreshnik I, Lin YR, Clark L, Busch F, Stewart L, Wysocki VH, Ingber DE, Abraham J, Baker D. Proceedings of the National Academy of Sciences. 2021;118(17):e2021569118.",
     link: "https://pubmed.ncbi.nlm.nih.gov/33879614/",
     doi: "10.1073/pnas.2021569118",
     pmid: "33879614",

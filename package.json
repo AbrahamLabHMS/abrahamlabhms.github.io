@@ -8,7 +8,7 @@
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1",
     "security:check": "node scripts/validate-security.mjs",
     "build": "node scripts/validate-security.mjs && node scripts/validate-content.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build",
-    "postbuild": "node scripts/validate-build.mjs",
+    "postbuild": "node scripts/validate-build.mjs && node scripts/validate-presentation.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host 127.0.0.1",
     "validate:content": "node scripts/validate-content.mjs",
     "check:publications": "node scripts/check-publication-updates.mjs",
@@ -23,6 +23,7 @@
     "@astrojs/check": "^0.9.10",
     "@axe-core/playwright": "^4.13.0",
     "@types/node": "^25.9.4",
+    "parse5": "7.3.0",
     "playwright": "^1.61.1",
     "sharp": "^0.35.3"
   },

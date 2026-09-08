@@ -21,6 +21,7 @@ export type HeroFigure = {
   note?: string;
   href?: string;
   imagePosition?: string;
+  imageCrop?: { x: number; y: number; width: number; height: number };
   figureCredit?: string;
   figureNumber?: string;
   license?: string;

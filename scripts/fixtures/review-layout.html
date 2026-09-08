@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Layout diagnostics fixture</title>
+  <style>
+    body { margin: 20px; font: 16px/24px Arial, sans-serif; }
+    .pressure { display: grid; grid-template-columns: 100px 150px; gap: 10px; }
+    .pressure p { min-width: 0; margin: 0; white-space: nowrap; }
+    .nested { margin-top: 40px; }
+    .overlay { position: relative; width: 300px; height: 80px; margin-top: 40px; }
+    .overlay p { position: absolute; top: 0; left: 0; }
+    .hidden { display: none; }
+    .clipped { margin-top: 40px; overflow: hidden; height: 10px; }
+  </style>
+</head>
+<body>
+  <div class="pressure"><p id="long">LongUnbreakableName</p><p id="neighbor">Neighbor text</p></div>
+  <p class="nested" id="nested">Text with <a href="#nested">an inline <strong>nested link</strong></a>.</p>
+  <div class="overlay"><p id="overlay-a">Intentional layer</p><p id="overlay-b">Intentional layer</p></div>
+  <div class="hidden"><p>Hidden text</p><button>Hidden control</button></div>
+  <div class="clipped" id="clip-parent"><p id="clip-text">Clipped text</p></div>
+</body>
+</html>

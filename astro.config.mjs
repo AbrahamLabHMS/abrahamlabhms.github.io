@@ -1,8 +1,8 @@
 import { defineConfig } from "astro/config";
+import { normalizeBasePath } from "./scripts/lib/site-paths.mjs";
 
 const site = process.env.SITE_URL || "https://abrahamlab.med.harvard.edu";
-const rawBase = (process.env.SITE_BASE_PATH || "").trim();
-const base = rawBase ? `/${rawBase.replace(/^\/+|\/+$/g, "")}` : undefined;
+const base = normalizeBasePath(process.env.SITE_BASE_PATH) || undefined;
 
 export default defineConfig({
   site,

@@ -10,7 +10,7 @@ export const siteData = {
   theme: {
     defaultMode: "system"
   },
-  heroTitle: "Mechanisms of viral infection.",
+  heroTitle: "Mechanisms of viral infection",
   heroDeck:
     "We study how medically important viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs block them.",
   heroFigures: [
@@ -25,18 +25,19 @@ export const siteData = {
       ],
       imageWidth: 1800,
       imageHeight: 960,
-      alt: "Cryo-EM structures and biochemical measurements of the Machupo virus glycoprotein complex.",
+      alt: "Two structural views of an arenavirus glycoprotein complex from Mann and colleagues, Nature Microbiology, 2025.",
       note: "Open-access figure",
       href: "https://www.nature.com/articles/s41564-025-02085-6",
       imagePosition: "center",
+      imageCrop: { x: 50.3, y: 0, width: 49.7, height: 82 },
       figureCredit: "Mann et al., Nature Microbiology (2025)",
-      figureNumber: "Figure 2",
+      figureNumber: "Figure 2d, cropped panel",
       license: "CC BY 4.0",
       visualSource: "https://www.nature.com/articles/s41564-025-02085-6/figures/2"
     }
   ],
   publicationRecord: {
-    checkedAt: "2026-08-28",
+    checkedAt: "2026-09-07",
     sources: ["PubMed", "bioRxiv"]
   },
   shareImages: {

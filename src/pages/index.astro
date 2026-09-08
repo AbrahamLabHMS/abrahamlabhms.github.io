@@ -13,6 +13,13 @@ const hmsCoverage = newsItems.find(
   (item) => item.category === "Institutional coverage" && item.link !== labFilm?.link
 );
 const heroFigure = siteData.heroFigures[0];
+const crop = heroFigure.imageCrop;
+const cropStyle = {
+  "--figure-aspect": (heroFigure.imageWidth * crop.width) / (heroFigure.imageHeight * crop.height),
+  "--figure-width": `${10000 / crop.width}%`,
+  "--figure-x": `${-100 * crop.x / crop.width}%`,
+  "--figure-y": `${-100 * crop.y / crop.height}%`
+};
 const heroSrcSet = heroFigure.imageVariants
   ?.map((variant) => `${withBase(variant.path)} ${variant.width}w`)
   .join(", ");
@@ -29,18 +36,20 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
   modifiedAt={siteData.publicationRecord.checkedAt}
 >
   <section class="dossier-hero home-hero">
-    <img
-      class="dossier-hero__media"
-      src={withBase(heroFigure.image)}
-      srcset={heroSrcSet}
-      sizes="(max-width: 600px) 100vw, 72vw"
-      alt={heroFigure.alt}
-      width={heroFigure.imageWidth}
-      height={heroFigure.imageHeight}
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-    />
+    <div class="dossier-hero__visual" style={cropStyle}>
+      <img
+        class="dossier-hero__media"
+        src={withBase(heroFigure.image)}
+        srcset={heroSrcSet}
+        sizes="(max-width: 600px) 210vw, 120vw"
+        alt={heroFigure.alt}
+        width={heroFigure.imageWidth}
+        height={heroFigure.imageHeight}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </div>
     <div class="shell dossier-hero__grid">
       <div class="dossier-hero__copy reveal">
         <p class="overline overline--inverse">Harvard Medical School · HHMI</p>
@@ -81,23 +90,16 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
       <div class="shell publication-feature__grid">
         <header class="publication-feature__heading reveal">
           <p class="overline">{recentPublicationLabel(recentPaper)}</p>
-          <p class="publication-feature__source">{recentPaper.journal} · {recentPaper.articleType} · {recentPaper.publishedAt ? <time datetime={recentPaper.publishedAt}>{formatDateLabel(recentPaper.publishedAt)}</time> : recentPaper.year}</p>
+          <p class="publication-feature__source">{recentPaper.journal}<br />{recentPaper.publishedAt ? <time datetime={recentPaper.publishedAt}>{formatDateLabel(recentPaper.publishedAt)}</time> : recentPaper.year}</p>
         </header>
         <article class="publication-feature__body reveal">
           <h2>{recentPaper.title}</h2>
-          <p class="publication-feature__claim">{recentPaper.significanceLine}</p>
-          <p>{recentPaper.summary}</p>
-          <p class="citation-text">{recentPaper.citation}</p>
+          {(recentPaper.significanceLine || recentPaper.summary) && <p class="publication-feature__claim">{recentPaper.significanceLine || recentPaper.summary}</p>}
           <div class="button-row">
             <a class="button button--primary" href={recentPaper.link} target="_blank" rel="noreferrer">Read paper</a>
             <a class="text-link" href={withBase("/publications/")}>View publications <span aria-hidden="true">→</span></a>
           </div>
         </article>
-        <dl class="publication-feature__facts reveal">
-          {recentPaper.system && <div><dt>System</dt><dd>{recentPaper.system}</dd></div>}
-          {recentPaper.methodCluster && <div><dt>Methods</dt><dd>{recentPaper.methodCluster}</dd></div>}
-          {recentPaper.doi && <div><dt>DOI</dt><dd>{recentPaper.doi}</dd></div>}
-        </dl>
       </div>
     </section>
   )}
@@ -105,19 +107,14 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
   <section class="section current-work">
     <div class="shell current-work__grid">
       <header class="section-heading reveal">
-        <h2>Recent papers and HMS coverage</h2>
-        <p class="publication-status">
-          <span>Publication record checked</span>
-          <time datetime={siteData.publicationRecord.checkedAt}>{formatDateLabel(siteData.publicationRecord.checkedAt)}</time>
-          <small>{siteData.publicationRecord.sources.join(" + ")}</small>
-        </p>
+        <h2>Papers and coverage</h2>
+        <a class="text-link" href={withBase("/news/")}>HMS films and stories <span aria-hidden="true">→</span></a>
       </header>
       <div class="dossier-ledger">
         {otherRecentPapers.map((paper) => (
           <article class="dossier-ledger__row reveal">
             <p class="dossier-ledger__meta">{paper.articleType} · {paper.journal} · {paper.publishedAt ? <time datetime={paper.publishedAt}>{formatDateLabel(paper.publishedAt)}</time> : paper.year}</p>
             <h3><a href={paper.link} target="_blank" rel="noreferrer">{paper.title}</a></h3>
-            <p>{paper.significanceLine}</p>
             <span class="dossier-ledger__action" aria-hidden="true">↗</span>
           </article>
         ))}
@@ -125,7 +122,6 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
           <article class="dossier-ledger__row reveal">
             <p class="dossier-ledger__meta">{hmsCoverage.source}</p>
             <h3><a href={hmsCoverage.link} target="_blank" rel="noreferrer">{hmsCoverage.title}</a></h3>
-            <p>{hmsCoverage.summary}</p>
             <span class="dossier-ledger__action" aria-hidden="true">↗</span>
           </article>
         )}

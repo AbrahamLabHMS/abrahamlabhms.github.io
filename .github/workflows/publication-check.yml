@@ -2,11 +2,15 @@ name: Publication check
 
 on:
   schedule:
-    - cron: "17 14 1 * *"
+    - cron: "17 14 * * 1"
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: publication-review-queue
+  cancel-in-progress: false
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
@@ -15,6 +19,9 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Check out repository
         # Pinned to immutable action commit; update intentionally after review.
@@ -34,13 +41,22 @@ jobs:
         run: npm ci
 
       - name: Test publication-monitor failure handling
-        run: node --test scripts/check-publication-updates.test.mjs
+        id: checker-tests
+        run: node --test scripts/check-publication-updates.test.mjs scripts/publication-review-issue.test.mjs
 
       - name: Validate site content
         run: npm run validate:content
 
       - name: Check publication sources
+        id: publications
+        if: ${{ !cancelled() && steps.dependencies.outcome == 'success' && steps.checker-tests.outcome == 'success' }}
         run: npm run check:publications
+
+      - name: Maintain one human-review issue
+        if: ${{ !cancelled() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && steps.publications.outcome != 'skipped' && hashFiles('output/publication-check/report.json') != '' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/lib/publication-review-issue.mjs output/publication-check/report.json
 
       - name: Build site for link review
         id: build

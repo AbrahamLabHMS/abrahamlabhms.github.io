@@ -1,9 +1,8 @@
 import type { APIRoute } from "astro";
 import { siteData } from "../data/site";
+import { siteUrl } from "../../scripts/lib/site-paths.mjs";
 
 const origin = process.env.SITE_URL || siteData.url;
-const rawBase = (process.env.SITE_BASE_PATH || "").trim();
-const basePath = rawBase ? `/${rawBase.replace(/^\/+|\/+$/g, "")}/` : "/";
 const pages: Array<{ path: string; lastmod?: string }> = [
   { path: "/", lastmod: siteData.publicationRecord.checkedAt },
   { path: "/publications/", lastmod: siteData.publicationRecord.checkedAt },
@@ -14,7 +13,7 @@ const pages: Array<{ path: string; lastmod?: string }> = [
 ];
 
 const toAbsolute = (path: string) =>
-  new URL(path === "/" ? basePath : `${basePath}${path.replace(/^\/+/, "")}`, `${origin}/`).toString();
+  siteUrl(origin, process.env.SITE_BASE_PATH, path);
 
 export const GET: APIRoute = () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -17,7 +17,6 @@ import { siteData } from "../../data/site";
       <div class="page-intro__copy reveal">
         <p class="overline">Abraham Lab</p>
         <h1>Contact</h1>
-        <p>For scientific, speaking, and administrative inquiries.</p>
       </div>
     </div>
   </section>
@@ -37,7 +36,7 @@ import { siteData } from "../../data/site";
           <p class="overline">Administration</p>
           <div class="contact-block__content">
             <h2>James Spencer</h2>
-            <p>Lab operations and administration</p>
+            <p>Lab Manager</p>
             <a href={`mailto:${siteData.contact.managerEmail}`}>{siteData.contact.managerEmail}</a>
           </div>
         </section>
@@ -52,7 +51,6 @@ import { siteData } from "../../data/site";
           <p class="overline">Graduate training</p>
           <div class="contact-block__content">
             <h2>Harvard programs</h2>
-            <p>Graduate students join through Harvard training programs.</p>
             <ul class="contact-programs">
               {siteData.graduatePrograms.map(({label, href}) => (
                 <li><a href={href} target="_blank" rel="noreferrer">{label} <span aria-hidden="true">↗</span></a></li>

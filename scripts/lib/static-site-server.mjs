@@ -1,6 +1,8 @@
 import http from "node:http";
 import path from "node:path";
 import { promises as fs } from "node:fs";
+import { hasBasePath, normalizeBasePath } from "./site-paths.mjs";
+export { normalizeBasePath } from "./site-paths.mjs";
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -24,15 +26,12 @@ export class ForbiddenPathError extends Error {
   }
 }
 
-export function normalizeBasePath(value) {
-  const raw = String(value || "").trim();
-  return raw ? `/${raw.replace(/^\/+|\/+$/g, "")}` : "";
-}
-
 export function createStaticSiteTools({ siteRoot, basePath = "" }) {
+  siteRoot = path.resolve(siteRoot);
+  basePath = normalizeBasePath(basePath);
   function isInsideSiteRoot(candidatePath) {
     const relative = path.relative(siteRoot, candidatePath);
-    return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+    return relative !== ".." && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative);
   }
 
   function safeStaticRequestPath(requestPath) {
@@ -43,6 +42,7 @@ export function createStaticSiteTools({ siteRoot, basePath = "" }) {
       throw new ForbiddenPathError("Malformed request path");
     }
 
+    if (decoded.includes("\0")) throw new ForbiddenPathError("Null bytes are not allowed");
     const slashNormalized = decoded.replace(/\\/g, "/");
     if (slashNormalized.split("/").some((part) => part === "..")) {
       throw new ForbiddenPathError("Path traversal is not allowed");
@@ -66,30 +66,27 @@ export function createStaticSiteTools({ siteRoot, basePath = "" }) {
 
   async function fileExists(filePath) {
     try {
-      await fs.access(filePath);
-      return true;
-    } catch {
+      const [realRoot, realFile] = await Promise.all([fs.realpath(siteRoot), fs.realpath(filePath)]);
+      const relative = path.relative(realRoot, realFile);
+      if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+        throw new ForbiddenPathError("Symlink escaped the static root");
+      }
+      return (await fs.stat(filePath)).isFile();
+    } catch (error) {
+      if (error instanceof ForbiddenPathError) throw error;
+      if (!["ENOENT", "ENOTDIR"].includes(error.code)) throw error;
       return false;
     }
   }
 
   async function resolveStaticPath(requestPath) {
-    const withoutBase = basePath && (requestPath === basePath || requestPath.startsWith(`${basePath}/`))
-      ? requestPath.slice(basePath.length) || "/"
-      : requestPath;
-    const safePath = safeStaticRequestPath(withoutBase);
+    const safeRequest = `/${safeStaticRequestPath(requestPath)}`;
+    if (!hasBasePath(safeRequest, basePath)) return null;
+    const safePath = (safeRequest.slice(basePath.length) || "/").replace(/^\/+/, "");
     const directPath = staticCandidate(safePath);
 
-    if (await fileExists(directPath)) {
-      const stats = await fs.stat(directPath);
-      if (stats.isDirectory()) {
-        const indexPath = staticCandidate(safePath, "index.html");
-        if (await fileExists(indexPath)) {
-          return { filePath: indexPath, statusCode: 200 };
-        }
-      } else {
-        return { filePath: directPath, statusCode: 200 };
-      }
+    if (!safeRequest.endsWith("/") && await fileExists(directPath)) {
+      return { filePath: directPath, statusCode: 200 };
     }
 
     const directoryIndexPath = staticCandidate(safePath, "index.html");

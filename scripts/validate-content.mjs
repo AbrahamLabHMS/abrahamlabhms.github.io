@@ -63,6 +63,7 @@ const expectedProgramTagsByPerson = new Map([
 ]);
 
 const expectedCorrespondingDois = new Set([
+  "10.1038/s41586-026-10937-2",
   "10.64898/2026.08.22.744730",
   "10.64898/2026.07.28.741352",
   "10.64898/2026.07.28.741058",
@@ -85,6 +86,8 @@ const expectedCorrespondingDois = new Set([
 ]);
 
 const expectedPmcidsByDoi = new Map([
+  ["10.64898/2026.07.28.741352", "PMC13484082"],
+  ["10.64898/2026.07.28.741058", "PMC13483993"],
   ["10.1016/j.cell.2025.11.041", "PMC13082216"],
   ["10.1038/s41564-025-02085-6", "PMC12408356"],
   ["10.1016/j.cell.2025.03.029", "PMC12406711"],
@@ -101,6 +104,25 @@ const expectedPmcidsByDoi = new Map([
   ["10.1038/s41577-020-0365-7", "PMC7290146"],
   ["10.1038/s41467-018-04271-z", "PMC5951886"],
   ["10.1016/j.chom.2015.11.005", "PMC4685251"]
+]);
+
+// Bibliographic review completed 2026-09-07; see references/content-source-brief.md.
+const reviewedPublicationFields = new Map([
+  ["10.1038/s41586-026-10937-2", {
+    title: "Structure and operating principles of a monkeypox virus replisome",
+    authors: "Yu Z, Sathyanarayana P, Tan JMJ, Hu S, Fan X, Gao A, Kranzusch PJ, Loparo JJ, Abraham J",
+    journal: "Nature", year: 2026, publishedAt: "2026-09-02", pmid: "42686903", articleType: "Research article",
+    correspondenceSource: "https://www.nature.com/articles/s41586-026-10937-2#author-information"
+  }],
+  ["10.64898/2026.08.22.744730", { articleType: "Preprint", journal: "bioRxiv", publishedAt: "2026-08-24" }],
+  ["10.64898/2026.07.28.741352", { articleType: "Preprint", journal: "bioRxiv", publishedAt: "2026-07-29", pmid: "42620031" }],
+  ["10.64898/2026.07.28.741058", { articleType: "Preprint", journal: "bioRxiv", publishedAt: "2026-07-28", pmid: "42619960" }],
+  ["10.1016/j.cell.2025.11.041", { authors: "Yu Z, Sathyanarayana P, Liu C, Tan JMJ, Yang P, Das B, Hu S, Fan X, Ji C, Weller SK, Shekhar M, Coen DM, Kranzusch PJ, Loparo JJ, Abraham J" }],
+  ["10.1016/j.cell.2024.07.048", { authors: "Shankar S, Pan J, Yang P, Bian Y, Oroszlán G, Yu Z, Mukherjee P, Filman DJ, Hogle JM, Shekhar M, Coen DM, Abraham J" }],
+  ["10.1038/s41586-024-07740-2", { authors: "Li W, Plante JA, Lin C, Basu H, Plung JS, Fan X, Boeckers JM, Oros J, Buck TK, Anekal PV, Hanson WA, Varnum H, Wells A, Mann CJ, Tjang LV, Yang P, Reyna RA, Mitchell BM, Shinde DP, Walker JL, Choi SY, Brusic V, Montero Llopis P, Weaver SC, Umemori H, Chiu IM, Plante KS, Abraham J" }],
+  ["10.1038/s41586-021-04326-0", { authors: "Clark LE, Clark SA, Lin C, Liu J, Coscia A, Nabel KG, Yang P, Neel DV, Lee H, Brusic V, Stryapunina I, Plante KS, Ahmed AA, Catteruccia F, Young-Pearse TL, Chiu IM, Montero Llopis P, Weaver SC, Abraham J" }],
+  ["10.1126/science.abl6251", { authors: "Nabel KG, Clark SA, Shankar S, Pan J, Clark LE, Yang P, Coscia A, McKay LGA, Varnum HH, Brusic V, Tolan NV, Zhou G, Desjardins M, Turbett SE, Kanjilal S, Sherman AC, Dighe A, LaRocque RC, Ryan ET, Tylek C, Cohen-Solal JF, Darcy AT, Tavella D, Clabbers A, Fan Y, Griffiths A, Correia IR, Seagal J, Baden LR, Charles RC, Abraham J" }],
+  ["10.1073/pnas.2021569118", { authors: "Sahtoe DD, Coscia A, Mustafaoglu N, Miller LM, Olal D, Vulovic I, Yu TY, Goreshnik I, Lin YR, Clark L, Busch F, Stewart L, Wysocki VH, Ingber DE, Abraham J, Baker D" }]
 ]);
 
 function transpileTsModule(source, filePath) {
@@ -520,6 +542,20 @@ async function main() {
     if (publication?.pmcid !== pmcid) {
       fail(`Publication DOI ${doi} must use verified PMCID ${pmcid}.`);
     }
+  }
+
+  for (const [doi, expected] of reviewedPublicationFields) {
+    const publication = publications.find((item) => item.doi === doi);
+    for (const [field, value] of Object.entries(expected)) {
+      if (publication?.[field] !== value) fail(`Publication DOI ${doi} must retain reviewed ${field}: ${value}. Reconcile primary metadata before changing this guard.`);
+    }
+    if (publication && !publication.citation.startsWith(`${publication.authors}. `)) {
+      fail(`Publication DOI ${doi} has inconsistent authors and citation text.`);
+    }
+  }
+  const lachesin = publications.find((item) => item.doi === "10.64898/2026.07.28.741058");
+  if (!lachesin?.authors.includes("Plante KS, Gerold G, Perrimon N, Abraham J")) {
+    fail("The Lachesin v1 citation must retain Gisa Gerold in the order verified in XML/PDF front matter, not the stale bioRxiv summary API.");
   }
 
   const topThree = sortedPublications.slice(0, 3);

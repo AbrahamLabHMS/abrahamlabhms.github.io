@@ -15,7 +15,9 @@ const personData = {
     { "@type": "Organization", name: "Brigham and Women's Hospital" }
   ],
   url: new URL(withBase("/jonathan-abraham/"), siteData.url).toString(),
-  sameAs: [...jonathanProfile.profileLinks.map((item) => item.href), jonathanProfile.pubmedUrl]
+  sameAs: jonathanProfile.profileLinks
+    .filter((item) => /hhmi\.org\/scientists\/|physiciandirectory\.|orcid\.org\//.test(item.href))
+    .map((item) => item.href)
 };
 ---
 
@@ -58,10 +60,6 @@ const personData = {
       </article>
 
       <aside class="profile-story__rail">
-        <section class="profile-list reveal">
-          <h2>Research</h2>
-          <ul>{jonathanProfile.focusAreas.map((item) => <li>{item}</li>)}</ul>
-        </section>
         <section class="profile-list reveal">
           <h2>Distinctions</h2>
           <ul>{jonathanProfile.distinctions.map((item) => <li>{item}</li>)}</ul>

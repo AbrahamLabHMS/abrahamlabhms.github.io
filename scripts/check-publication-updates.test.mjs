@@ -4,15 +4,18 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import {
+  compareBibliography,
   collectPublicationReport,
   renderMarkdown,
   reportExitCode,
   writePublicationReport
 } from "./check-publication-updates.mjs";
+import { acceptedSourceVariations } from "./lib/publication-metadata-variations.mjs";
 
 const now = new Date("2026-09-05T12:00:00.000Z");
-const journal = { title: "Existing journal fixture", doi: "10.1000/journal", pmid: "1", articleType: "Research article" };
-const preprint = { title: "Existing preprint fixture", doi: "10.1101/2026.01.01.123456", articleType: "Preprint" };
+const journal = { title: "Existing journal fixture", authors: "Example A, Abraham J", journal: "Nature", doi: "10.1000/journal", pmid: "1", articleType: "Research article" };
+const preprint = { title: "Existing preprint fixture", authors: journal.authors, journal: "bioRxiv", doi: "10.1101/2026.01.01.123456", articleType: "Preprint",
+  link: "https://www.biorxiv.org/content/10.1101/2026.01.01.123456v1" };
 const candidateDoi = "10.1101/2026.02.01.123456";
 
 function discoveryRecord(doi, extra = {}) {
@@ -22,13 +25,27 @@ function discoveryRecord(doi, extra = {}) {
 function bioRxivRecord(doi, extra = {}) {
   return {
     doi,
-    title: "Candidate fixture",
+    title: doi === preprint.doi ? preprint.title : "Candidate fixture",
+    authors: "Example, A.; Abraham, J.",
     version: "1",
     published: "NA",
     author_corresponding: "Jonathan Abraham",
     author_corresponding_institution: "Harvard Medical School",
     ...extra
   };
+}
+
+function pubmedRecord(extra = {}) {
+  return { title: journal.title, authors: [{ name: "Example A" }, { name: "Abraham J" }], fulljournalname: journal.journal,
+    source: journal.journal, pubtype: ["Journal Article"], articleids: [{ idtype: "doi", value: journal.doi }], ...extra };
+}
+
+function crossrefRecord(doi, extra = {}) {
+  const isPreprint = /10\.(?:1101|64898)\//.test(doi);
+  return { message: { DOI: doi, title: [doi === preprint.doi ? preprint.title : doi === journal.doi ? journal.title : "Candidate fixture"],
+    author: [{ given: "Alice", family: "Example" }, { given: "Jonathan", family: "Abraham" }],
+    type: isPreprint ? "posted-content" : "journal-article", "container-title": isPreprint ? [] : ["Nature"],
+    institution: isPreprint ? [{ name: "bioRxiv" }] : [], ...extra } };
 }
 
 function fixtureFetch(overrides = {}) {
@@ -41,13 +58,16 @@ function fixtureFetch(overrides = {}) {
       payload = overrides.pubmedSearch ?? { esearchresult: { count: "0", idlist: [] } };
     } else if (url.hostname === "eutils.ncbi.nlm.nih.gov" && url.pathname.endsWith("esummary.fcgi")) {
       payload = overrides.pubmedSummary ?? {
-        result: { "1": { title: journal.title, articleids: [{ idtype: "doi", value: journal.doi }] } }
+        result: { "1": pubmedRecord() }
       };
     } else if (url.hostname === "www.ebi.ac.uk") {
       payload = overrides.discovery ?? { hitCount: 0, resultList: { result: [] } };
     } else if (url.hostname === "api.biorxiv.org") {
       const doi = url.pathname.replace("/details/biorxiv/", "").replace("/na/json", "");
       payload = overrides.details ?? { messages: [{ status: "ok" }], collection: [bioRxivRecord(doi)] };
+    } else if (url.hostname === "api.crossref.org") {
+      const doi = url.pathname.replace("/works/", "");
+      payload = overrides.crossref ?? crossrefRecord(doi);
     } else {
       throw new Error(`Unexpected fixture URL: ${url}`);
     }
@@ -333,4 +353,231 @@ test("partial JSON, Markdown and workflow summary are saved before failure is re
   assert.match(markdown, /Status: INCOMPLETE/);
   assert.equal(await fs.readFile(summaryPath, "utf8"), markdown);
   assert.equal(reportExitCode(report), 1);
+});
+
+test("unchanged-title journal DOI is a possible version even when bioRxiv still reports NA", async () => {
+  const doi = "10.1000/successor";
+  const { report } = await check({
+    pubmedSearch: { esearchresult: { count: "1", idlist: ["2"] } },
+    pubmedSummary: { result: { "1": pubmedRecord(), "2": pubmedRecord({ title: `${preprint.title}.`, articleids: [{ idtype: "doi", value: doi }] }) } },
+    crossref: (url) => crossrefRecord(url.pathname.replace("/works/", ""), url.pathname.includes("successor") ? { title: [preprint.title] } : {})
+  });
+  assert.equal(report.status, "complete");
+  assert.equal(reportExitCode(report), 0);
+  assert.equal(report.candidates.length, 1);
+  assert.equal(report.candidates[0].kind, "possible-journal-version");
+  assert.deepEqual(report.candidates[0].relatedLocalDois, [preprint.doi]);
+  assert.equal(report.candidates[0].crossref.status, "journal");
+  assert.equal(report.publishedPreprints.length, 0);
+  assert.match(renderMarkdown(report), /Title similarity alone is not confirmation/);
+});
+
+test("same title alone never proves identity or suppresses a different DOI", async () => {
+  const { report } = await check({
+    discovery: { hitCount: 1, resultList: { result: [discoveryRecord(candidateDoi)] } },
+    details: (url) => ({ collection: [bioRxivRecord(url.pathname.includes(candidateDoi) ? candidateDoi : preprint.doi, { title: preprint.title })] }),
+    crossref: (url) => crossrefRecord(url.pathname.replace("/works/", ""), url.pathname.includes(candidateDoi) ? { title: [preprint.title] } : {})
+  });
+  assert.equal(report.candidates[0].kind, "possible-version");
+  assert.equal(report.candidates[0].publicationStatus, "preprint");
+});
+
+test("matching identifiers do not hide title, author or journal mismatches", async () => {
+  for (const [field, change, message] of [
+    ["title", "A meaningfully different title", /Title mismatch/],
+    ["authors", [{ name: "Abraham J" }, { name: "Example A" }], /Author list mismatch/],
+    ["fulljournalname", "Another Journal", /Journal mismatch/]
+  ]) {
+    const { report } = await check({ pubmedSummary: { result: { "1": pubmedRecord({ [field]: change, ...(field === "fulljournalname" ? { source: change } : {}) }) } } });
+    assert.equal(report.status, "complete");
+    assert.match(report.remoteMetadataIssues.join("\n"), message);
+    assert.equal(reportExitCode(report), 1);
+  }
+});
+
+test("normalization ignores harmless typography but retains Greek letters, digits and plus signs", async () => {
+  const { report } = await check({ pubmedSummary: { result: { "1": pubmedRecord({ title: "Existing JOURNAL fixture.",
+    authors: [{ name: "Example A." }, { name: "Abraham J." }], fulljournalname: "The Nature", source: "The Nature" }) } } });
+  assert.equal(reportExitCode(report), 0);
+  for (const [local, remote] of [["alpha \u03b1", "alpha \u03b2"], ["Type 1", "Type 2"], ["A+B", "A B"]]) {
+    const result = await check({ pubmedSummary: { result: { "1": pubmedRecord({ title: remote }) } },
+      crossref: crossrefRecord(journal.doi, { title: [local] }) }, [{ ...journal, title: local }]);
+    assert.match(result.report.remoteMetadataIssues.join("\n"), /Title mismatch/);
+  }
+});
+
+test("PMID plus Journal Article plus Preprint remains a preprint", async () => {
+  const indexed = { ...preprint, pmid: "1" };
+  const { report } = await check({ pubmedSummary: { result: { "1": pubmedRecord({ title: preprint.title,
+    fulljournalname: "bioRxiv : the preprint server for biology", source: "bioRxiv", pubtype: ["Journal Article", "Preprint"],
+    articleids: [{ idtype: "doi", value: preprint.doi }] }) } } }, [indexed]);
+  assert.equal(reportExitCode(report), 0);
+  assert.equal(report.publishedPreprints.length, 0);
+});
+
+test("wrong local publication status is flagged independently of identifiers", async () => {
+  const { report } = await check({ pubmedSummary: { result: { "1": pubmedRecord({ pubtype: ["Journal Article", "Preprint"] }) } } });
+  assert.match(report.remoteMetadataIssues.join("\n"), /Publication status mismatch/);
+  assert.equal(reportExitCode(report), 1);
+});
+
+test("a newly indexed known DOI is an identifier update, not a duplicate or new work", async () => {
+  const { report } = await check({ pubmedSearch: { esearchresult: { count: "1", idlist: ["2"] } },
+    pubmedSummary: { result: { "2": pubmedRecord({ title: preprint.title, source: "bioRxiv", pubtype: ["Preprint"],
+      articleids: [{ idtype: "doi", value: preprint.doi }] }) } } }, [preprint]);
+  assert.equal(report.candidates.length, 1);
+  assert.equal(report.candidates[0].kind, "identifier-update");
+  assert.equal(report.candidates[0].pmid, "2");
+});
+
+test("cross-source candidates deduplicate by DOI while retaining source and PMID evidence", async () => {
+  const { report } = await check({ pubmedSearch: { esearchresult: { count: "1", idlist: ["2"] } },
+    pubmedSummary: { result: { "2": pubmedRecord({ title: "Candidate fixture", pubtype: ["Preprint"],
+      articleids: [{ idtype: "doi", value: candidateDoi }] }) } },
+    discovery: { hitCount: 2, resultList: { result: [discoveryRecord(candidateDoi), discoveryRecord(candidateDoi)] } }
+  }, []);
+  assert.equal(report.candidates.length, 1);
+  assert.equal(report.candidates[0].pmid, "2");
+  assert.deepEqual(report.candidates[0].sources, ["PubMed", "bioRxiv"]);
+  assert.equal(reportExitCode(report), 0);
+});
+
+test("pinned preprint metadata is compared to v1 while v2 is a distinct review item", async () => {
+  const { report } = await check({ details: { collection: [bioRxivRecord(preprint.doi),
+    bioRxivRecord(preprint.doi, { version: "2", title: "Revised fixture title", authors: "Another, A.; Abraham, J." })] } }, [preprint]);
+  assert.equal(reportExitCode(report), 0);
+  assert.equal(report.versionUpdates.length, 1);
+  assert.equal(report.versionUpdates[0].latestVersion, 2);
+  assert.equal(report.publishedPreprints.length, 0);
+  assert.match(renderMarkdown(report), /This is not a journal transition/);
+});
+
+test("unavailable cited versions and malformed version numbers fail honestly", async () => {
+  for (const versions of [["2"], ["1", "1"], ["0"], [undefined], ["not-a-version"]]) {
+    const { report } = await check({ details: { collection: versions.map((version) => bioRxivRecord(preprint.doi, { version })) } }, [preprint]);
+    assert.equal(report.status, "incomplete");
+    assert.equal(reportExitCode(report), 1);
+  }
+});
+
+test("Crossref author conflicts remain visible, and missing fields are incomplete checks", async () => {
+  const conflict = await check({ crossref: crossrefRecord(journal.doi, { author: [{ given: "Jonathan", family: "Abraham" }] }) }, [journal]);
+  assert.match(conflict.report.remoteMetadataIssues.join("\n"), /Author list mismatch/);
+  for (const change of [{ author: [] }, { title: [] }, { "container-title": [] }, { type: "unknown" }, { DOI: "10.1000/wrong" }]) {
+    const { report } = await check({ crossref: crossrefRecord(journal.doi, change) }, [journal]);
+    assert.equal(report.status, "incomplete");
+    assert.match(report.sourceErrors.join("\n"), /Crossref/);
+  }
+});
+
+test("a stale bioRxiv author string is reported rather than silently merged with Crossref", async () => {
+  const { report } = await check({ details: { collection: [bioRxivRecord(preprint.doi, { authors: "Abraham, J." })] } }, [preprint]);
+  assert.equal(report.status, "complete");
+  assert.equal(report.remoteMetadataIssues.length, 1);
+  assert.match(report.remoteMetadataIssues[0], /bioRxiv v1.*do not merge author lists/);
+});
+
+test("Crossref version relations detect journal successors and deduplicate provider relations", async () => {
+  const publishedDoi = "10.1000/successor";
+  for (const published of ["NA", publishedDoi]) {
+    const { report } = await check({ details: { collection: [bioRxivRecord(preprint.doi, { published })] },
+      crossref: (url) => crossrefRecord(url.pathname.replace("/works/", ""), url.pathname.includes(preprint.doi)
+        ? { relation: { "is-preprint-of": [{ "id-type": "doi", id: publishedDoi }] } } : {}) }, [preprint]);
+    assert.equal(report.status, "complete");
+    assert.equal(report.publishedPreprints.length, 1);
+    assert.equal(report.publishedPreprints[0].crossref.status, "journal");
+    assert.ok(report.publishedPreprints[0].sources.includes("Crossref"));
+  }
+});
+
+test("a published DOI that still resolves to posted content is not accepted as a journal transition", async () => {
+  const { report } = await check({ details: { collection: [bioRxivRecord(preprint.doi, { published: candidateDoi })] } }, [preprint]);
+  assert.match(report.remoteMetadataIssues.join("\n"), /does not target a journal record/);
+  assert.equal(reportExitCode(report), 1);
+});
+
+test("online and issue dates remain separate and are never used to rewrite local data", async () => {
+  const publications = [{ ...journal, publishedAt: "2026-08-01" }];
+  const before = structuredClone(publications);
+  const { report } = await check({ crossref: crossrefRecord(journal.doi, {
+    "published-online": { "date-parts": [[2026, 8, 1]] }, "published-print": { "date-parts": [[2026, 9]] }
+  }) }, publications);
+  assert.deepEqual(report.remoteDates, [{ doi: journal.doi, onlineDate: "2026-08-01", issueDate: "2026-09", postedDate: null }]);
+  assert.deepEqual(publications, before);
+});
+
+test("untrusted remote Markdown cannot inject mentions or managed issue markers", async () => {
+  const { report } = await check({ pubmedSummary: { result: { "1": pubmedRecord({ title: "@all <!-- publication-check:end --> [click](https://example.com)" }) } } });
+  const markdown = renderMarkdown(report);
+  assert.doesNotMatch(markdown, /@all|<!-- publication-check:end -->|\[click\]\(/);
+  assert.match(markdown, /&#64;all/);
+});
+
+function variationFixture(rule) {
+  const publication = { doi: rule.doi, title: "Reviewed bibliography fixture", authors: rule.field === "authors" ? rule.local.join(", ") : "Example A",
+    journal: rule.field === "journal" ? rule.local[0] : "Nature", articleType: "Research article" };
+  const remote = { title: publication.title, authors: rule.field === "authors" ? [...rule.remote] : ["Example A"],
+    journals: rule.field === "journal" ? [...rule.remote] : [publication.journal], status: "journal" };
+  return { publication, remote };
+}
+
+test("only complete reviewed DOI/source/value pairs accept an indexed name or journal variant", () => {
+  for (const rule of acceptedSourceVariations) {
+    for (const source of rule.sources) {
+      const { publication, remote } = variationFixture(rule);
+      const accepted = [];
+      assert.deepEqual(compareBibliography(publication, remote, source, accepted), []);
+      assert.equal(accepted.length, 1);
+      assert.equal(accepted[0].id, rule.id);
+      assert.equal(accepted[0].reviewedAt, "2026-09-07");
+      assert.ok(accepted[0].evidence.every((url) => url.startsWith("https://")));
+      assert.ok(accepted[0].sourceVersion);
+    }
+  }
+});
+
+test("reviewed author variations never hide an added, missing, reordered or misspelled author", () => {
+  for (const rule of acceptedSourceVariations.filter((item) => item.field === "authors")) {
+    const { publication, remote } = variationFixture(rule);
+    const mutations = [
+      [...remote.authors, "Unexpected U"], remote.authors.slice(1),
+      [remote.authors[1], remote.authors[0], ...remote.authors.slice(2)],
+      ["Misspelled M", ...remote.authors.slice(1)]
+    ];
+    for (const authors of mutations) {
+      const accepted = [];
+      assert.match(compareBibliography(publication, { ...remote, authors }, rule.sources[0], accepted).join("\n"), /Author list mismatch/);
+      assert.deepEqual(accepted, []);
+    }
+    const changedLocal = { ...publication, authors: `${publication.authors}, New N` };
+    assert.match(compareBibliography(changedLocal, remote, rule.sources[0]).join("\n"), /Author list mismatch/);
+  }
+});
+
+test("exceptions do not apply to another DOI, another index, or a new preprint version", () => {
+  for (const rule of acceptedSourceVariations) {
+    const { publication, remote } = variationFixture(rule);
+    assert.ok(compareBibliography({ ...publication, doi: "10.1000/unreviewed" }, remote, rule.sources[0]).length);
+    assert.ok(compareBibliography(publication, remote, "Unreviewed source").length);
+  }
+  const rule = acceptedSourceVariations.find((item) => item.id === "lachesin-v1-stale-biorxiv-author-string");
+  const { publication, remote } = variationFixture(rule);
+  assert.match(compareBibliography(publication, remote, "bioRxiv v2").join("\n"), /Author list mismatch/);
+});
+
+test("an accepted author variant cannot hide a title, journal or status change", () => {
+  const rule = acceptedSourceVariations[0];
+  const { publication, remote } = variationFixture(rule);
+  const accepted = [];
+  const issues = compareBibliography(publication, { ...remote, title: "Different title", journals: ["Different journal"], status: "preprint" }, "PubMed", accepted);
+  assert.equal(accepted.length, 1);
+  assert.match(issues.join("\n"), /Title mismatch/);
+  assert.match(issues.join("\n"), /Journal mismatch/);
+  assert.match(issues.join("\n"), /Publication status mismatch/);
+});
+
+test("the reviewed PNAS journal alias cannot hide a different journal list", () => {
+  const rule = acceptedSourceVariations.find((item) => item.field === "journal");
+  const { publication, remote } = variationFixture(rule);
+  assert.match(compareBibliography(publication, { ...remote, journals: [...remote.journals, "Unrelated journal"] }, "PubMed").join("\n"), /Journal mismatch/);
 });

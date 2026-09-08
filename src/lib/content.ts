@@ -17,6 +17,12 @@ export function featuredOnly(items: Publication[]) {
     .sort(comparePublicationDates);
 }
 
+export function publicationAnchor(item: Publication) {
+  const identifier = item.doi?.toLowerCase() ?? item.pmid;
+  if (!identifier) throw new Error(`Publication needs a stable identifier: ${item.title}`);
+  return `paper-${identifier}`;
+}
+
 export function homepagePublication(items: Publication[], overrideDoi?: string) {
   if (overrideDoi) {
     const selected = items.find((item) => item.doi === overrideDoi);
