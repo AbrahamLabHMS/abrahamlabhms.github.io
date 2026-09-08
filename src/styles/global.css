@@ -1478,6 +1478,7 @@ html:not(.js) .site-header {
 }
 
 .contact-page__details {
+  min-width: 0;
   border-block-start: 1px solid var(--line-strong);
 }
 
@@ -1499,6 +1500,7 @@ html:not(.js) .site-header {
   flex: 1 1 18em;
   min-width: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.45rem;
 }
 
@@ -1519,7 +1521,7 @@ html:not(.js) .site-header {
 }
 
 .contact-block__content > a[href^="mailto:"] {
-  width: max-content;
+  justify-self: start;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
@@ -1542,6 +1544,7 @@ html:not(.js) .site-header {
 }
 
 .map-widget {
+  min-width: 0;
   border-block: 1px solid var(--line-strong);
   background: var(--surface);
 }
@@ -2230,7 +2233,7 @@ html:not(.js) .site-header {
 
   .contact-block {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.45rem;
   }
 
