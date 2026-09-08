@@ -82,6 +82,7 @@ body {
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.62;
+  overflow-wrap: anywhere;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -838,7 +839,7 @@ html:not(.js) .site-header {
 
 .page-intro__grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 32em), 1fr));
   gap: 3rem;
   align-items: end;
 }
@@ -864,6 +865,8 @@ html:not(.js) .site-header {
 
 .page-intro__actions {
   display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 1.25rem;
@@ -1020,19 +1023,23 @@ html:not(.js) .site-header {
 
 .publication-output {
   min-width: 0;
-  display: grid;
-  grid-template-columns: 4.25rem minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: baseline;
 }
 
 .publication-output > span {
+  flex: 0 1 6.25em;
+  min-width: 0;
   color: var(--ink-quiet);
   font: 500 0.68rem/1.4 var(--font-mono);
   text-transform: uppercase;
 }
 
 .publication-output ul {
+  flex: 1 1 12em;
+  min-width: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 0.75rem;
@@ -1475,18 +1482,21 @@ html:not(.js) .site-header {
 }
 
 .contact-block {
-  display: grid;
-  grid-template-columns: 10rem minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 2rem;
   padding-block: 1.6rem;
   border-block-end: 1px solid var(--line);
 }
 
 .contact-block .overline {
+  flex: 0 1 12.8em;
+  min-width: 0;
   padding-top: 0.2rem;
 }
 
 .contact-block__content {
+  flex: 1 1 18em;
   min-width: 0;
   display: grid;
   gap: 0.45rem;
@@ -2027,7 +2037,7 @@ html:not(.js) .site-header {
   }
 
   .dossier-hero h1 {
-    font-size: 3.25rem;
+    font-size: 3rem;
   }
 
   .dossier-hero__deck {
@@ -2132,10 +2142,6 @@ html:not(.js) .site-header {
     padding-block: 1.5rem;
   }
 
-  .publication-output {
-    grid-template-columns: 3.5rem minmax(0, 1fr);
-  }
-
   .profile-dossier {
     padding-block: 4.5rem 3.8rem;
   }
@@ -2223,6 +2229,7 @@ html:not(.js) .site-header {
   }
 
   .contact-block {
+    display: grid;
     grid-template-columns: 1fr;
     gap: 0.45rem;
   }
@@ -2245,7 +2252,7 @@ html:not(.js) .site-header {
   }
 
   .site-footer__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10em), 1fr));
     gap: 2.5rem 1.5rem;
   }
 
