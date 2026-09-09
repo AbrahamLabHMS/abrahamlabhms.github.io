@@ -2,6 +2,10 @@
 
 Static Astro site for the Abraham Lab at Harvard Medical School.
 
+Repository: [AbrahamLabHMS/abrahamlabhms.github.io](https://github.com/AbrahamLabHMS/abrahamlabhms.github.io).
+GitHub Pages address: [abrahamlabhms.github.io](https://abrahamlabhms.github.io/).
+The repository name follows GitHub's account-site naming requirement; the project is named **Abraham Lab Website**.
+
 ## Local development
 
 ```bash
@@ -12,8 +16,10 @@ npm run dev
 ## Production build
 
 ```bash
-npm run build
+SITE_URL=https://abrahamlabhms.github.io SITE_BASE_PATH= npm run build
 ```
+
+The Pages workflow uses this root-domain configuration. The HMS custom domain is not connected yet; coordinate that change with HMS IT before changing the deployment URL or adding a `CNAME` file.
 
 The GitHub Actions workflow in `.github/workflows/deploy.yml` validates and builds the site, checks screenshots, and runs the accessibility/browser tests before publishing that same `_site` artifact. A failed check leaves the previous deployment serving.
 
