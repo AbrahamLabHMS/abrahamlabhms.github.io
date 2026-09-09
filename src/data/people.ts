@@ -229,7 +229,7 @@ export const peopleData: PeopleData = {
     {
       label: "Summer Students",
       entries: [
-        { name: "Arya Akbarshahi" },
+        { name: "Arya Akbarshahi", summers: [2025] },
         { name: "Linzy Malcolm" },
         { name: "Cecilia \"Cici\" Bradley", labStart: "2026-06", labEnd: "2026-07", summers: [2026] },
         { name: "Louella \"Ella\" Seo", labStart: "2026-06", labEnd: "2026-08", summers: [2026] },

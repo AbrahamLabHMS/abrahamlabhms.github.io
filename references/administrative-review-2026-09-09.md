@@ -6,7 +6,7 @@ Scope: HHMI capitalization, alumni destinations, membership dates, and the campu
 
 James initially confirmed July 2024 starts for Jessica Oros, Corazón Núñez, and Laurentia Vianney Tjang on September 9, 2026. He subsequently corrected Jessica Oros's start to April 2024. Corazón and Laurentia remain July 2024.
 
-Cecilia "Cici" Bradley, Louella "Ella" Seo, and Zaila Avant-garde display `Summer 2026`. Their previously recorded months remain in the data. No summer year is inferred for Arya Akbarshahi or Linzy Malcolm; those dates still need confirmation. The `summers` field can represent separately confirmed summers without implying continuous employment between them.
+Cecilia "Cici" Bradley, Louella "Ella" Seo, and Zaila Avant-garde display `Summer 2026`. Their previously recorded months remain in the data. James confirmed Arya Akbarshahi's participation as `Summer 2025` on September 9, 2026. Linzy Malcolm's summer year still needs confirmation. The `summers` field can represent separately confirmed summers without implying continuous employment between them.
 
 ## Alumni sources and limits
 

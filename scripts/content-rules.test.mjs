@@ -59,4 +59,5 @@ test("alumni destinations retain public sources and confirmed summer entries use
   for (const name of ['Cecilia "Cici" Bradley', 'Louella "Ella" Seo', "Zaila Avant-garde"]) {
     assert.deepEqual(alumni.find((person) => person.name === name)?.summers, [2026]);
   }
+  assert.deepEqual(alumni.find((person) => person.name === "Arya Akbarshahi")?.summers, [2025]);
 });
