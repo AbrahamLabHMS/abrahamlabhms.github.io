@@ -81,7 +81,13 @@ jobs:
 
       - name: Install browser engines
         id: browsers
-        run: npx --no-install playwright install --with-deps chromium firefox webkit 2>&1 | tee output/ci/browsers.log
+        run: |
+          # Playwright downloads its own browsers; the runner's Chrome APT feed is unrelated.
+          # Keep an upstream Chrome index mismatch from blocking Ubuntu system dependencies.
+          if [[ -f /etc/apt/sources.list.d/google-chrome.list ]]; then
+            sudo mv /etc/apt/sources.list.d/google-chrome.list "$RUNNER_TEMP/google-chrome.list"
+          fi
+          npx --no-install playwright install --with-deps chromium firefox webkit 2>&1 | tee output/ci/browsers.log
 
       - name: Capture visual-review screenshots
         if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
