@@ -2,7 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
 import { createStaticSiteTools, normalizeBasePath } from "./lib/static-site-server.mjs";
-import { collectFitSnapshot, enlargeText, inspectFit, waitForLocalImages, waitForSystemTheme } from "./lib/review-checks.mjs";
+import { collectFitSnapshot, enlargeText, inspectFit, visitLocalImages, waitForLocalImages, waitForSystemTheme } from "./lib/review-checks.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -81,7 +81,7 @@ async function preparePage(page, theme) {
   await page.evaluate(async () => {
     if (document.fonts?.ready) await document.fonts.ready;
   });
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await visitLocalImages(page);
   await waitForLocalImages(page, 2500);
   await page.evaluate(() => window.scrollTo(0, 0));
 }

@@ -111,6 +111,14 @@ npm run quality:review
 
 The quality review checks the automated WCAG 2.1 Level AA rule set, keyboard navigation, text-spacing resilience, 320px reflow, light and dark modes, legacy route handoffs, and layout behavior in Chromium, Firefox, and WebKit. It covers phone, tablet, laptop, wide desktop, narrow-window, and short-wide-window shapes.
 
+Before inspecting images, the review scrolls each visible local image into view. This preserves native lazy loading and responsive image selection while avoiding false failures for images between the first screen and the footer. Broken image checks remain enabled. To run the browser regression fixture after installing the engines:
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=.cache/ms-playwright RUN_REVIEW_BROWSER_FIXTURES=1 node --test scripts/review-lazy-images.test.mjs
+```
+
+Local macOS WebKit may skip links when using Tab unless full keyboard navigation is enabled; this can produce keyboard-only audit failures unrelated to the page. Check [Apple's Safari keyboard guidance](https://support.apple.com/en-gb/guide/safari/cpsh003/mac) before interpreting those results. The release workflow runs all three engines on Ubuntu and does not skip keyboard checks.
+
 Reports are written to `output/quality-review/`. The release workflow runs these checks against the build it will publish and uploads screenshots, reports, and logs under `site-review-<commit>`, including when a check fails.
 
 ## Contact map

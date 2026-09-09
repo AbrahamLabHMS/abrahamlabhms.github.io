@@ -97,6 +97,10 @@ jobs:
         if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
         run: node scripts/visual-review.mjs 2>&1 | tee output/ci/visual-review.log
 
+      - name: Test lazy image review in all browser engines
+        if: ${{ !cancelled() && steps.browsers.outcome == 'success' }}
+        run: RUN_REVIEW_BROWSER_FIXTURES=1 node --test scripts/review-lazy-images.test.mjs 2>&1 | tee output/ci/lazy-image-tests.log
+
       - name: Run accessibility and browser review
         # Run even if screenshot assertions failed, preserving both diagnostics.
         if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}

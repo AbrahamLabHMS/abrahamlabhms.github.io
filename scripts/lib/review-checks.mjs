@@ -24,6 +24,32 @@ export async function waitForLocalImages(page, timeout) {
   }
 }
 
+export async function visitLocalImages(page, timeout = 2500) {
+  const position = await page.evaluate(() => ({ x: window.scrollX, y: window.scrollY }));
+  try {
+    const images = page.locator("img");
+    for (let index = 0; index < await images.count(); index += 1) {
+      const image = images.nth(index);
+      if (!await image.isVisible() || !await image.evaluate((node) =>
+        new URL(node.currentSrc || node.src, location.href).origin === location.origin)) continue;
+      const handle = await image.elementHandle();
+      if (!handle) continue;
+      try {
+        // Native lazy loading needs a real viewport visit, not a jump to the footer.
+        await image.scrollIntoViewIfNeeded({ timeout });
+        await page.waitForFunction((node) => node.complete, handle, { timeout });
+      } catch (error) {
+        if (error.name !== "TimeoutError") throw error;
+        // Keep failed/pending images intact for the layout audit to report.
+      } finally {
+        await handle.dispose();
+      }
+    }
+  } finally {
+    await page.evaluate(({ x, y }) => window.scrollTo({ left: x, top: y, behavior: "instant" }), position);
+  }
+}
+
 // This function is serialized into the page; keep browser dependencies inside it.
 export function collectFitSnapshot() {
   const ids = new Map();
