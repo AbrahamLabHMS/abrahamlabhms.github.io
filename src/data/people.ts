@@ -160,13 +160,11 @@ export const peopleData: PeopleData = {
         },
         {
           name: "Chieyu Lin, Ph.D.",
-          destination: "Next position: Beam Therapeutics",
-          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+          destination: "Next position: Beam Therapeutics"
         },
         {
           name: "Sundaresh Shankar, Ph.D.",
-          destination: "Next position: Broad Institute of MIT and Harvard",
-          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+          destination: "Next position: Broad Institute of MIT and Harvard"
         },
         {
           name: "Keshalini Sabaratnam, Ph.D.",
@@ -176,7 +174,6 @@ export const peopleData: PeopleData = {
         {
           name: "Xiaoyi Fan, Ph.D.",
           destination: "Next position: Merck",
-          destinationSource: "https://abrahamlab.med.harvard.edu/people/",
           labStart: "2022-08", labEnd: "2026-06"
         }
       ]
@@ -186,13 +183,11 @@ export const peopleData: PeopleData = {
       entries: [
         {
           name: "Sarah Clark-Drake",
-          destination: "Arcellx",
-          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+          destination: "Arcellx"
         },
         {
           name: "Lars Clark",
-          destination: "Vertex Pharmaceuticals",
-          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+          destination: "Vertex Pharmaceuticals"
         },
         {
           name: "Katherine Nabel Smith",
@@ -202,7 +197,7 @@ export const peopleData: PeopleData = {
         {
           name: "Haley Varnum, Ph.D.",
           destination: "Medical Student, Harvard Medical School",
-          destinationSource: "https://abrahamlab.med.harvard.edu/people/",
+          destinationSource: "https://www.med.harvard.edu/md_phd/students/2020.html",
           labStart: "2023-09", labEnd: "2026-07"
         }
       ]

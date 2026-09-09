@@ -3,6 +3,7 @@ import test from "node:test";
 import { groupPeople, homepagePublication, recentPublicationLabel } from "../src/lib/content.ts";
 import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
+import { alumniSourceError } from "./lib/alumni-sources.mjs";
 
 const article = (doi, publishedAt, articleType = "Research article") => ({
   doi, publishedAt, articleType, year: Number(publishedAt.slice(0, 4)),
@@ -51,13 +52,33 @@ test("the three confirmed 2024 graduate starts stay aligned with James's correct
   }
 });
 
-test("alumni destinations retain public sources and confirmed summer entries use seasons", () => {
+test("alumni links use outside sources and confirmed summer entries use seasons", () => {
   const alumni = peopleData.alumni.flatMap((group) => group.entries);
-  for (const person of alumni.filter((entry) => entry.destination)) {
-    assert.equal(new URL(person.destinationSource).protocol, "https:");
+  for (const person of alumni) {
+    assert.equal(alumniSourceError(person), null, person.name);
   }
   for (const name of ['Cecilia "Cici" Bradley', 'Louella "Ella" Seo', "Zaila Avant-garde"]) {
     assert.deepEqual(alumni.find((person) => person.name === name)?.summers, [2026]);
   }
   assert.deepEqual(alumni.find((person) => person.name === "Arya Akbarshahi")?.summers, [2025]);
+});
+
+test("historical alumni destinations can stay unlinked but lab-site evidence is rejected", () => {
+  assert.equal(alumniSourceError({ destination: "Next position: Example Institute" }), null);
+  assert.equal(alumniSourceError({}), null);
+  assert.equal(alumniSourceError({ destination: "Medical Student", destinationSource: "https://www.med.harvard.edu/md_phd/students/2020.html" }), null);
+  for (const destinationSource of [
+    "https://abrahamlab.med.harvard.edu/people/",
+    "https://www.abrahamlab.med.harvard.edu/people/",
+    "https://abrahamlab.med.harvard.edu./team/",
+    "https://AbrahamLabHMS.github.io/team/",
+    "https://jamesspencer-source.github.io/abraham-lab-website-demo/people/",
+    "https://jamesspencer-source.github.io/abraham-lab-website/team/"
+  ]) {
+    assert.match(alumniSourceError({ destination: "Next position", destinationSource }), /not an Abraham Lab website/);
+  }
+  for (const destinationSource of ["not a URL", "http://example.edu/profile/", "javascript:alert(1)", "https://user:password@example.edu/profile/"]) {
+    assert.ok(alumniSourceError({ destination: "Next position", destinationSource }));
+  }
+  assert.match(alumniSourceError({ destinationSource: "https://example.edu/profile/" }), /no destination text/);
 });

@@ -29,7 +29,15 @@ The [existing lab roster](https://abrahamlab.med.harvard.edu/people/) was review
 | Adrian Coscia | Harvard/MIT MD-PhD Program | [Program roster](https://www.med.harvard.edu/md_phd/students/2020.html) and [June 2026 defense listing](https://cellbio.hms.harvard.edu/previous-dissertation-seminars). Do not imply that he is still in the thesis phase. |
 | Taleen Dilanyan | PhD in Chemistry, Caltech (2024) | [Caltech dissertation record](https://thesis.caltech.edu/16280/) verifies the completed degree, not a current employer. |
 
-Destination text links to the supporting public source. Sources are retained with each entry so later changes can be checked. An institutional listing can lag; this is a dated review, not a promise of ongoing employment verification.
+Destination text links to an outside institutional or professional source where one is available. An institutional listing can lag; this is a dated review, not a promise of ongoing employment verification.
+
+### Public alumni links: September 9 correction
+
+James asked that the Team page not cite the old lab website, which will be replaced. Chieyu Lin, Sundaresh Shankar, Xiaoyi Fan, Sarah Clark-Drake, and Lars Clark retain their destination wording as plain text, without the former roster links. Historical roster references above remain internal provenance only; they are not published as Team-page links or treated as proof of continuing employment.
+
+Haley Varnum instead links to the [Harvard/MIT MD-PhD current-student directory, entering 2020](https://www.med.harvard.edu/md_phd/students/2020.html). The page was checked on September 9, 2026 and names Haley, the HST medical track, Biophysics, and Jonathan Abraham as mentor. No clinical-year number is inferred. The other existing outside directory/profile links remain unchanged.
+
+Validation allows an unlinked historical destination but rejects alumni source links to the old HMS lab domain, the current lab GitHub Pages site, or the former demo. The built Team page is checked too, so an inline link cannot bypass the data check.
 
 ## Campus photograph
 

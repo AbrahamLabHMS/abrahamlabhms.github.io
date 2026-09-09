@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import { normalizeBasePath } from "./lib/site-paths.mjs";
 import { attribute, createBuildTargetValidator, elements } from "./lib/build-targets.mjs";
 import { siteData } from "../src/data/site.ts";
+import { alumniSourceError } from "./lib/alumni-sources.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -114,6 +115,13 @@ for (const marker of ["<h1>Publications</h1>", "Publications checked", "Jonathan
 }
 
 const teamPage = await fs.readFile(path.join(siteRoot, "team", "index.html"), "utf8");
+for (const link of elements(teamPage).filter((node) => node.tagName === "a")) {
+  let ancestor = link.parentNode;
+  while (ancestor && attribute(ancestor, "id") !== "alumni") ancestor = ancestor.parentNode;
+  if (!ancestor) continue;
+  const error = alumniSourceError({ destination: "Alumni destination", destinationSource: attribute(link, "href") });
+  if (error) failures.push(`Team alumni link ${attribute(link, "href")} ${error}.`);
+}
 for (const programUrl of [
   "https://virologyphd.hms.harvard.edu/",
   "https://bbsphd.hms.harvard.edu/"

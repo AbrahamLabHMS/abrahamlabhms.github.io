@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
+import { alumniSourceError } from "./lib/alumni-sources.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -665,12 +666,8 @@ async function main() {
   for (const group of peopleData.alumni || []) {
     for (const person of group.entries || []) {
       validateLabDates(person, `Alumnus "${person.name}"`, fail);
-      if (person.destination && !/^https:\/\//.test(person.destinationSource || "")) {
-        fail(`Alumnus "${person.name}" needs a public HTTPS source for their destination.`);
-      }
-      if (person.destinationSource && !normalize(person.destination)) {
-        fail(`Alumnus "${person.name}" has a source but no destination text.`);
-      }
+      const sourceError = alumniSourceError(person);
+      if (sourceError) fail(`Alumnus "${person.name}" ${sourceError}.`);
     }
   }
 
