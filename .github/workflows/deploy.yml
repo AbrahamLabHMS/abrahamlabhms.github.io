@@ -39,8 +39,9 @@ jobs:
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
       PLAYWRIGHT_BROWSERS_PATH: .cache/ms-playwright
-      SITE_URL: ${{ format('https://{0}.github.io', github.repository_owner) }}
-      SITE_BASE_PATH: ${{ format('/{0}', github.event.repository.name) }}
+      # This account-level Pages site is served at the domain root.
+      SITE_URL: https://abrahamlabhms.github.io
+      SITE_BASE_PATH: ""
 
     steps:
       - name: Check out repository
