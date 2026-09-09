@@ -13,13 +13,6 @@ const hmsCoverage = newsItems.find(
   (item) => item.category === "Institutional coverage" && item.link !== labFilm?.link
 );
 const heroFigure = siteData.heroFigures[0];
-const crop = heroFigure.imageCrop;
-const cropStyle = {
-  "--figure-aspect": (heroFigure.imageWidth * crop.width) / (heroFigure.imageHeight * crop.height),
-  "--figure-width": `${10000 / crop.width}%`,
-  "--figure-x": `${-100 * crop.x / crop.width}%`,
-  "--figure-y": `${-100 * crop.y / crop.height}%`
-};
 const heroSrcSet = heroFigure.imageVariants
   ?.map((variant) => `${withBase(variant.path)} ${variant.width}w`)
   .join(", ");
@@ -36,12 +29,12 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
   modifiedAt={siteData.publicationRecord.checkedAt}
 >
   <section class="dossier-hero home-hero">
-    <div class="dossier-hero__visual" style={cropStyle}>
+    <div class="dossier-hero__visual" style={{ "--hero-image-position": heroFigure.imagePosition }}>
       <img
         class="dossier-hero__media"
         src={withBase(heroFigure.image)}
         srcset={heroSrcSet}
-        sizes="(max-width: 600px) 210vw, 120vw"
+        sizes="100vw"
         alt={heroFigure.alt}
         width={heroFigure.imageWidth}
         height={heroFigure.imageHeight}
@@ -61,8 +54,8 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
         </div>
       </div>
       <p class="dossier-hero__source reveal">
-        <span>{heroFigure.figureCredit} · {heroFigure.figureNumber} · {heroFigure.license}</span>
-        <a href={heroFigure.visualSource} target="_blank" rel="noreferrer">Source <span aria-hidden="true">↗</span></a>
+        <span>{heroFigure.title}</span>
+        <a href={heroFigure.visualSource} target="_blank" rel="noreferrer">Photo: {heroFigure.figureCredit} · {heroFigure.license} <span aria-hidden="true">↗</span></a>
       </p>
     </div>
   </section>

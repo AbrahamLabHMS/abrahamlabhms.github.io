@@ -81,7 +81,7 @@ const directoryIndex = [
                 <p class="team-row__role">{person.title}</p>
                 {person.program && <div class="team-row__details"><span>{person.program}</span></div>}
               </div>
-              <div class="team-row__dates"><MembershipDates start={person.labStart} end={person.labEnd} /></div>
+              <div class="team-row__dates"><MembershipDates start={person.labStart} end={person.labEnd} summers={person.summers} /></div>
             </article>
           ))}
         </div>
@@ -99,8 +99,10 @@ const directoryIndex = [
                 <li>
                   <span>{entry.name}</span>
                   <span class="alumni-group__details">
-                    <MembershipDates start={entry.labStart} end={entry.labEnd} />
-                    {entry.destination && <small>{entry.destination}</small>}
+                    <MembershipDates start={entry.labStart} end={entry.labEnd} summers={entry.summers} />
+                    {entry.destination && <small>{entry.destinationSource ? (
+                      <a href={entry.destinationSource} target="_blank" rel="noreferrer">{entry.destination}</a>
+                    ) : entry.destination}</small>}
                   </span>
                 </li>
               ))}

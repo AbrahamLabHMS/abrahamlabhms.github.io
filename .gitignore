@@ -4,6 +4,7 @@ dist/
 .DS_Store
 .npm-cache/
 output/visual-review/
+output/quality-review/
 output/publication-check/
 output/link-check/
 .cache/

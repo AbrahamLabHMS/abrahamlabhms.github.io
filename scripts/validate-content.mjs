@@ -195,6 +195,17 @@ function validateLabDates(entry, label, fail) {
   if (entry?.labStart && entry?.labEnd && entry.labEnd < entry.labStart) {
     fail(`${label}.labEnd cannot be earlier than labStart.`);
   }
+
+  if (entry?.summers !== undefined) {
+    const years = entry.summers;
+    if (!Array.isArray(years) || !years.length ||
+        years.some((year) => !Number.isInteger(year) || year < 1900 || year > 2100) ||
+        new Set(years).size !== years.length) {
+      fail(`${label}.summers must contain unique four-digit years.`);
+    } else if (years.some((year, index) => index > 0 && year < years[index - 1])) {
+      fail(`${label}.summers must be in chronological order.`);
+    }
+  }
 }
 
 function sentenceWordCount(sentence) {
@@ -654,6 +665,12 @@ async function main() {
   for (const group of peopleData.alumni || []) {
     for (const person of group.entries || []) {
       validateLabDates(person, `Alumnus "${person.name}"`, fail);
+      if (person.destination && !/^https:\/\//.test(person.destinationSource || "")) {
+        fail(`Alumnus "${person.name}" needs a public HTTPS source for their destination.`);
+      }
+      if (person.destinationSource && !normalize(person.destination)) {
+        fail(`Alumnus "${person.name}" has a source but no destination text.`);
+      }
     }
   }
 
@@ -699,7 +716,9 @@ async function main() {
     if (!(await localAssetExists(figure.image))) {
       fail(`Hero figure references a missing image: ${figure.image}`);
     }
-    for (const field of ["alt", "figureCredit", "figureNumber", "license", "visualSource"]) {
+    const creditFields = ["alt", "figureCredit", "license", "visualSource"];
+    if (figure.kind !== "photograph") creditFields.push("figureNumber");
+    for (const field of creditFields) {
       if (!normalize(figure[field])) {
         fail(`Hero figure "${figure.title}" needs ${field}.`);
       }
@@ -742,6 +761,10 @@ async function main() {
 
     if (/Associate Professor of Microbiology, Harvard Medical School/.test(text)) {
       fail(`Outdated Jonathan title found in ${path.relative(repoRoot, filePath)}.`);
+    }
+
+    if (/\bHHMI investigator\b/.test(text)) {
+      fail(`Use "HHMI Investigator" capitalization in ${path.relative(repoRoot, filePath)}.`);
     }
 
     if (/\/assets\/images\/people\//.test(text)) {

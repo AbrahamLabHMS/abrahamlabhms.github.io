@@ -44,3 +44,19 @@ test("directory groups preserve all current members and reject unknown groups", 
   assert.deepEqual(new Set(rendered), new Set(peopleData.currentMembers));
   assert.throws(() => groupPeople([{ name: "Test entry", title: "Test", group: "Misspelled group", order: 1 }]), /Unknown team group/);
 });
+
+test("the three confirmed 2024 graduate starts stay aligned with James's correction", () => {
+  for (const name of ["Jessica Oros", "Corazón Núñez", "Laurentia Vianney Tjang"]) {
+    assert.equal(peopleData.currentMembers.find((person) => person.name === name)?.labStart, "2024-07");
+  }
+});
+
+test("alumni destinations retain public sources and confirmed summer entries use seasons", () => {
+  const alumni = peopleData.alumni.flatMap((group) => group.entries);
+  for (const person of alumni.filter((entry) => entry.destination)) {
+    assert.equal(new URL(person.destinationSource).protocol, "https:");
+  }
+  for (const name of ['Cecilia "Cici" Bradley', 'Louella "Ella" Seo', "Zaila Avant-garde"]) {
+    assert.deepEqual(alumni.find((person) => person.name === name)?.summers, [2026]);
+  }
+});

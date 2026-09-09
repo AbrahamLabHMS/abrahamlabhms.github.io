@@ -82,6 +82,7 @@ export const peopleData: PeopleData = {
       name: "Jessica Oros",
       title: "Graduate Student",
       programTags: ["Virology"],
+      labStart: "2024-07",
       group: "Graduate Students",
       order: 12
     },
@@ -97,6 +98,7 @@ export const peopleData: PeopleData = {
       name: "Laurentia Vianney Tjang",
       title: "Graduate Student",
       programTags: ["Virology"],
+      labStart: "2024-07",
       group: "Graduate Students",
       order: 14
     },
@@ -104,6 +106,7 @@ export const peopleData: PeopleData = {
       name: "Corazón Núñez",
       title: "Graduate Student",
       programTags: ["Virology"],
+      labStart: "2024-07",
       group: "Graduate Students",
       order: 15
     },
@@ -146,26 +149,62 @@ export const peopleData: PeopleData = {
         { name: "Dan Olal, Ph.D.", labStart: "2019-02" },
         {
           name: "Poorna Goswami, Ph.D.",
-          destination: "Lasell University",
+          destination: "Adjunct Faculty, Lasell University",
+          destinationSource: "https://www.lasell.edu/staff-directory.html?alpha=G",
           labStart: "2024-04"
         },
-        { name: "Gabor Oroszán, Ph.D.", destination: "VRG Therapeutics" },
-        { name: "Chieyu Lin, Ph.D." },
-        { name: "Sundaresh Shankar, Ph.D." },
-        { name: "Keshalini Sabaratnam, Ph.D." },
-        { name: "Xiaoyi Fan, Ph.D.", labStart: "2022-08", labEnd: "2026-06" }
+        {
+          name: "Gábor Oroszlán, Ph.D.",
+          destination: "VRG Therapeutics",
+          destinationSource: "https://www.vrgtherapeutics.com/our-team"
+        },
+        {
+          name: "Chieyu Lin, Ph.D.",
+          destination: "Next position: Beam Therapeutics",
+          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+        },
+        {
+          name: "Sundaresh Shankar, Ph.D.",
+          destination: "Next position: Broad Institute of MIT and Harvard",
+          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+        },
+        {
+          name: "Keshalini Sabaratnam, Ph.D.",
+          destination: "Senior Consultant, International Market Access Consulting (IMAC)",
+          destinationSource: "https://www.imarketaccess.com/team.html"
+        },
+        {
+          name: "Xiaoyi Fan, Ph.D.",
+          destination: "Next position: Merck",
+          destinationSource: "https://abrahamlab.med.harvard.edu/people/",
+          labStart: "2022-08", labEnd: "2026-06"
+        }
       ]
     },
     {
       label: "Graduate Students",
       entries: [
-        { name: "Sarah Clark-Drake", destination: "Arcellx" },
-        { name: "Lars Clark" },
+        {
+          name: "Sarah Clark-Drake",
+          destination: "Arcellx",
+          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+        },
+        {
+          name: "Lars Clark",
+          destination: "Vertex Pharmaceuticals",
+          destinationSource: "https://abrahamlab.med.harvard.edu/people/"
+        },
         {
           name: "Katherine Nabel Smith",
-          destination: "Penn Dermatology, University of Pennsylvania"
+          destination: "Dermatology Resident, University of Pennsylvania",
+          destinationSource: "https://dermatology.upenn.edu/residents/current-residents/katherine-nabel-smith/"
         },
-        { name: "Haley Varnum, Ph.D.", labStart: "2023-09", labEnd: "2026-07" }
+        {
+          name: "Haley Varnum, Ph.D.",
+          destination: "Medical Student, Harvard Medical School",
+          destinationSource: "https://abrahamlab.med.harvard.edu/people/",
+          labStart: "2023-09", labEnd: "2026-07"
+        }
       ]
     },
     {
@@ -175,8 +214,16 @@ export const peopleData: PeopleData = {
     {
       label: "Research Technicians",
       entries: [
-        { name: "Adrian Coscia" },
-        { name: "Taleen Dilanyan" }
+        {
+          name: "Adrian Coscia",
+          destination: "Harvard/MIT MD-PhD Program",
+          destinationSource: "https://www.med.harvard.edu/md_phd/students/2020.html"
+        },
+        {
+          name: "Taleen Dilanyan",
+          destination: "PhD in Chemistry, Caltech (2024)",
+          destinationSource: "https://thesis.caltech.edu/16280/"
+        }
       ]
     },
     {
@@ -184,9 +231,9 @@ export const peopleData: PeopleData = {
       entries: [
         { name: "Arya Akbarshahi" },
         { name: "Linzy Malcolm" },
-        { name: "Cecilia \"Cici\" Bradley", labStart: "2026-06", labEnd: "2026-07" },
-        { name: "Louella \"Ella\" Seo", labStart: "2026-06", labEnd: "2026-08" },
-        { name: "Zaila Avant-garde", labStart: "2026-06", labEnd: "2026-08" }
+        { name: "Cecilia \"Cici\" Bradley", labStart: "2026-06", labEnd: "2026-07", summers: [2026] },
+        { name: "Louella \"Ella\" Seo", labStart: "2026-06", labEnd: "2026-08", summers: [2026] },
+        { name: "Zaila Avant-garde", labStart: "2026-06", labEnd: "2026-08", summers: [2026] }
       ]
     }
   ]

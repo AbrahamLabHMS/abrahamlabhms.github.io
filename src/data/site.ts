@@ -15,25 +15,22 @@ export const siteData = {
     "We study how medically important viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs block them.",
   heroFigures: [
     {
-      label: "Nature Microbiology · 2025",
-      title: "Molecular organization of the New World arenavirus spike glycoprotein complex",
-      image: "/assets/images/publications/arenavirus-gpc-figure-2-1800.webp",
+      kind: "photograph",
+      label: "Harvard Medical School",
+      title: "Gordon Hall, Harvard Medical School",
+      image: "/assets/images/campus/gordon-hall-2400.webp",
       imageVariants: [
-        { path: "/assets/images/publications/arenavirus-gpc-figure-2-720.webp", width: 720 },
-        { path: "/assets/images/publications/arenavirus-gpc-figure-2-1200.webp", width: 1200 },
-        { path: "/assets/images/publications/arenavirus-gpc-figure-2-1800.webp", width: 1800 }
+        { path: "/assets/images/campus/gordon-hall-960.webp", width: 960 },
+        { path: "/assets/images/campus/gordon-hall-1600.webp", width: 1600 },
+        { path: "/assets/images/campus/gordon-hall-2400.webp", width: 2400 }
       ],
-      imageWidth: 1800,
-      imageHeight: 960,
-      alt: "Two structural views of an arenavirus glycoprotein complex from Mann and colleagues, Nature Microbiology, 2025.",
-      note: "Open-access figure",
-      href: "https://www.nature.com/articles/s41564-025-02085-6",
-      imagePosition: "center",
-      imageCrop: { x: 50.3, y: 0, width: 49.7, height: 82 },
-      figureCredit: "Mann et al., Nature Microbiology (2025)",
-      figureNumber: "Figure 2d, cropped panel",
-      license: "CC BY 4.0",
-      visualSource: "https://www.nature.com/articles/s41564-025-02085-6/figures/2"
+      imageWidth: 2400,
+      imageHeight: 1599,
+      alt: "Gordon Hall's columned facade, seen across the Harvard Medical School Quadrangle.",
+      imagePosition: "53% 60%",
+      figureCredit: "SA / Wikimedia Commons",
+      license: "Public domain",
+      visualSource: "https://commons.wikimedia.org/wiki/File:Hms.jpg"
     }
   ],
   publicationRecord: {

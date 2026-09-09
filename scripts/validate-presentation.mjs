@@ -39,7 +39,14 @@ for (const row of teamRows) {
   assert.ok(!descendants(row).some((node) => node.tagName === "img"));
 }
 for (const node of team.filter((node) => node.tagName === "time")) {
-  assert.match(attribute(node, "datetime") || "", /^\d{4}-(0[1-9]|1[0-2])$/);
+  assert.match(attribute(node, "datetime") || "", /^\d{4}(?:-(0[1-9]|1[0-2]))?$/);
+}
+for (const person of peopleData.alumni.flatMap((group) => group.entries).filter((entry) => entry.summers?.length)) {
+  const row = team.find((node) => node.tagName === "li" && node.childNodes.some((child) => child.tagName === "span" && text(child) === person.name));
+  assert.ok(row, `Missing summer student: ${person.name}`);
+  const dates = descendants(row).filter((node) => node.tagName === "time");
+  assert.deepEqual(dates.map(text), person.summers.map((year) => `Summer ${year}`));
+  assert.deepEqual(dates.map((node) => attribute(node, "datetime")), person.summers.map(String));
 }
 
 for (const route of ["index.html", "publications/index.html", "team/index.html", "contact/index.html"]) {

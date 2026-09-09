@@ -44,7 +44,7 @@ export const jonathanProfile = {
   ],
   profileLinks: [
     {
-      label: "HHMI investigator profile",
+      label: "HHMI Investigator profile",
       href: "https://www.hhmi.org/scientists/jonathan-abraham"
     },
     {

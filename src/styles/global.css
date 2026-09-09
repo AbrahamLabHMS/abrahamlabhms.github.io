@@ -446,32 +446,27 @@ html:not(.js) .site-header {
   inset: 0;
   content: "";
   background:
-    linear-gradient(90deg, var(--hero) 0%, rgba(16, 23, 22, 0.98) 33%, rgba(16, 23, 22, 0.66) 55%, rgba(16, 23, 22, 0.08) 80%),
-    linear-gradient(0deg, var(--hero) 0%, transparent 28%, transparent 80%, var(--hero) 100%);
+    linear-gradient(90deg, rgba(16, 23, 22, 0.9) 0%, rgba(16, 23, 22, 0.84) 32%, rgba(16, 23, 22, 0.38) 63%, rgba(16, 23, 22, 0.12) 100%),
+    linear-gradient(0deg, rgba(16, 23, 22, 0.85), transparent 28%, transparent 78%, rgba(16, 23, 22, 0.4));
 }
 
 .dossier-hero__visual {
   position: absolute;
   z-index: -2;
-  right: -1%;
-  top: 50%;
-  width: min(60vw, 54rem);
-  aspect-ratio: var(--figure-aspect);
+  inset: 0;
   overflow: hidden;
-  transform: translateY(-50%);
 }
 
 .dossier-hero__media {
-  position: absolute;
-  left: var(--figure-x);
-  top: var(--figure-y);
-  width: var(--figure-width);
-  max-width: none;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--hero-image-position, center);
 }
 
 .dossier-hero__grid {
   position: relative;
+  width: min(86rem, calc(100% - clamp(3rem, 10vw, 10rem)));
   min-height: 40rem;
   display: flex;
   align-items: center;
@@ -481,20 +476,20 @@ html:not(.js) .site-header {
 .dossier-hero__copy {
   position: relative;
   z-index: 2;
-  width: min(43rem, 58%);
+  width: min(39rem, 58%);
 }
 
 .dossier-hero h1 {
-  max-width: 10ch;
+  max-width: 14ch;
   margin-top: 1rem;
   color: var(--hero-ink);
-  font-size: 5rem;
+  font-size: 4.5rem;
 }
 
 .dossier-hero__deck {
-  max-width: 37rem;
+  max-width: 34rem;
   margin-top: 1.8rem;
-  color: var(--hero-muted);
+  color: var(--hero-ink);
   font-size: 1.18rem;
   line-height: 1.62;
 }
@@ -506,21 +501,23 @@ html:not(.js) .site-header {
 .dossier-hero__source {
   position: absolute;
   z-index: 2;
+  left: 0;
   right: 0;
   bottom: 2rem;
-  width: min(38rem, 48%);
+  width: 100%;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  color: var(--hero-muted);
+  color: var(--hero-ink);
   font-family: var(--font-mono);
   font-size: 0.73rem;
   line-height: 1.5;
 }
 
 .dossier-hero__source a {
-  flex: none;
+  min-width: 0;
   color: var(--hero-ink);
 }
 
@@ -1394,7 +1391,7 @@ html:not(.js) .site-header {
 
 .alumni-group li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.8fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 1rem;
   padding-block: 0.75rem;
   border-block-start: 1px solid var(--line);
@@ -1403,10 +1400,21 @@ html:not(.js) .site-header {
 }
 
 .alumni-group__details {
+  min-width: 0;
   display: grid;
   gap: 0.2rem;
   color: var(--ink-quiet);
   text-align: right;
+}
+
+.alumni-group__details a {
+  color: var(--ink-muted);
+  text-decoration-color: var(--line-strong);
+}
+
+.alumni-group__details a:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
 }
 
 .alumni-group__details time,
@@ -1829,14 +1837,6 @@ html:not(.js) .site-header {
     width: min(39rem, 68%);
   }
 
-  .dossier-hero__visual {
-    width: 70%;
-  }
-
-  .dossier-hero__source {
-    width: 48%;
-  }
-
   .current-work__grid,
   .team-signal__grid,
   .profile-dossier__grid,
@@ -1931,10 +1931,6 @@ html:not(.js) .site-header {
 
   .dossier-hero__copy {
     width: min(36rem, 78%);
-  }
-
-  .dossier-hero__source {
-    width: 58%;
   }
 
   .endorsement-band__marks {
@@ -2040,7 +2036,7 @@ html:not(.js) .site-header {
   }
 
   .dossier-hero h1 {
-    font-size: 3rem;
+    font-size: 2.75rem;
   }
 
   .dossier-hero__deck {
@@ -2051,16 +2047,10 @@ html:not(.js) .site-header {
     width: 100%;
   }
 
-  .dossier-hero__visual {
-    inset: auto -12% 0 auto;
-    width: 115%;
-    transform: none;
-  }
-
   .dossier-hero::after {
     background:
-      linear-gradient(180deg, var(--hero) 10%, rgba(16, 23, 22, 0.92) 58%, rgba(16, 23, 22, 0.62) 84%, var(--hero) 100%),
-      linear-gradient(90deg, rgba(16, 23, 22, 0.55), transparent);
+      linear-gradient(180deg, rgba(16, 23, 22, 0.76), rgba(16, 23, 22, 0.67) 62%, rgba(16, 23, 22, 0.9)),
+      linear-gradient(90deg, rgba(16, 23, 22, 0.2), transparent);
   }
 
   .dossier-hero__source {

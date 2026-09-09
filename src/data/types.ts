@@ -8,6 +8,7 @@ export type ThemeSettings = {
 };
 
 export type HeroFigure = {
+  kind?: "photograph" | "figure";
   label: string;
   title: string;
   image: string;
@@ -184,13 +185,16 @@ export type SeasonalMember = {
   program?: string;
   labStart?: string;
   labEnd?: string;
+  summers?: number[];
 };
 
 export type AlumniEntry = {
   name: string;
   destination?: string;
+  destinationSource?: string;
   labStart?: string;
   labEnd?: string;
+  summers?: number[];
 };
 
 export type AlumniGroup = {

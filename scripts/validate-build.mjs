@@ -161,9 +161,9 @@ for (const dimensionMarker of ['width="405" height="53"', 'width="1918" height="
   if (!homePage.includes(dimensionMarker)) failures.push(`Homepage affiliation logo is missing fixed dimensions: ${dimensionMarker}`);
 }
 for (const marker of [
-  "arenavirus-gpc-figure-2-720.webp 720w",
-  "arenavirus-gpc-figure-2-1200.webp 1200w",
-  "arenavirus-gpc-figure-2-1800.webp 1800w"
+  "gordon-hall-960.webp 960w",
+  "gordon-hall-1600.webp 1600w",
+  "gordon-hall-2400.webp 2400w"
 ]) {
   if (!homePage.includes(marker)) failures.push(`Homepage is missing "${marker}".`);
 }

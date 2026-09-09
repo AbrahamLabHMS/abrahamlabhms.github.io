@@ -17,14 +17,15 @@ test("citation anchors are unique and do not change with a title correction", ()
   }
 });
 
-test("hero panel viewport stays inside the credited source image", () => {
+test("hero uses a credited campus photograph without a paper-panel crop", () => {
   const figure = siteData.heroFigures[0];
-  const { x, y, width, height } = figure.imageCrop;
-  assert.ok([x, y, width, height].every(Number.isFinite));
-  assert.ok(x >= 0 && y >= 0 && width > 0 && height > 0);
-  assert.ok(x + width <= 100 && y + height <= 100);
-  assert.match(figure.figureNumber, /2d.*cropped/);
-  assert.match(figure.visualSource, /\/figures\/2$/);
+  assert.equal(figure.kind, "photograph");
+  assert.equal(figure.imageCrop, undefined);
+  assert.match(figure.title, /Gordon Hall/);
+  assert.match(figure.image, /\/campus\//);
+  assert.ok(figure.imageWidth >= 2000 && figure.imageHeight > 0);
+  assert.equal(figure.license, "Public domain");
+  assert.equal(figure.visualSource, "https://commons.wikimedia.org/wiki/File:Hms.jpg");
 });
 
 test("homepage has a single paper summary and keeps the map on Contact", async () => {
