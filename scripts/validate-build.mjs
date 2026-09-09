@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
 import { normalizeBasePath } from "./lib/site-paths.mjs";
 import { attribute, createBuildTargetValidator, elements } from "./lib/build-targets.mjs";
+import { siteData } from "../src/data/site.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -160,11 +161,8 @@ if (!homePage.includes("https://accessibility.huit.harvard.edu/digital-accessibi
 for (const dimensionMarker of ['width="405" height="53"', 'width="1918" height="445"']) {
   if (!homePage.includes(dimensionMarker)) failures.push(`Homepage affiliation logo is missing fixed dimensions: ${dimensionMarker}`);
 }
-for (const marker of [
-  "gordon-hall-960.webp 960w",
-  "gordon-hall-1600.webp 1600w",
-  "gordon-hall-2400.webp 2400w"
-]) {
+for (const image of siteData.heroFigures[0].imageVariants || []) {
+  const marker = `${basePath}${image.path} ${image.width}w`;
   if (!homePage.includes(marker)) failures.push(`Homepage is missing "${marker}".`);
 }
 

@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { elements, attribute } from "./lib/build-targets.mjs";
 import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
+import { siteData } from "../src/data/site.ts";
 import { homepagePublication, publicationAnchor } from "../src/lib/content.ts";
 
 const page = async (route) => elements(await readFile(new URL(`../_site/${route}`, import.meta.url), "utf8"));
@@ -11,6 +12,15 @@ const text = (node) => node.nodeName === "#text" ? node.value : (node.childNodes
 const descendants = (node) => [node, ...(node.childNodes || []).flatMap(descendants)];
 
 const home = await page("index.html");
+const hero = siteData.heroFigures[0];
+const heroMedia = home.find((node) => hasClass(node, "dossier-hero__media"));
+assert.ok(heroMedia, "Home must render its campus photograph");
+assert.equal(attribute(heroMedia, "width"), String(hero.imageWidth));
+assert.equal(attribute(heroMedia, "height"), String(hero.imageHeight));
+assert.equal(attribute(heroMedia, "alt"), hero.alt);
+for (const href of [hero.visualSource, hero.licenseUrl]) {
+  assert.ok(home.some((node) => node.tagName === "a" && attribute(node, "href") === href), "Hero must link its image source and license");
+}
 const features = home.filter((node) => hasClass(node, "publication-feature__body"));
 assert.equal(features.length, 1, "Home must contain one recent-paper feature");
 const feature = descendants(features[0]);

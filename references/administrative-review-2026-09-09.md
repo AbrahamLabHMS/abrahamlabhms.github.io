@@ -33,6 +33,8 @@ Destination text links to the supporting public source. Sources are retained wit
 
 ## Campus photograph
 
+This initial winter photograph was superseded by the [leafy campus hero review](campus-hero-review-2026-09-09.md) later on September 9. The original source and original release notes below are retained for provenance; the image generator now uses the replacement photograph.
+
 - Subject: Gordon Hall and the Harvard Medical School Quadrangle. This is campus context, not a photograph of the lab's VSC building.
 - [Original source and rights declaration](https://commons.wikimedia.org/wiki/File:Hms.jpg).
 - [Original JPEG](https://upload.wikimedia.org/wikipedia/commons/c/c2/Hms.jpg), 3906 x 2602 pixels, photographer SA (Wikimedia Commons user Drsamir).

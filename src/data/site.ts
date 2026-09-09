@@ -18,19 +18,21 @@ export const siteData = {
       kind: "photograph",
       label: "Harvard Medical School",
       title: "Gordon Hall, Harvard Medical School",
-      image: "/assets/images/campus/gordon-hall-2400.webp",
+      image: "/assets/images/campus/gordon-hall-quad-2400.webp",
       imageVariants: [
-        { path: "/assets/images/campus/gordon-hall-960.webp", width: 960 },
-        { path: "/assets/images/campus/gordon-hall-1600.webp", width: 1600 },
-        { path: "/assets/images/campus/gordon-hall-2400.webp", width: 2400 }
+        { path: "/assets/images/campus/gordon-hall-quad-960.webp", width: 960 },
+        { path: "/assets/images/campus/gordon-hall-quad-1600.webp", width: 1600 },
+        { path: "/assets/images/campus/gordon-hall-quad-2400.webp", width: 2400 }
       ],
       imageWidth: 2400,
-      imageHeight: 1599,
-      alt: "Gordon Hall's columned facade, seen across the Harvard Medical School Quadrangle.",
-      imagePosition: "53% 60%",
-      figureCredit: "SA / Wikimedia Commons",
-      license: "Public domain",
-      visualSource: "https://commons.wikimedia.org/wiki/File:Hms.jpg"
+      imageHeight: 1800,
+      alt: "Gordon Hall's columned facade across the green lawn and leafy trees of the Harvard Medical School Quadrangle.",
+      imagePosition: "50% 44%",
+      figureCredit: "EgorovaSvetlana",
+      license: "CC BY-SA 4.0",
+      licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",
+      note: "Cropped for display",
+      visualSource: "https://commons.wikimedia.org/wiki/File:Gordon_Hall_Harvard_Medical_School_Quadrangle.jpg"
     }
   ],
   publicationRecord: {

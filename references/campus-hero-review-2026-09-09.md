@@ -1,0 +1,35 @@
+# Campus Hero Review: September 9, 2026
+
+## Request and image choice
+
+James requested a more stately, leafy campus photograph in place of the winter view, with straighter architectural alignment. This pass changes the hero photograph, responsive framing, image treatment, attribution, and image checks only. Scientific copy and all personnel records are unchanged.
+
+The replacement is a straight-on photograph of Gordon Hall across the Harvard Medical School Quadrangle. The original retains the full facade, green lawn, and leafy trees. It was photographed on September 6, 2009, not at commencement; no commencement or spring date is claimed on the site.
+
+## Source and reuse
+
+- Photographer: EgorovaSvetlana.
+- [Source and license declaration](https://commons.wikimedia.org/wiki/File:Gordon_Hall_Harvard_Medical_School_Quadrangle.jpg).
+- [Original JPEG](https://upload.wikimedia.org/wikipedia/commons/3/3d/Gordon_Hall_Harvard_Medical_School_Quadrangle.jpg): 4000 x 3000 pixels.
+- [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Attribution, source link, license link, and a crop notice are visible beside the hero. The photographic derivatives retain this license; it does not change the license of the website's code.
+- Original: `references/source-assets/hms-gordon-hall-quadrangle.jpg`.
+- Derivatives: `public/assets/images/campus/gordon-hall-quad-{960,1600,2400}.webp`.
+- Regenerate with `node scripts/optimize-campus-image.mjs`. This only resizes and compresses the original. CSS controls the responsive crop and text-contrast overlay.
+- No generative edits, invented greenery, altered architecture, or people removal.
+- The winter original remains in the internal source-assets folder for provenance, but its derivatives are no longer used by the homepage.
+
+## Commencement alternatives
+
+The banner-draped Gordon Hall photograph on the [HMS Faculty of Medicine Handbook](https://facultyhandbook.hms.harvard.edu/8assoc-prof/) is a useful visual reference. It has not been added to the site because its permission for reuse on this banner has not been established.
+
+The [HMS photography guide](https://identityguide.hms.harvard.edu/multimedia/photography) distinguishes photos requiring OCER approval from the approved campus-photo gallery. That gallery requires the campus network or VPN and was unreachable in this session. James was asked whether he could connect to the HMS VPN. Publication of a different official commencement photograph should wait for an approved gallery asset or explicit permission.
+
+## Local verification
+
+- Static build and generated-page validation pass, including the responsive hero files, source/license links, alt text, and intrinsic dimensions.
+- Astro check: no errors, warnings, or hints.
+- Regression suite: 96 passed, 2 existing browser-fixture skips, no failures.
+- Screenshot audit: Home at 320, 390, 430, 768, 820, 1024, 1280, and 1440 pixels, light and dark. No detected layout failures.
+- Chromium site-quality review: 204 compatibility checks and 42 automated WCAG scans passed. These automated checks are not a complete accessibility certification.
+- Additional hero-photo check sampled the background pixels beneath each heading, deck, and overline text rectangle at the eight widths in both themes. All 48 checks passed; the lowest measured contrast was 5.05:1. Tablet shading follows the actual width of the copy.
+- New asset filenames prevent the previous winter photograph from remaining in the browser's image cache. The unused winter WebP files were removed from the public assets.

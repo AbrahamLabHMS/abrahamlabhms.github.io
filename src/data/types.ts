@@ -26,6 +26,7 @@ export type HeroFigure = {
   figureCredit?: string;
   figureNumber?: string;
   license?: string;
+  licenseUrl?: string;
   visualSource?: string;
 };
 

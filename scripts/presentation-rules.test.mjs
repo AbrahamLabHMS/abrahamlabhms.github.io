@@ -17,15 +17,21 @@ test("citation anchors are unique and do not change with a title correction", ()
   }
 });
 
-test("hero uses a credited campus photograph without a paper-panel crop", () => {
+test("hero uses the licensed leafy campus photograph without a paper-panel crop", async () => {
   const figure = siteData.heroFigures[0];
   assert.equal(figure.kind, "photograph");
   assert.equal(figure.imageCrop, undefined);
   assert.match(figure.title, /Gordon Hall/);
   assert.match(figure.image, /\/campus\//);
   assert.ok(figure.imageWidth >= 2000 && figure.imageHeight > 0);
-  assert.equal(figure.license, "Public domain");
-  assert.equal(figure.visualSource, "https://commons.wikimedia.org/wiki/File:Hms.jpg");
+  assert.equal(figure.license, "CC BY-SA 4.0");
+  assert.equal(figure.licenseUrl, "https://creativecommons.org/licenses/by-sa/4.0/");
+  assert.equal(figure.figureCredit, "EgorovaSvetlana");
+  assert.match(figure.visualSource, /File:Gordon_Hall_Harvard_Medical_School_Quadrangle\.jpg$/);
+  assert.match(figure.note, /[Cc]rop/);
+  const home = await source("src/pages/index.astro");
+  assert.match(home, /href=\{heroFigure\.licenseUrl\}/);
+  assert.match(home, /href=\{heroFigure\.visualSource\}/);
 });
 
 test("homepage has a single paper summary and keeps the map on Contact", async () => {

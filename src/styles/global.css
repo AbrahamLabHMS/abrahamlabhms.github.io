@@ -432,6 +432,7 @@ html:not(.js) .site-header {
 
 /* Home hero */
 .dossier-hero {
+  --hero-shade-end: 58%;
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -446,8 +447,8 @@ html:not(.js) .site-header {
   inset: 0;
   content: "";
   background:
-    linear-gradient(90deg, rgba(16, 23, 22, 0.9) 0%, rgba(16, 23, 22, 0.84) 32%, rgba(16, 23, 22, 0.38) 63%, rgba(16, 23, 22, 0.12) 100%),
-    linear-gradient(0deg, rgba(16, 23, 22, 0.85), transparent 28%, transparent 78%, rgba(16, 23, 22, 0.4));
+    linear-gradient(90deg, rgba(16, 23, 22, 0.88) 0%, rgba(16, 23, 22, 0.76) 32%, rgba(16, 23, 22, 0.64) var(--hero-shade-end), rgba(16, 23, 22, 0.06) 100%),
+    linear-gradient(0deg, rgba(16, 23, 22, 0.85), transparent 30%, transparent 78%, rgba(16, 23, 22, 0.25));
 }
 
 .dossier-hero__visual {
@@ -1824,6 +1825,7 @@ html:not(.js) .site-header {
   }
 
   .dossier-hero {
+    --hero-shade-end: 68%;
     min-height: 38rem;
   }
 
@@ -1927,6 +1929,10 @@ html:not(.js) .site-header {
 
   .dossier-hero h1 {
     font-size: 4rem;
+  }
+
+  .dossier-hero {
+    --hero-shade-end: 78%;
   }
 
   .dossier-hero__copy {
