@@ -69,6 +69,19 @@ for (const htmlFile of htmlFiles) {
   if (!html.includes('property="og:image:width" content="1200"')) failures.push(`${relative} is missing the 1200px share-image width.`);
   if (!html.includes('property="og:image:height" content="630"')) failures.push(`${relative} is missing the 630px share-image height.`);
 
+  const nodes = elements(html);
+  const meta = (key) => attribute(nodes.find((node) => node.tagName === "meta" &&
+    (attribute(node, "property") === key || attribute(node, "name") === key)) || {}, "content");
+  const shareImage = meta("og:image");
+  if (meta("twitter:image") !== shareImage || meta("og:image:secure_url") !== shareImage) {
+    failures.push(`${relative} has inconsistent sharing-image URLs.`);
+  }
+  if (["index.html", "team/index.html", "contact/index.html"].includes(relative)) {
+    const expectedImage = new URL(`${basePath}${siteData.shareImages.campus.image}`, siteData.url).href;
+    if (shareImage !== expectedImage) failures.push(`${relative} must use the campus link preview.`);
+    if (meta("og:image:alt") !== siteData.shareImages.campus.alt) failures.push(`${relative} has stale sharing-image alt text.`);
+  }
+
   failures.push(...(await targets.validateHtml(htmlFile, html)).map((failure) => `${relative}: ${failure}`));
 }
 

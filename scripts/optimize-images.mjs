@@ -25,6 +25,10 @@ for (const width of widths) {
 
 const socialImages = [
   {
+    source: path.join(repoRoot, "references", "source-assets", "hms-gordon-hall-quadrangle.jpg"),
+    output: path.join(socialOutputDir, "abraham-lab-gordon-hall.jpg")
+  },
+  {
     source,
     output: path.join(socialOutputDir, "abraham-lab-science.jpg")
   },

@@ -40,6 +40,12 @@ export const siteData = {
     sources: ["PubMed", "bioRxiv"]
   },
   shareImages: {
+    campus: {
+      image: "/assets/images/social/abraham-lab-gordon-hall.jpg",
+      alt: "Gordon Hall across the Harvard Medical School Quadrangle. Photo: EgorovaSvetlana, CC BY-SA 4.0; cropped.",
+      width: 1200,
+      height: 630
+    },
     science: {
       image: "/assets/images/social/abraham-lab-science.jpg",
       alt: "Cryo-EM structures and biochemical measurements from an Abraham Lab arenavirus study.",

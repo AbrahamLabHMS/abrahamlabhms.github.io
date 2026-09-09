@@ -32,9 +32,9 @@ const {
   pageClass,
   canonicalPath,
   socialImage: socialImagePath,
-  socialImageAlt = siteData.shareImages.science.alt,
-  socialImageWidth = siteData.shareImages.science.width,
-  socialImageHeight = siteData.shareImages.science.height,
+  socialImageAlt = siteData.shareImages.campus.alt,
+  socialImageWidth = siteData.shareImages.campus.width,
+  socialImageHeight = siteData.shareImages.campus.height,
   ogType = "website",
   modifiedAt,
   noIndex = false,
@@ -45,7 +45,7 @@ const pageTitle = title ? `${title} | ${siteData.fullName}` : siteData.fullName;
 const metaDescription = description ?? siteData.description;
 const canonicalTarget = canonicalPath ? withBase(canonicalPath) : Astro.url.pathname;
 const canonical = new URL(canonicalTarget, siteData.url).toString();
-const socialImage = new URL(withBase(socialImagePath ?? siteData.shareImages.science.image), siteData.url).toString();
+const socialImage = new URL(withBase(socialImagePath ?? siteData.shareImages.campus.image), siteData.url).toString();
 const socialImageType = socialImage.endsWith(".webp") ? "image/webp" : socialImage.endsWith(".png") ? "image/png" : "image/jpeg";
 const themeDefaultMode = siteData.theme.defaultMode;
 const themeColorLight = "#f5f7f6";

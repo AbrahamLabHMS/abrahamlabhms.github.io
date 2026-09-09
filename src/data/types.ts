@@ -70,6 +70,12 @@ export type SiteData = {
     homepageDoi?: string;
   };
   shareImages: {
+    campus: {
+      image: string;
+      alt: string;
+      width: number;
+      height: number;
+    };
     science: {
       image: string;
       alt: string;

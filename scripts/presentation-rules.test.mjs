@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import sharp from "sharp";
 import { publicationAnchor } from "../src/lib/content.ts";
 import { publications } from "../src/data/publications.ts";
 import { siteData } from "../src/data/site.ts";
@@ -39,6 +40,33 @@ test("homepage has a single paper summary and keeps the map on Contact", async (
   assert.doesNotMatch(home, /publication-feature__facts|recentPaper\.citation|MapWidget/);
   assert.match(home, /recentPaper\.significanceLine \|\| recentPaper\.summary/);
   assert.match(await source("src/pages/contact/index.astro"), /MapWidget/);
+});
+
+test("default link preview uses the campus photo with its dimensions and credit", async () => {
+  const image = siteData.shareImages.campus;
+  const bytes = await readFile(new URL(`../public${image.image}`, import.meta.url));
+  const metadata = await sharp(bytes).metadata();
+  assert.equal(metadata.format, "jpeg");
+  assert.equal(metadata.width, image.width);
+  assert.equal(metadata.height, image.height);
+  assert.equal(image.width, 1200);
+  assert.equal(image.height, 630);
+  assert.ok(bytes.length < 500000, "Campus link preview should stay under 500 kB.");
+  assert.match(image.alt, /Gordon Hall/);
+  assert.equal(metadata.exif, undefined);
+  assert.equal(metadata.xmp, undefined);
+  const license = await source(`public${image.image}.license.txt`);
+  assert.match(license, /EgorovaSvetlana/);
+  assert.match(license, /https:\/\/creativecommons.org\/licenses\/by-sa\/4.0\//);
+  assert.match(license, /cropped and resized/);
+  assert.match(license, /File:Gordon_Hall_Harvard_Medical_School_Quadrangle\.jpg/);
+
+  const layout = await source("src/layouts/BaseLayout.astro");
+  assert.match(layout, /socialImagePath \?\? siteData\.shareImages\.campus\.image/);
+  assert.doesNotMatch(layout, /siteData\.shareImages\.science/);
+  for (const file of ["src/pages/index.astro", "src/pages/team/index.astro", "src/pages/contact/index.astro"]) {
+    assert.doesNotMatch(await source(file), /socialImage=/, `${file} should inherit the shared default.`);
+  }
 });
 
 test("motion cannot make uninitialized content invisible", async () => {
