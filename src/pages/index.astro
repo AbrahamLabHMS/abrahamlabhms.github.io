@@ -49,15 +49,14 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
           <a class="button button--outline-light" href={withBase("/team/")}>View the team</a>
         </div>
       </div>
-      <p class="dossier-hero__source reveal">
-        <span>{heroFigure.title}</span>
-        <span class="dossier-hero__credit">
-          <a href={heroFigure.visualSource} target="_blank" rel="noreferrer">Photo: {heroFigure.figureCredit}</a>
-          <span aria-hidden="true"> · </span>
-          <a href={heroFigure.licenseUrl} target="_blank" rel="noreferrer">{heroFigure.license}</a>
-          <span> · {heroFigure.note}</span>
-        </span>
-      </p>
+      <details class="dossier-hero__source">
+        <summary>Photo credit</summary>
+        <div class="dossier-hero__credit">
+          <p>{heroFigure.title}</p>
+          <p><a href={heroFigure.visualSource} target="_blank" rel="noreferrer">Photo: {heroFigure.figureCredit}</a></p>
+          <p><a href={heroFigure.licenseUrl} target="_blank" rel="noreferrer">{heroFigure.license}</a> · {heroFigure.note}</p>
+        </div>
+      </details>
     </div>
   </section>
 

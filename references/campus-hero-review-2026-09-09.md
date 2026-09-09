@@ -11,7 +11,7 @@ The replacement is a straight-on photograph of Gordon Hall across the Harvard Me
 - Photographer: EgorovaSvetlana.
 - [Source and license declaration](https://commons.wikimedia.org/wiki/File:Gordon_Hall_Harvard_Medical_School_Quadrangle.jpg).
 - [Original JPEG](https://upload.wikimedia.org/wikipedia/commons/3/3d/Gordon_Hall_Harvard_Medical_School_Quadrangle.jpg): 4000 x 3000 pixels.
-- [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Attribution, source link, license link, and a crop notice are visible beside the hero. The photographic derivatives retain this license; it does not change the license of the website's code.
+- [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Attribution, source link, license link, and a crop notice are available through the hero's Photo credit disclosure. The photographic derivatives retain this license; it does not change the license of the website's code.
 - Original: `references/source-assets/hms-gordon-hall-quadrangle.jpg`.
 - Derivatives: `public/assets/images/campus/gordon-hall-quad-{960,1600,2400}.webp`.
 - Regenerate with `node scripts/optimize-campus-image.mjs`. This only resizes and compresses the original. CSS controls the responsive crop and text-contrast overlay.
@@ -40,6 +40,10 @@ The default social image now uses the same Gordon Hall source rather than a scie
 
 - File: `public/assets/images/social/abraham-lab-gordon-hall.jpg`, 1200 x 630 pixels.
 - Regenerate with `npm run images:optimize`. The centered crop preserves the facade, trees, and lawn. No photo content is added or retouched.
-- This photographic derivative remains CC BY-SA 4.0. Creator, source, license URL, and crop notice are recorded in the public `abraham-lab-gordon-hall.jpg.license.txt` beside it. Sharing alt text also names the photographer, license, and crop; the homepage keeps its visible source and license links. The JPEG has no camera or location metadata, consistent with the site's image privacy checks.
+- This photographic derivative remains CC BY-SA 4.0. Creator, source, license URL, and crop notice are recorded in the public `abraham-lab-gordon-hall.jpg.license.txt` beside it. Sharing alt text also names the photographer, license, and crop; the homepage keeps its source and license links in the Photo credit disclosure. The JPEG has no camera or location metadata, consistent with the site's image privacy checks.
 - Open Graph, Twitter Card, and structured page metadata use the new image URL. The new filename separates it from the old scientific-image cache.
 - [Slack's crawler documentation](https://api.slack.com/robots) explains that it caches link metadata and images. Deployment changes the site's response to crawlers; it does not edit a thumbnail already attached to a Slack message.
+
+## Discreet hero attribution
+
+The full-width caption is replaced by a small Photo credit disclosure at the lower-right of the hero. The full location, photographer, source, license, and crop notice remain available on tap, click, or keyboard activation, including with JavaScript disabled. Opening the bounded panel does not resize the hero. The disclosure is checked in phone, tablet, and desktop browser tests alongside the existing light/dark screenshot matrix.

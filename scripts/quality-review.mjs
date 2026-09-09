@@ -280,6 +280,62 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   await context.close();
 }
 
+async function checkPhotoCredit(browser, browserName, origin, failures) {
+  const cases = themes.flatMap((theme) => [390, 820, 1440].map((width) => ({ width, theme, javaScriptEnabled: true })));
+  cases.push({ width: 390, theme: "light", javaScriptEnabled: false });
+  for (const { width, theme, javaScriptEnabled } of cases) {
+    const context = await browser.newContext({
+      viewport: { width, height: 900 }, colorScheme: theme, reducedMotion: "reduce",
+      javaScriptEnabled, hasTouch: width < 1000
+    });
+    try {
+      const page = await context.newPage();
+      await page.goto(routeUrl(origin, "/"), { waitUntil: "domcontentloaded" });
+      if (javaScriptEnabled) await preparePage(page, theme);
+      else await waitForLocalImages(page, 2500);
+      const label = `${browserName} photo-credit ${width} ${theme} ${javaScriptEnabled ? "js" : "no-js"}`;
+      const disclosure = page.locator("details.dossier-hero__source");
+      const summary = disclosure.locator("summary");
+      const panel = disclosure.locator(".dossier-hero__credit");
+      const links = panel.locator("a");
+      if (await panel.isVisible()) failures.push(`${label}: attribution should start collapsed.`);
+      await summary.scrollIntoViewIfNeeded();
+      const heroHeight = (await page.locator(".home-hero").boundingBox()).height;
+      const controlBox = await summary.boundingBox();
+      if (controlBox.width < 44 || controlBox.height < 44) failures.push(`${label}: credit control is too small for touch.`);
+      if (width < 1000) await summary.tap();
+      else await summary.click();
+      if (!await panel.isVisible() || await links.count() !== 2) failures.push(`${label}: photo source and license must be available on activation.`);
+      const box = await panel.boundingBox();
+      if (!box || box.x < 0 || box.y < 0 || box.x + box.width > width + 1 || box.y + box.height > 901) {
+        failures.push(`${label}: open attribution leaves the viewport.`);
+      }
+      if (Math.abs((await page.locator(".home-hero").boundingBox()).height - heroHeight) > 1) {
+        failures.push(`${label}: opening attribution shifts the hero layout.`);
+      }
+      await summary.focus();
+      for (let index = 0; index < await links.count(); index += 1) {
+        await page.keyboard.press("Tab");
+        if (!await links.nth(index).evaluate((node) => node === document.activeElement)) {
+          failures.push(`${label}: attribution link ${index + 1} is not keyboard reachable.`);
+        }
+      }
+      if (browserName === "chromium") {
+        const directory = path.join(outputRoot, "photo-credit");
+        await fs.mkdir(directory, { recursive: true });
+        await page.screenshot({ path: path.join(directory, `${width}-${theme}-${javaScriptEnabled ? "js" : "no-js"}.png`) });
+      }
+      await summary.focus();
+      await page.keyboard.press("Enter");
+      if (await panel.isVisible()) failures.push(`${label}: Enter did not collapse attribution.`);
+      await page.keyboard.press("Space");
+      if (!await panel.isVisible()) failures.push(`${label}: Space did not reopen attribution.`);
+    } finally {
+      await context.close();
+    }
+  }
+}
+
 async function checkMapFallback(browser, browserName, origin, failures) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
@@ -546,6 +602,7 @@ async function run() {
 
       try {
         await checkKeyboard(browser, browserName, server.origin, failures);
+        await checkPhotoCredit(browser, browserName, server.origin, failures);
         await checkMapFallback(browser, browserName, server.origin, failures);
         await runCompatibility(browser, browserName, server.origin, failures, records);
         await checkTextEnlargement(browser, browserName, server.origin, failures, records);

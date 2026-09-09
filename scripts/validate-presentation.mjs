@@ -18,8 +18,13 @@ assert.ok(heroMedia, "Home must render its campus photograph");
 assert.equal(attribute(heroMedia, "width"), String(hero.imageWidth));
 assert.equal(attribute(heroMedia, "height"), String(hero.imageHeight));
 assert.equal(attribute(heroMedia, "alt"), hero.alt);
+const photoCredit = home.find((node) => node.tagName === "details" && hasClass(node, "dossier-hero__source"));
+assert.ok(photoCredit, "Photo credit must use a native disclosure that works without JavaScript");
+assert.equal(attribute(photoCredit, "open"), undefined, "Photo credit should be collapsed by default");
+assert.equal(text(photoCredit.childNodes.find((node) => node.tagName === "summary")), "Photo credit");
+assert.ok(text(photoCredit).includes(hero.figureCredit) && text(photoCredit).includes(hero.note));
 for (const href of [hero.visualSource, hero.licenseUrl]) {
-  assert.ok(home.some((node) => node.tagName === "a" && attribute(node, "href") === href), "Hero must link its image source and license");
+  assert.ok(descendants(photoCredit).some((node) => node.tagName === "a" && attribute(node, "href") === href), "Hero must link its image source and license inside the disclosure");
 }
 const features = home.filter((node) => hasClass(node, "publication-feature__body"));
 assert.equal(features.length, 1, "Home must contain one recent-paper feature");
