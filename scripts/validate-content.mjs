@@ -21,7 +21,8 @@ const dataFiles = {
   publications: path.join(repoRoot, "src", "data", "publications.ts"),
   jonathan: path.join(repoRoot, "src", "data", "jonathan.ts"),
   news: path.join(repoRoot, "src", "data", "news.ts"),
-  people: path.join(repoRoot, "src", "data", "people.ts")
+  people: path.join(repoRoot, "src", "data", "people.ts"),
+  research: path.join(repoRoot, "src", "data", "research.ts")
 };
 
 const scannedTextFiles = [
@@ -291,10 +292,37 @@ async function main() {
   const jonathanProfile = await loadTsExport(dataFiles.jonathan, "jonathanProfile");
   const newsItems = await loadTsExport(dataFiles.news, "newsItems");
   const peopleData = await loadTsExport(dataFiles.people, "peopleData");
+  const researchTopics = await loadTsExport(dataFiles.research, "researchTopics");
+  const researchIntro = await loadTsExport(dataFiles.research, "researchIntro");
   const currentTeamGroups = new Set(await loadTsExport(path.join(repoRoot, "src", "data", "types.ts"), "CURRENT_TEAM_GROUPS"));
 
   const fail = (message) => errors.push(message);
   const note = (message) => warn.push(message);
+
+  if (researchTopics.length !== 3 || new Set(researchTopics.map((topic) => topic.id)).size !== 3) {
+    fail("Research must have three distinct explanatory topics.");
+  }
+  addRhythmWarnings("researchIntro.description", researchIntro.description, note);
+  researchIntro.paragraphs.forEach((paragraph) => addRhythmWarnings("researchIntro.paragraphs", paragraph, note));
+  for (const topic of researchTopics) {
+    for (const image of [topic.image, topic.imageSmall]) {
+      if (!await localAssetExists(image)) fail(`Research topic ${topic.id} has a missing image: ${image}`);
+    }
+    for (const field of ["question", "imageAlt", "caption", "relevance", "methods"]) {
+      if (!normalize(topic[field])) fail(`Research topic ${topic.id} needs ${field}.`);
+      addRhythmWarnings(`research.${topic.id}.${field}`, topic[field], note);
+    }
+    topic.paragraphs.forEach((paragraph) => addRhythmWarnings(`research.${topic.id}.paragraphs`, paragraph, note));
+    if (!topic.papers.length) fail(`Research topic ${topic.id} needs published evidence.`);
+    for (const reference of topic.papers) {
+      const paper = publications.find((item) => item.doi === reference.doi);
+      if (!paper || paper.articleType !== "Research article" || !paper.correspondingAuthor) {
+        fail(`Research reference ${reference.doi} must match a verified journal research article in the record.`);
+      }
+      if (!normalize(reference.finding)) fail(`Research reference ${reference.doi} needs a finding.`);
+      addRhythmWarnings(`research.${topic.id}.finding`, reference.finding, note);
+    }
+  }
 
   const required = [
     {

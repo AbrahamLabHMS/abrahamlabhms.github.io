@@ -98,7 +98,6 @@ const sitemap = await fs.readFile(path.join(siteRoot, "sitemap.xml"), "utf8");
 const robots = await fs.readFile(path.join(siteRoot, "robots.txt"), "utf8");
 failures.push(...await targets.validateSitemap(sitemap, robots));
 if (
-  sitemap.includes("/research/") ||
   sitemap.includes("/people/") ||
   sitemap.includes("/contact-us/") ||
   sitemap.includes("/meet-the-pi/")
@@ -110,9 +109,13 @@ if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(sitemap)) {
 }
 
 const publicationsPage = await fs.readFile(path.join(siteRoot, "publications", "index.html"), "utf8");
-for (const marker of ["<h1>Publications</h1>", "Publications checked", "Jonathan Abraham on PubMed", "Jump to year", "PDB", "EMDB", "Open access", "Print or save PDF"]) {
+for (const marker of ["<h1>Publications</h1>", "Jonathan Abraham on PubMed", "Jump to year", "PDB", "EMDB", "Open access"]) {
   if (!publicationsPage.includes(marker)) failures.push(`Publications page is missing "${marker}".`);
 }
+for (const marker of ["Publications checked", "Print or save PDF", "window.print()", "publication-status"] ) {
+  if (publicationsPage.includes(marker)) failures.push(`Publications page still contains removed control: ${marker}`);
+}
+if (!sitemap.includes("/research/")) failures.push("Research explainer is missing from the sitemap.");
 
 const teamPage = await fs.readFile(path.join(siteRoot, "team", "index.html"), "utf8");
 for (const link of elements(teamPage).filter((node) => node.tagName === "a")) {

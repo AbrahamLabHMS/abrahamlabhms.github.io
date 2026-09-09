@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { publications } from "../../data/publications";
-import { formatDateLabel, groupPublicationsByYear, publicationAnchor } from "../../lib/content";
+import { groupPublicationsByYear, publicationAnchor } from "../../lib/content";
 import { siteData } from "../../data/site";
 import { jonathanProfile } from "../../data/jonathan";
 
@@ -31,14 +31,9 @@ const isPrimaryDestination = (link: string, primary: string) => {
         <h1>Publications</h1>
       </div>
       <div class="page-intro__actions reveal">
-        <p class="publication-status publication-status--intro">
-          <span>Publications checked</span>
-          <time datetime={siteData.publicationRecord.checkedAt}>{formatDateLabel(siteData.publicationRecord.checkedAt)}</time>
-        </p>
         <a class="publication-pubmed-link" href={jonathanProfile.pubmedUrl} target="_blank" rel="noreferrer">
           Jonathan Abraham on PubMed <span aria-hidden="true">↗</span>
         </a>
-        <button class="publication-print" type="button" onclick="window.print()">Print or save PDF</button>
       </div>
     </div>
   </section>

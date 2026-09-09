@@ -4,6 +4,7 @@ import { elements, attribute } from "./lib/build-targets.mjs";
 import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
 import { siteData } from "../src/data/site.ts";
+import { researchTopics, researchIntro } from "../src/data/research.ts";
 import { homepagePublication, publicationAnchor } from "../src/lib/content.ts";
 
 const page = async (route) => elements(await readFile(new URL(`../_site/${route}`, import.meta.url), "utf8"));
@@ -35,6 +36,7 @@ assert.equal(feature.filter((node) => node.tagName === "p").length, recent.signi
 assert.ok(!home.some((node) => node.tagName === "iframe" || hasClass(node, "map-widget")), "Maps belong on Contact only");
 
 const record = await page("publications/index.html");
+assert.ok(!record.some((node) => hasClass(node, "publication-print") || hasClass(node, "publication-status")), "Publications must not show print controls or a checked timestamp");
 const rows = record.filter((node) => hasClass(node, "publication-row"));
 assert.equal(rows.length, publications.length);
 assert.equal(new Set(rows.map((row) => attribute(row, "id"))).size, rows.length);
@@ -44,6 +46,33 @@ for (const publication of publications) {
   const links = descendants(row).filter((node) => node.tagName === "a").map((node) => attribute(node, "href"));
   assert.ok(links.includes(publication.link));
   if (publication.pmcid) assert.equal(links.filter((href) => href.includes(`/articles/${publication.pmcid}/`)).length, 1);
+}
+
+const research = await page("research/index.html");
+assert.equal(text(research.find((node) => node.tagName === "h1")), researchIntro.title);
+assert.ok(!research.some((node) => node.tagName === "meta" && attribute(node, "name") === "robots" && (attribute(node, "content") || "").includes("noindex")));
+assert.ok(attribute(research.find((node) => node.tagName === "link" && attribute(node, "rel") === "canonical"), "href").endsWith("/research/"));
+assert.equal(research.filter((node) => hasClass(node, "research-chapter")).length, 3);
+for (const topic of researchTopics) {
+  const section = research.find((node) => attribute(node, "id") === topic.id);
+  const nodes = descendants(section);
+  const image = nodes.find((node) => node.tagName === "img");
+  assert.equal(attribute(image, "width"), "1536");
+  assert.equal(attribute(image, "height"), "1024");
+  assert.equal(attribute(image, "alt"), topic.imageAlt);
+  assert.ok(text(section).includes("Conceptual schematic, not to scale"));
+  for (const reference of topic.papers) {
+    const paper = publications.find((item) => item.doi === reference.doi);
+    assert.ok(nodes.some((node) => node.tagName === "a" && attribute(node, "href") === paper.link && text(node).includes(paper.title)));
+  }
+}
+const primaryNav = home.find((node) => node.tagName === "nav" && attribute(node, "aria-label") === "Primary");
+assert.ok(descendants(primaryNav).some((node) => node.tagName === "a" && text(node) === "Research"));
+for (const route of ["index.html", "research/index.html", "publications/index.html", "team/index.html", "contact/index.html"]) {
+  const nodes = await page(route);
+  for (const [rel, file] of [["icon", "abraham-lab-mark.svg"], ["icon", "abraham-lab-icon-32.png"], ["apple-touch-icon", "abraham-lab-touch-180.png"]]) {
+    assert.ok(nodes.some((node) => node.tagName === "link" && attribute(node, "rel") === rel && (attribute(node, "href") || "").endsWith(file)), `Missing ${file} on ${route}`);
+  }
 }
 
 const team = await page("team/index.html");

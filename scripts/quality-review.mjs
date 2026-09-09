@@ -161,7 +161,7 @@ async function checkTextEnlargement(browser, browserName, origin, failures, reco
   for (const width of [390, 1280]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: "reduce" });
     try {
-      for (const route of primaryRoutes.filter((item) => ["home", "publications", "team", "contact"].includes(item.slug))) {
+      for (const route of primaryRoutes.filter((item) => ["home", "research", "publications", "team", "contact"].includes(item.slug))) {
         const page = await context.newPage();
         const response = await page.goto(routeUrl(origin, route.path), { waitUntil: "domcontentloaded" });
         const label = `${browserName} text-200-percent ${route.slug} ${width}`;
@@ -417,7 +417,7 @@ async function checkMapFallback(browser, browserName, origin, failures) {
 
 async function checkTextSpacing(browser, origin, failures) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  for (const route of primaryRoutes.filter((item) => ["home", "publications", "team", "contact"].includes(item.slug))) {
+  for (const route of primaryRoutes.filter((item) => ["home", "research", "publications", "team", "contact"].includes(item.slug))) {
     const page = await context.newPage();
     const response = await page.goto(routeUrl(origin, route.path), { waitUntil: "domcontentloaded" });
     if (!response?.ok()) {

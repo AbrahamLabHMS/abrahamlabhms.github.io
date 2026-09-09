@@ -66,6 +66,7 @@ export const siteData = {
   tagline: "Mechanisms of viral entry, antibody recognition, and replication.",
   nav: [
     { label: "Home", href: "/" },
+    { label: "Research", href: "/research/" },
     { label: "Publications", href: "/publications/" },
     { label: "Jonathan Abraham", href: "/jonathan-abraham/" },
     { label: "Team", href: "/team/" },

@@ -179,11 +179,11 @@ async function run() {
       headerDisplay: getComputedStyle(document.querySelector(".site-header")).display,
       footerDisplay: getComputedStyle(document.querySelector(".site-footer")).display,
       indexDisplay: getComputedStyle(document.querySelector(".publication-index")).display,
-      buttonDisplay: getComputedStyle(document.querySelector(".publication-print")).display,
+      hasPrintButton: Boolean(document.querySelector(".publication-print")),
       documentOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth
     }));
     if (!printResponse?.ok()) failures.push("Publications print view did not load.");
-    if ([printCheck.headerDisplay, printCheck.footerDisplay, printCheck.indexDisplay, printCheck.buttonDisplay].some((value) => value !== "none")) {
+    if (printCheck.hasPrintButton || [printCheck.headerDisplay, printCheck.footerDisplay, printCheck.indexDisplay].some((value) => value !== "none")) {
       failures.push("Publications print view includes screen-only navigation or controls.");
     }
     if (printCheck.documentOverflow > 1) failures.push(`Publications print view has ${printCheck.documentOverflow}px of horizontal overflow.`);

@@ -165,7 +165,9 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
     <meta name="twitter:image:alt" content={socialImageAlt} />
     <script is:inline type="application/ld+json" set:html={jsonLd}></script>
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href={withBase("/assets/images/brands/favicon.svg")} type="image/svg+xml" />
+    <link rel="icon" href={withBase("/assets/images/brands/abraham-lab-icon-32.png")} type="image/png" sizes="32x32" />
+    <link rel="icon" href={withBase("/assets/images/brands/abraham-lab-mark.svg")} type="image/svg+xml" sizes="any" />
+    <link rel="apple-touch-icon" href={withBase("/assets/images/brands/abraham-lab-touch-180.png")} sizes="180x180" />
   </head>
   <body class:list={["site-body", pageClass]}>
     <Header currentPath={Astro.url.pathname} />

@@ -59,6 +59,8 @@ npm run check:publications
 
 The checker compares the local record with PubMed and bioRxiv and writes a read-only report to `output/publication-check/`. Update `siteData.publicationRecord.checkedAt` only after both sources complete successfully and any candidate records have been reviewed.
 
+The check date is internal review metadata, not a visible page label. Publications has no custom print/PDF control; ordinary browser printing still has a readable stylesheet.
+
 Unavailable or incomplete sources produce a partial report and a failed check, not a successful "no changes" result. The checker never edits the public record or its review date.
 
 ## Image optimization
@@ -68,6 +70,18 @@ The full-resolution, open-access homepage figure is retained under `references/s
 ```bash
 npm run images:optimize
 ```
+
+## Research explainer and favicon
+
+`/research/` is an indexable explainer linked in navigation. Its three topics live in `src/data/research.ts`; paper references resolve by DOI against the shared publication record. Titles, journal names, dates, and destination links are not duplicated in the explainer data. See `references/research-explainer-2026-09-09.md` for the source review and the limits of its conceptual illustrations.
+
+The schematic source PNGs live in `references/source-assets/research/`. The canonical favicon is `public/assets/images/brands/abraham-lab-mark.svg`. Regenerate their optimized assets and icon fallbacks with:
+
+```bash
+node scripts/optimize-research-assets.mjs
+```
+
+The SVG monogram, 32px PNG, and 180px touch icon share one design. Versioned names let new pages request the updated favicon without depending on a stale favicon cache.
 
 ## Visual review
 

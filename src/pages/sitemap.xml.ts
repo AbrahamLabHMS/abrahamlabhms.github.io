@@ -5,6 +5,7 @@ import { siteUrl } from "../../scripts/lib/site-paths.mjs";
 const origin = process.env.SITE_URL || siteData.url;
 const pages: Array<{ path: string; lastmod?: string }> = [
   { path: "/", lastmod: siteData.publicationRecord.checkedAt },
+  { path: "/research/" },
   { path: "/publications/", lastmod: siteData.publicationRecord.checkedAt },
   { path: "/jonathan-abraham/" },
   { path: "/team/" },

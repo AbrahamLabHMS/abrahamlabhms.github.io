@@ -72,7 +72,7 @@ test("srcset URL tokens preserve data commas and do not inspect descriptors as p
 });
 
 test("actual config and endpoint code agree for explicit root and project builds", async (t) => {
-  const siteRoot = await staticFixture(t, Object.fromEntries(["publications", "jonathan-abraham", "news", "contact"].map((name) => [`${name}/index.html`, `<h1>${name}</h1>`])));
+  const siteRoot = await staticFixture(t, Object.fromEntries(["research", "publications", "jonathan-abraham", "news", "contact"].map((name) => [`${name}/index.html`, `<h1>${name}</h1>`])));
   for (const basePath of [undefined, "", "/", "///", "/demo/"]) {
     const env = { SITE_URL: origin, SITE_BASE_PATH: basePath };
     const load = async (relative) => {

@@ -1,8 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title">
-  <title>Abraham Lab favicon</title>
-  <rect width="96" height="96" rx="10" fill="#0c0f11" />
-  <path
-    d="M29 72 45 22h6l16 50h-8l-3.8-12H40.7L37 72Zm13.7-19h10.5L48 36.7Z"
-    fill="#7dbbc3"
-  />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Abraham Lab</title>
+  <rect width="64" height="64" rx="8" fill="#17211f"/>
+  <path fill="#f5f7f6" fill-rule="evenodd" d="M7 48 19 16h8l12 32h-9l-2.4-7H18l-2.4 7ZM20.3 34h5l-2.5-7.5Z"/>
+  <path fill="#78c8cb" d="M43 16h8v24h7v8H43Z"/>
 </svg>

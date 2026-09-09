@@ -1,14 +1,84 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { researchIntro, researchTopics } from "../../data/research";
+import { publications } from "../../data/publications";
 import { withBase } from "../../lib/content";
+
+const topics = researchTopics.map((topic) => ({
+  ...topic,
+  papers: topic.papers.map((reference) => {
+    const publication = publications.find((paper) => paper.doi === reference.doi);
+    if (!publication) throw new Error(`Research reference missing from publication record: ${reference.doi}`);
+    return { ...publication, finding: reference.finding };
+  })
+}));
 ---
 
-<BaseLayout title="Research" description="Published work from the Abraham Lab." canonicalPath="/publications/" noIndex={true}>
-  <section class="legacy-page">
-    <div class="narrow-shell legacy-page__inner reveal">
-      <p class="overline">Research</p>
-      <h1>See the publication record.</h1>
-      <p>The Publications page lists papers from the lab.</p>
+<BaseLayout title="Research" description={researchIntro.description} pageClass="page-research">
+  <section class="research-intro">
+    <div class="shell research-intro__grid">
+      <div>
+        <p class="overline">Research</p>
+        <h1>{researchIntro.title}</h1>
+      </div>
+      <div class="research-intro__copy">
+        {researchIntro.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <nav class="research-index" aria-label="Research topics">
+    <ol class="shell">
+      {topics.map((topic, index) => (
+        <li><a href={`#${topic.id}`}><span aria-hidden="true">0{index + 1}</span>{topic.label}</a></li>
+      ))}
+    </ol>
+  </nav>
+
+  <div class="shell research-chapters">
+    {topics.map((topic, index) => (
+      <section class="research-chapter" id={topic.id} aria-labelledby={`${topic.id}-title`}>
+        <header class="research-chapter__heading">
+          <p class="overline"><span aria-hidden="true">0{index + 1} / </span>{topic.label}</p>
+          <h2 id={`${topic.id}-title`}>{topic.question}</h2>
+        </header>
+        <div class="research-chapter__grid">
+          <figure class="research-figure">
+            <img src={withBase(topic.image)} srcset={`${withBase(topic.imageSmall)} 960w, ${withBase(topic.image)} 1536w`}
+              sizes="(max-width: 1040px) 93vw, 48vw" width="1536" height="1024" loading="lazy" decoding="async" alt={topic.imageAlt} />
+            <figcaption>
+              <p>{topic.caption}</p>
+              <span>Conceptual schematic, not to scale</span>
+            </figcaption>
+          </figure>
+          <div class="research-chapter__copy">
+            {topic.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+            <div class="research-relevance">
+              <h3>Why it matters</h3>
+              <p>{topic.relevance}</p>
+            </div>
+            <p class="research-methods"><strong>How we study it</strong>{topic.methods}</p>
+          </div>
+        </div>
+        <div class="research-papers">
+          <h3>From the lab</h3>
+          <ul>
+            {topic.papers.map((paper) => (
+              <li>
+                <p class="research-papers__finding">{paper.finding}</p>
+                <a href={paper.link} target="_blank" rel="noreferrer">{paper.title}<span aria-hidden="true"> ↗</span></a>
+                <p class="research-papers__citation">{paper.journal} · {paper.year}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <section class="research-close">
+    <div class="shell research-close__inner">
+      <h2>Explore the papers</h2>
       <a class="button button--primary" href={withBase("/publications/")}>View publications</a>
     </div>
   </section>
