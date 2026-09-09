@@ -46,8 +46,8 @@ test("directory groups preserve all current members and reject unknown groups", 
 });
 
 test("the three confirmed 2024 graduate starts stay aligned with James's correction", () => {
-  for (const name of ["Jessica Oros", "Corazón Núñez", "Laurentia Vianney Tjang"]) {
-    assert.equal(peopleData.currentMembers.find((person) => person.name === name)?.labStart, "2024-07");
+  for (const [name, start] of [["Jessica Oros", "2024-04"], ["Corazón Núñez", "2024-07"], ["Laurentia Vianney Tjang", "2024-07"]]) {
+    assert.equal(peopleData.currentMembers.find((person) => person.name === name)?.labStart, start);
   }
 });
 

@@ -4,7 +4,7 @@ Scope: HHMI capitalization, alumni destinations, membership dates, and the campu
 
 ## User-confirmed dates
 
-James confirmed July 2024 starts for Jessica Oros, Corazón Núñez, and Laurentia Vianney Tjang on September 9, 2026.
+James initially confirmed July 2024 starts for Jessica Oros, Corazón Núñez, and Laurentia Vianney Tjang on September 9, 2026. He subsequently corrected Jessica Oros's start to April 2024. Corazón and Laurentia remain July 2024.
 
 Cecilia "Cici" Bradley, Louella "Ella" Seo, and Zaila Avant-garde display `Summer 2026`. Their previously recorded months remain in the data. No summer year is inferred for Arya Akbarshahi or Linzy Malcolm; those dates still need confirmation. The `summers` field can represent separately confirmed summers without implying continuous employment between them.
 
@@ -48,5 +48,5 @@ Destination text links to the supporting public source. Sources are retained wit
 - 97 regression tests: 95 passed, 2 existing browser-fixture skips, no failures.
 - Local screenshot review: 112 captures across seven routes, eight widths (320 through 1440), and light/dark modes.
 - Local Chromium quality review: 204 compatibility checks and 42 automated WCAG 2.1 AA scans, no reported failures. This is not a claim of complete WCAG certification.
-- Read back Jessica, Corazón, and Laurentia's July 2024 start dates from the rendered Team page. Checked campus framing on phone, tablet, and desktop, and reviewed the expanded alumni register.
+- Read back the confirmed graduate start dates from the rendered Team page. Checked campus framing on phone, tablet, and desktop, and reviewed the expanded alumni register.
 - GitHub's existing deployment workflow remains responsible for the full Chromium/Firefox/WebKit release gate.

@@ -82,7 +82,7 @@ export const peopleData: PeopleData = {
       name: "Jessica Oros",
       title: "Graduate Student",
       programTags: ["Virology"],
-      labStart: "2024-07",
+      labStart: "2024-04",
       group: "Graduate Students",
       order: 12
     },
