@@ -12,7 +12,7 @@ export const siteData = {
   },
   heroTitle: "Mechanisms of viral infection",
   heroDeck:
-    "We study how medically important viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs block them.",
+    "We study how viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs block them.",
   heroFigures: [
     {
       kind: "photograph",
