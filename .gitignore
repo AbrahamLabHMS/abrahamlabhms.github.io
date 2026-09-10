@@ -5,6 +5,7 @@ dist/
 .npm-cache/
 output/visual-review/
 output/quality-review/
+output/playwright/
 output/hero-review/
 output/hero-contrast-review.mjs
 output/publication-check/

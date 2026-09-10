@@ -27,7 +27,7 @@ export const siteData = {
       imageWidth: 2400,
       imageHeight: 1800,
       alt: "Gordon Hall's columned facade across the green lawn and leafy trees of the Harvard Medical School Quadrangle.",
-      imagePosition: "50% 44%",
+      imagePosition: "50% 36%",
       figureCredit: "EgorovaSvetlana",
       license: "CC BY-SA 4.0",
       licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0/",

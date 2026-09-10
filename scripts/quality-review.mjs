@@ -280,6 +280,46 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   await context.close();
 }
 
+async function checkHeroFraming(browser, browserName, origin, failures) {
+  for (const theme of themes) {
+    for (const width of [390, 820, 1440, 2300, 2560]) {
+      const context = await browser.newContext({ viewport: { width, height: 1000 }, colorScheme: theme, reducedMotion: "reduce" });
+      try {
+        const page = await context.newPage();
+        await page.goto(routeUrl(origin, "/"), { waitUntil: "domcontentloaded" });
+        await preparePage(page, theme);
+        const framing = await page.locator(".dossier-hero__media").evaluate((image) => {
+          const box = image.getBoundingClientRect();
+          const scale = Math.max(box.width / image.naturalWidth, box.height / image.naturalHeight);
+          return {
+            loaded: image.complete && image.naturalWidth > 0,
+            renderedWidth: image.naturalWidth * scale,
+            visibleHeightFraction: box.height / (image.naturalHeight * scale),
+            documentWidth: document.documentElement.scrollWidth
+          };
+        });
+        const label = `${browserName} hero framing ${width} ${theme}`;
+        if (!framing.loaded) failures.push(`${label}: campus photograph did not load.`);
+        // The 4:3 source must not expand indefinitely across a shallow, wide banner.
+        if (width >= 1440 && (framing.renderedWidth > 1442 || framing.visibleHeightFraction < 0.58)) {
+          failures.push(`${label}: wide-window framing over-enlarges or over-crops the campus photograph.`);
+        }
+        if (width <= 600 && (framing.renderedWidth > 642 || framing.visibleHeightFraction < 0.98)) {
+          failures.push(`${label}: phone framing stretches the photograph across the tall text area.`);
+        }
+        if (framing.documentWidth > width + 1) failures.push(`${label}: photograph causes horizontal overflow.`);
+        if (browserName === "chromium" && width >= 2300) {
+          const directory = path.join(outputRoot, "hero-framing");
+          await fs.mkdir(directory, { recursive: true });
+          await page.screenshot({ path: path.join(directory, `${width}-${theme}.png`) });
+        }
+      } finally {
+        await context.close();
+      }
+    }
+  }
+}
+
 async function checkPhotoCredit(browser, browserName, origin, failures) {
   const cases = themes.flatMap((theme) => [390, 820, 1440].map((width) => ({ width, theme, javaScriptEnabled: true })));
   cases.push({ width: 390, theme: "light", javaScriptEnabled: false });
@@ -602,6 +642,7 @@ async function run() {
 
       try {
         await checkKeyboard(browser, browserName, server.origin, failures);
+        await checkHeroFraming(browser, browserName, server.origin, failures);
         await checkPhotoCredit(browser, browserName, server.origin, failures);
         await checkMapFallback(browser, browserName, server.origin, failures);
         await runCompatibility(browser, browserName, server.origin, failures, records);

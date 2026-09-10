@@ -30,7 +30,7 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
         class="dossier-hero__media"
         src={withBase(heroFigure.image)}
         srcset={heroSrcSet}
-        sizes="100vw"
+        sizes="(max-width: 600px) 40rem, (max-width: 1440px) 100vw, 90rem"
         alt={heroFigure.alt}
         width={heroFigure.imageWidth}
         height={heroFigure.imageHeight}

@@ -33,6 +33,7 @@ test("hero uses the licensed leafy campus photograph without a paper-panel crop"
   const home = await source("src/pages/index.astro");
   assert.match(home, /href=\{heroFigure\.licenseUrl\}/);
   assert.match(home, /href=\{heroFigure\.visualSource\}/);
+  assert.match(home, /sizes="\(max-width: 600px\) 40rem, \(max-width: 1440px\) 100vw, 90rem"/);
 });
 
 test("homepage has a single paper summary and keeps the map on Contact", async () => {
