@@ -998,6 +998,33 @@ html:not(.js) .site-header {
   line-height: 1.55;
 }
 
+.research-figure__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.research-figure__key li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.research-figure__key i {
+  flex: 0 0 0.625rem;
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--entity-color);
+}
+
 .research-figure figcaption span {
   display: block;
   margin-top: 0.5rem;

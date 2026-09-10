@@ -1,0 +1,23 @@
+[
+  {
+    "name": "entry",
+    "source": "entry.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "3dae2202deb72d07a7e69018f5b6c82a894e9c685f8182d8148c7324e008c89d"
+  },
+  {
+    "name": "antibody",
+    "source": "antibody.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "cbd49b5249483bd0fe9367a7052531d4a2961ee8c28771412b51dafefa2e0270"
+  },
+  {
+    "name": "replication",
+    "source": "replication.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "09dea4183ddecfa281e28262c13c217cdda9f7cc984c2505ba970e7e9deed703"
+  }
+]

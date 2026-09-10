@@ -1,0 +1,10 @@
+Use case: precise-object-edit. Edit the supplied conceptual scientific illustration by recoloring specified entities ONLY.
+Preserve the existing 1536x1024 landscape composition, silhouettes, poses, object locations, layering, fine matte cut-paper texture, pale background, soft light and all conceptual relationships. No redrawing, new entities, added text, symbols, labels, arrows, data, or changes to depicted science. This is intentionally generic artwork, not an experimental image or molecular structure.
+Entity identity must have a stable color across this illustration series. Colors are muted and matte, not neon or metallic. Keep shading within each assigned hue rather than allowing another entity's hue to bleed in.
+Input image is the EDIT TARGET: the genome-copying illustration.
+Make exactly these color changes:
+1. Recolor the entire large charcoal polymerase silhouette and ALL its cutaway/layered surfaces to a distinct restrained muted blue, midtone target #4E6FAA. Its shadows can be darker BLUE, but it must not remain charcoal, become cyan, or look purple.
+2. Recolor the new cyan strand, including its ribbon and its own small connecting elements, to muted leaf green, midtone target #6B884B. New strand starts within the cutaway and runs to the right: preserve this shape and path.
+3. Keep the continuous existing template strand silver-gray, target #A8B0B7; it comes from the left and continues across the image. Keep its own connecting elements silver-gray.
+4. Keep the pale background unchanged.
+One color identity per entity: blue enzyme, silver template, green new strand. No cyan protein or cyan strand. Preserve geometry, scale, paths, contacts, and the simplified cutaway; do not add molecular details.

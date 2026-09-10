@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { researchIntro, researchTopics } from "../../data/research";
+import { researchEntities, researchIntro, researchTopics } from "../../data/research";
 import { publications } from "../../data/publications";
 import { withBase } from "../../lib/content";
 
@@ -47,6 +47,14 @@ const topics = researchTopics.map((topic) => ({
             <img src={withBase(topic.image)} srcset={`${withBase(topic.imageSmall)} 960w, ${withBase(topic.image)} 1536w`}
               sizes="(max-width: 1040px) 93vw, 48vw" width="1536" height="1024" loading="lazy" decoding="async" alt={topic.imageAlt} />
             <figcaption>
+              <ul class="research-figure__key" aria-label={`${topic.label} illustration key`}>
+                {topic.imageEntities.map((entityId) => (
+                  <li data-entity={entityId}>
+                    <i aria-hidden="true" style={{ "--entity-color": researchEntities[entityId].color }}></i>
+                    {researchEntities[entityId].label}
+                  </li>
+                ))}
+              </ul>
               <p>{topic.caption}</p>
               <span>Conceptual schematic, not to scale</span>
             </figcaption>

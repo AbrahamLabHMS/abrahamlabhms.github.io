@@ -1,0 +1,11 @@
+Use case: precise-object-edit. Edit the supplied conceptual scientific illustration by recoloring specified entities ONLY.
+Preserve the existing 1536x1024 landscape composition, silhouettes, poses, object locations, layering, fine matte cut-paper texture, pale background, soft light and all conceptual relationships. No redrawing, new entities, added text, symbols, labels, arrows, data, or changes to depicted science. This is intentionally generic artwork, not an experimental image or molecular structure.
+Entity identity must have a stable color across this illustration series. Colors are muted and matte, not neon or metallic. Keep shading within each assigned hue rather than allowing another entity's hue to bleed in.
+Input image 1 is the EDIT TARGET: the antibody illustration.
+Input image 2 is COLOR REFERENCE ONLY: the entry illustration, whose cyan receptor color should be matched.
+Make exactly these color changes to image 1:
+1. Recolor the entire Y-shaped antibody from cyan to warm muted ochre/gold, with midtone target #C49339. Include both arms, the stem, and all layered surfaces; retain shadows and highlights in the gold family.
+2. Recolor the whole silver cell receptor below from silver to muted cyan/teal, midtone target #168D9B, matching the receptor in input image 2. Include its membrane-spanning stem and both visible layers.
+3. Preserve the upper viral surface protein in its original charcoal family, approximate #4B5156.
+4. Both lipid membranes and the background remain neutral pale silver/white, exactly as before.
+The receptor must be cyan and the antibody must be gold: they cannot share a hue or swap assignments. The viral surface protein must not become gold or cyan. Preserve all geometry and the one antibody-arm contact exactly.

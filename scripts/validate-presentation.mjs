@@ -4,7 +4,7 @@ import { elements, attribute } from "./lib/build-targets.mjs";
 import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
 import { siteData } from "../src/data/site.ts";
-import { researchTopics, researchIntro } from "../src/data/research.ts";
+import { researchEntities, researchTopics, researchIntro } from "../src/data/research.ts";
 import { homepagePublication, publicationAnchor } from "../src/lib/content.ts";
 
 const page = async (route) => elements(await readFile(new URL(`../_site/${route}`, import.meta.url), "utf8"));
@@ -60,6 +60,18 @@ for (const topic of researchTopics) {
   assert.equal(attribute(image, "width"), "1536");
   assert.equal(attribute(image, "height"), "1024");
   assert.equal(attribute(image, "alt"), topic.imageAlt);
+  assert.ok(attribute(image, "src").endsWith(topic.image));
+  const key = nodes.find((node) => hasClass(node, "research-figure__key"));
+  assert.ok(key, "Research figures need a visible labeled key");
+  const keyItems = key.childNodes.filter((node) => node.tagName === "li");
+  assert.deepEqual(keyItems.map((node) => attribute(node, "data-entity")), [...topic.imageEntities]);
+  for (const item of keyItems) {
+    const entity = researchEntities[attribute(item, "data-entity")];
+    assert.equal(text(item).trim(), entity.label);
+    const swatch = item.childNodes.find((node) => node.tagName === "i");
+    assert.equal(attribute(swatch, "aria-hidden"), "true");
+    assert.ok(attribute(swatch, "style").includes(entity.color));
+  }
   assert.ok(text(section).includes("Conceptual schematic, not to scale"));
   for (const reference of topic.papers) {
     const paper = publications.find((item) => item.doi === reference.doi);

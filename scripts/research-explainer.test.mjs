@@ -3,11 +3,32 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import sharp from "sharp";
-import { researchTopics } from "../src/data/research.ts";
+import { researchEntities, researchTopics } from "../src/data/research.ts";
 import { publications } from "../src/data/publications.ts";
 import { siteData } from "../src/data/site.ts";
 
 const root = new URL("../", import.meta.url);
+
+test("illustrations use consistent entity colors and labeled keys", () => {
+  assert.deepEqual(researchEntities, {
+    viralProtein: { label: "Viral surface protein", color: "#4b5156" },
+    receptor: { label: "Cell receptor", color: "#168d9b" },
+    antibody: { label: "Antibody", color: "#c49339" },
+    polymerase: { label: "Polymerase", color: "#4e6faa" },
+    template: { label: "Template strand", color: "#a8b0b7" },
+    newStrand: { label: "New strand", color: "#6b884b" }
+  });
+  assert.equal(new Set(Object.values(researchEntities).map((entity) => entity.color)).size, 6);
+  const expectedKeys = {
+    "viral-entry": ["viralProtein", "receptor"],
+    "antibody-neutralization": ["viralProtein", "antibody", "receptor"],
+    "genome-replication": ["polymerase", "template", "newStrand"]
+  };
+  for (const topic of researchTopics) {
+    assert.deepEqual(topic.imageEntities, expectedKeys[topic.id]);
+    assert.match(topic.image, /-editorial-a2-1536\.webp$/);
+  }
+});
 
 test("Research is discoverable and its evidence resolves to journal research articles", () => {
   assert.equal(siteData.nav.filter((item) => item.href === "/research/").length, 1);
