@@ -16,7 +16,7 @@ const personData = {
   ],
   url: new URL(withBase("/jonathan-abraham/"), siteData.url).toString(),
   sameAs: jonathanProfile.profileLinks
-    .filter((item) => /hhmi\.org\/scientists\/|physiciandirectory\.|orcid\.org\//.test(item.href))
+    .filter((item) => /hhmi\.org\/scientists\/|massgeneralbrigham\.org\/en\/doctors\/|orcid\.org\//.test(item.href))
     .map((item) => item.href)
 };
 ---

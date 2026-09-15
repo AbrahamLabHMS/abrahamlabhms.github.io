@@ -52,8 +52,8 @@ export const jonathanProfile = {
       href: "https://micro.hms.harvard.edu/faculty"
     },
     {
-      label: "Brigham clinical profile",
-      href: "https://physiciandirectory.brighamandwomens.org/details/13685/jonathan-abraham-infectious_disease-boston"
+      label: "Mass General Brigham profile",
+      href: "https://www.massgeneralbrigham.org/en/doctors/a/jonathan-abraham-3008579"
     },
     {
       label: "ORCID record",

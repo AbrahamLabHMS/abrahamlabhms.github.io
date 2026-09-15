@@ -408,9 +408,9 @@ async function main() {
     },
     {
       condition: jonathanProfile.profileLinks?.some(
-        (item) => item.href.includes("physiciandirectory.brighamandwomens.org/details/13685/")
+        (item) => item.href === "https://www.massgeneralbrigham.org/en/doctors/a/jonathan-abraham-3008579"
       ),
-      message: "Jonathan's official Brigham clinical profile must be present."
+      message: "Jonathan's direct Mass General Brigham profile must be present."
     }
   ];
 
