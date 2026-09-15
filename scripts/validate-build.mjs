@@ -93,6 +93,9 @@ if (allFiles.some((filePath) => filePath.includes(`${path.sep}assets${path.sep}i
 if (!allFiles.some((filePath) => filePath.endsWith(".woff2"))) {
   failures.push("Built site is missing self-hosted font files.");
 }
+if (!allFiles.some((filePath) => /newsreader-latin-wght-normal[^/]*\.woff2$/.test(filePath))) {
+  failures.push("Built site is missing the self-hosted editorial font.");
+}
 
 const sitemap = await fs.readFile(path.join(siteRoot, "sitemap.xml"), "utf8");
 const robots = await fs.readFile(path.join(siteRoot, "robots.txt"), "utf8");

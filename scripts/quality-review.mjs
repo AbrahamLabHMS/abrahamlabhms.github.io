@@ -64,6 +64,13 @@ function parseBrowsers(value) {
 
 const selectedBrowsers = parseBrowsers(process.env.QUALITY_REVIEW_BROWSERS);
 
+function tabKey(browserName) {
+  // Safari on macOS uses Option-Tab for links unless full keyboard access is enabled.
+  return browserName === "webkit" && process.platform === "darwin" && process.env.QUALITY_REVIEW_WEBKIT_OPTION_TAB === "1"
+    ? "Alt+Tab"
+    : "Tab";
+}
+
 function routeUrl(origin, routePath) {
   return `${origin}${basePath}${routePath}`;
 }
@@ -121,10 +128,18 @@ async function inspectLayout(page) {
     const duplicateIds = [...document.querySelectorAll("[id]")]
       .map((node) => node.id)
       .filter((id, index, ids) => ids.indexOf(id) !== index);
+    const heading = document.querySelector("main h1");
 
     return {
       lang: document.documentElement.lang,
       h1Count: document.querySelectorAll("main h1").length,
+      editorialHeading: heading instanceof HTMLElement && getComputedStyle(heading).fontFamily.includes("Newsreader"),
+      editorialFontLoaded: [...document.fonts].some((font) => font.family.includes("Newsreader") && font.status === "loaded"),
+      wrappedChapterNumbers: [...document.querySelectorAll(".research-index a span")].filter((node) => {
+        const range = document.createRange();
+        range.selectNodeContents(node);
+        return range.getClientRects().length > 1;
+      }).length,
       hasMain: Boolean(document.querySelector("main#main-content")),
       hasSkipTarget: Boolean(document.querySelector("#main-content")),
       documentOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth,
@@ -146,6 +161,9 @@ async function inspectLayout(page) {
 function addLayoutFailures(failures, label, check) {
   if (check.lang !== "en") failures.push(`${label}: document language is not English.`);
   if (check.h1Count !== 1) failures.push(`${label}: expected one main heading, found ${check.h1Count}.`);
+  if (!check.editorialHeading) failures.push(`${label}: the page heading does not use the shared editorial typeface.`);
+  if (!check.editorialFontLoaded) failures.push(`${label}: the editorial font did not load; the heading uses a fallback.`);
+  if (check.wrappedChapterNumbers) failures.push(`${label}: research chapter numbers wrap across lines.`);
   if (!check.hasMain || !check.hasSkipTarget) failures.push(`${label}: main landmark or skip-link target is missing.`);
   if (check.documentOverflow > 1) failures.push(`${label}: horizontal overflow of ${check.documentOverflow}px.`);
   if (check.hiddenReveals) failures.push(`${label}: ${check.hiddenReveals} content sections remain hidden.`);
@@ -161,7 +179,7 @@ async function checkTextEnlargement(browser, browserName, origin, failures, reco
   for (const width of [390, 1280]) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, reducedMotion: "reduce" });
     try {
-      for (const route of primaryRoutes.filter((item) => ["home", "research", "publications", "team", "contact"].includes(item.slug))) {
+      for (const route of primaryRoutes) {
         const page = await context.newPage();
         const response = await page.goto(routeUrl(origin, route.path), { waitUntil: "domcontentloaded" });
         const label = `${browserName} text-200-percent ${route.slug} ${width}`;
@@ -184,7 +202,7 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   const page = await context.newPage();
   await page.goto(routeUrl(origin, "/"), { waitUntil: "domcontentloaded" });
   await preparePage(page, "light");
-  await page.keyboard.press("Tab");
+  await page.keyboard.press(tabKey(browserName));
   const skipCheck = await page.evaluate(() => {
     const active = document.activeElement;
     if (!(active instanceof HTMLElement)) return { focused: false, visible: false, outline: 0 };
@@ -208,11 +226,11 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   if (!toggleBox || toggleBox.width < 44 || toggleBox.height < 44) {
     failures.push(`${browserName}: mobile menu control is smaller than 44 by 44 CSS pixels.`);
   }
-  await page.keyboard.press("Tab");
+  await page.keyboard.press(tabKey(browserName));
   if (!await isFocused(page.locator(".brand"))) {
     failures.push(`${browserName}: the brand link should follow the skip link in keyboard order.`);
   }
-  await page.keyboard.press("Tab");
+  await page.keyboard.press(tabKey(browserName));
   if (!await isFocused(toggle)) {
     failures.push(`${browserName}: the mobile menu toggle is not before the navigation links in keyboard order.`);
   }
@@ -221,7 +239,7 @@ async function checkKeyboard(browser, browserName, origin, failures) {
     failures.push(`${browserName}: mobile navigation did not open with Enter.`);
   }
   for (let index = 0; index < await links.count(); index += 1) {
-    await page.keyboard.press("Tab");
+    await page.keyboard.press(tabKey(browserName));
     if (!await isFocused(links.nth(index))) {
       failures.push(`${browserName}: Tab did not reach navigation link ${index + 1} in order.`);
     }
@@ -230,7 +248,7 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   if (await nav.isVisible() || await toggle.getAttribute("aria-expanded") !== "false" || !await isFocused(toggle)) {
     failures.push(`${browserName}: Escape did not close the menu and return focus to its toggle.`);
   }
-  await page.keyboard.press("Tab");
+  await page.keyboard.press(tabKey(browserName));
   if (await nav.evaluate((node) => node.contains(document.activeElement))) {
     failures.push(`${browserName}: collapsed navigation links remain in the keyboard tab order.`);
   }
@@ -238,7 +256,7 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   await toggle.focus();
   await page.keyboard.press("Space");
   for (let index = 0; index <= await links.count(); index += 1) {
-    await page.keyboard.press("Tab");
+    await page.keyboard.press(tabKey(browserName));
   }
   const outsideMenu = await page.evaluate(() => !document.querySelector(".site-nav")?.contains(document.activeElement) && !document.activeElement?.matches(".nav-toggle"));
   const previousFocus = await page.evaluateHandle(() => document.activeElement);
@@ -252,7 +270,7 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   await page.setViewportSize({ width: 1040, height: 844 });
   await toggle.focus();
   await page.keyboard.press("Enter");
-  await page.keyboard.press("Tab");
+  await page.keyboard.press(tabKey(browserName));
   await page.setViewportSize({ width: 1041, height: 844 });
   await page.waitForFunction(() => document.querySelector(".nav-toggle")?.getAttribute("aria-expanded") === "false", null, { timeout: 2000 })
     .catch(() => failures.push(`${browserName}: navigation state did not reset at the desktop breakpoint.`));
@@ -355,7 +373,7 @@ async function checkPhotoCredit(browser, browserName, origin, failures) {
       }
       await summary.focus();
       for (let index = 0; index < await links.count(); index += 1) {
-        await page.keyboard.press("Tab");
+        await page.keyboard.press(tabKey(browserName));
         if (!await links.nth(index).evaluate((node) => node === document.activeElement)) {
           failures.push(`${label}: attribution link ${index + 1} is not keyboard reachable.`);
         }
@@ -417,7 +435,7 @@ async function checkMapFallback(browser, browserName, origin, failures) {
   if (await widget.locator("iframe").count() || await toggle.getAttribute("aria-expanded") !== "false") {
     failures.push(`${browserName}: hiding the map leaves its iframe active.`);
   }
-  await page.keyboard.press("Tab");
+  await page.keyboard.press(tabKey(browserName));
   if (!await directions.evaluate((node) => node === document.activeElement)) {
     failures.push(`${browserName}: external directions are not reachable after the map control by keyboard.`);
   }
@@ -434,10 +452,10 @@ async function checkMapFallback(browser, browserName, origin, failures) {
     failures.push(`${browserName}: navigation is not visible when JavaScript is disabled.`);
   }
   const noJsLinks = noJsPage.locator(".site-nav a");
-  await noJsPage.keyboard.press("Tab");
-  await noJsPage.keyboard.press("Tab");
+  await noJsPage.keyboard.press(tabKey(browserName));
+  await noJsPage.keyboard.press(tabKey(browserName));
   for (let index = 0; index < await noJsLinks.count(); index += 1) {
-    await noJsPage.keyboard.press("Tab");
+    await noJsPage.keyboard.press(tabKey(browserName));
     if (!await noJsLinks.nth(index).evaluate((node) => node === document.activeElement)) {
       failures.push(`${browserName}: no-JavaScript navigation link ${index + 1} is not reachable in keyboard order.`);
     }
@@ -445,7 +463,7 @@ async function checkMapFallback(browser, browserName, origin, failures) {
   const noJsDirections = noJsWidget.locator('a[href*="google.com/maps"]');
   let directionsReached = false;
   for (let index = 0; index < 40; index += 1) {
-    await noJsPage.keyboard.press("Tab");
+    await noJsPage.keyboard.press(tabKey(browserName));
     if (await noJsDirections.evaluate((node) => node === document.activeElement)) {
       directionsReached = true;
       break;
@@ -457,7 +475,7 @@ async function checkMapFallback(browser, browserName, origin, failures) {
 
 async function checkTextSpacing(browser, origin, failures) {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  for (const route of primaryRoutes.filter((item) => ["home", "research", "publications", "team", "contact"].includes(item.slug))) {
+  for (const route of primaryRoutes) {
     const page = await context.newPage();
     const response = await page.goto(routeUrl(origin, route.path), { waitUntil: "domcontentloaded" });
     if (!response?.ok()) {
@@ -583,6 +601,7 @@ async function writeReports({ failures, records, axeResults }) {
     generatedAt: new Date().toISOString(),
     standard: "WCAG 2.1 Level AA automated subset",
     browsers: selectedBrowsers,
+    keyboardTabKeys: Object.fromEntries(selectedBrowsers.map((name) => [name, tabKey(name)])),
     compatibilityViewports,
     stressViewports,
     primaryRoutes,
@@ -598,6 +617,7 @@ async function writeReports({ failures, records, axeResults }) {
     "# Abraham Lab Site Quality Review",
     "",
     `- Browser engines: ${selectedBrowsers.join(", ")}`,
+    `- Keyboard navigation: ${selectedBrowsers.map((name) => `${name}: ${tabKey(name)}`).join(", ")}`,
     `- Compatibility page checks: ${records.length}`,
     `- Automated WCAG 2.1 AA scans: ${axeResults.length}`,
     `- Axe violations: ${axeViolationCount}`,

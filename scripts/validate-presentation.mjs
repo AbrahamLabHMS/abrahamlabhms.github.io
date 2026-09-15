@@ -12,6 +12,12 @@ const hasClass = (node, name) => (attribute(node, "class") || "").split(/\s+/).i
 const text = (node) => node.nodeName === "#text" ? node.value : (node.childNodes || []).map(text).join("");
 const descendants = (node) => [node, ...(node.childNodes || []).flatMap(descendants)];
 
+for (const route of ["index.html", "research/index.html", "publications/index.html", "jonathan-abraham/index.html", "team/index.html", "news/index.html", "contact/index.html"]) {
+  const nodes = await page(route);
+  const robots = nodes.find((node) => node.tagName === "meta" && attribute(node, "name") === "robots");
+  assert.equal(attribute(robots, "content"), "index,follow,max-image-preview:large", `Production page must remain indexable: ${route}`);
+}
+
 const home = await page("index.html");
 const hero = siteData.heroFigures[0];
 const heroMedia = home.find((node) => hasClass(node, "dossier-hero__media"));

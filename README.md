@@ -119,6 +119,8 @@ PLAYWRIGHT_BROWSERS_PATH=.cache/ms-playwright RUN_REVIEW_BROWSER_FIXTURES=1 node
 
 Local macOS WebKit may skip links when using Tab unless full keyboard navigation is enabled; this can produce keyboard-only audit failures unrelated to the page. Check [Apple's Safari keyboard guidance](https://support.apple.com/en-gb/guide/safari/cpsh003/mac) before interpreting those results. The release workflow runs all three engines on Ubuntu and does not skip keyboard checks.
 
+On macOS with Safari's default keyboard preference, run `QUALITY_REVIEW_WEBKIT_OPTION_TAB=1 npm run quality:review` to use Option-Tab for WebKit. This changes only the test keystroke, not system preferences. The report records the key used; Chromium, Firefox, and Linux CI continue to use ordinary Tab. Text enlargement and spacing checks cover all seven primary routes, and the review verifies that the shared editorial font loads rather than falling back.
+
 Reports are written to `output/quality-review/`. The release workflow runs these checks against the build it will publish and uploads screenshots, reports, and logs under `site-review-<commit>`, including when a check fails.
 
 ## Contact map

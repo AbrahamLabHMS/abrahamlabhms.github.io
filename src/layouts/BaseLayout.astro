@@ -5,6 +5,7 @@ import { siteData } from "../data/site";
 import { withBase } from "../lib/content";
 import "@fontsource-variable/inter/wght.css";
 import "@fontsource-variable/inter-tight/wght.css";
+import "@fontsource-variable/newsreader/wght.css";
 import "@fontsource/ibm-plex-mono/latin-400.css";
 import "@fontsource/ibm-plex-mono/latin-500.css";
 import "@fontsource/ibm-plex-mono/latin-600.css";
@@ -49,7 +50,7 @@ const socialImage = new URL(withBase(socialImagePath ?? siteData.shareImages.cam
 const socialImageType = socialImage.endsWith(".webp") ? "image/webp" : socialImage.endsWith(".png") ? "image/png" : "image/jpeg";
 const themeDefaultMode = siteData.theme.defaultMode;
 const themeColorLight = "#f5f7f6";
-const themeColorDark = "#1c2221";
+const themeColorDark = "#242a2b";
 const themeColorHero = "#101716";
 const isHomePage = pageClass === "page-home";
 const organizationId = `${new URL(withBase("/"), siteData.url).toString()}#organization`;
