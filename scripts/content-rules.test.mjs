@@ -57,7 +57,8 @@ test("alumni links use outside sources and confirmed summer entries use seasons"
   for (const person of alumni) {
     assert.equal(alumniSourceError(person), null, person.name);
   }
-  for (const name of ['Cecilia "Cici" Bradley', 'Louella "Ella" Seo', "Zaila Avant-garde"]) {
+  assert.deepEqual(alumni.find((person) => person.name === 'Cecilia "Cici" Bradley')?.summers, [2025, 2026]);
+  for (const name of ['Louella "Ella" Seo', "Zaila Avant-garde"]) {
     assert.deepEqual(alumni.find((person) => person.name === name)?.summers, [2026]);
   }
   assert.deepEqual(alumni.find((person) => person.name === "Arya Akbarshahi")?.summers, [2025]);
