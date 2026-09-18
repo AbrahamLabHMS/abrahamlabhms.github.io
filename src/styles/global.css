@@ -1294,6 +1294,9 @@ html:not(.js) .site-header {
 
 .publication-row__record {
   min-width: 0;
+}
+
+.publication-row--with-figure .publication-row__record {
   max-width: 54rem;
 }
 
@@ -1307,11 +1310,14 @@ html:not(.js) .site-header {
 }
 
 .publication-row h3 {
-  max-width: 44ch;
   font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.3;
   text-wrap: pretty;
+}
+
+.publication-row--with-figure h3 {
+  max-width: 44ch;
 }
 
 .publication-row h3 a {
@@ -1324,11 +1330,14 @@ html:not(.js) .site-header {
 }
 
 .publication-row__citation {
-  max-width: 72ch;
   margin-top: 0.85rem;
   color: var(--ink-muted);
   font-size: 0.9375rem;
   line-height: 1.65;
+}
+
+.publication-row--with-figure .publication-row__citation {
+  max-width: 72ch;
 }
 
 .publication-row__outputs {
@@ -2852,10 +2861,14 @@ html:not(.js) .site-header {
   }
 
   .page-publications .publication-row {
-    grid-template-columns: minmax(0, 1fr) 1.15in;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.22in;
     padding-block: 0.14in;
     break-inside: avoid;
+  }
+
+  .page-publications .publication-row--with-figure {
+    grid-template-columns: minmax(0, 1fr) 1.15in;
   }
 
   .page-publications .publication-row h3 {

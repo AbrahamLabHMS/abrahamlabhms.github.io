@@ -31,6 +31,15 @@ async function waitForImage(image) {
 async function assertLayout(page, label) {
   const result = await page.evaluate(() => ({
     overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
+    textOnlyRows: [...document.querySelectorAll('.publication-row:not(.publication-row--with-figure)')].map(row => {
+      const frame = row.getBoundingClientRect();
+      const content = [...row.querySelectorAll('.publication-row__record, h3, .publication-row__citation')];
+      return {
+        id: row.id,
+        fullWidth: content.every(node => Math.abs(node.getBoundingClientRect().width - frame.width) <= 1),
+        noFigure: !row.querySelector('.publication-figure'),
+      };
+    }),
     thumbnails: [...document.querySelectorAll('.publication-figure__thumbnail')].map(link => {
       const image = link.querySelector('img');
       const matte = link.querySelector('.publication-figure__matte');
@@ -52,6 +61,10 @@ async function assertLayout(page, label) {
   }));
   assert(result.overflow <= 1, `${label}: horizontal overflow`);
   assert.equal(result.thumbnails.length, figures.length);
+  assert.equal(result.textOnlyRows.length, publications.length - figures.length);
+  for (const row of result.textOnlyRows) {
+    assert(row.noFigure && row.fullWidth, `${label}: text-only paper must use its full row width: ${row.id}`);
+  }
   for (const image of result.thumbnails) {
     assert(image.visible && image.loaded && image.unclipped && image.labelOutsideImage, `${label}: hidden, incomplete, clipped, or overlaid image`);
     assert.equal(image.fit, 'contain');
