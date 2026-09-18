@@ -186,6 +186,7 @@ export type Person = {
   programTags?: Array<"Virology" | "MD-PhD / Biophysics" | "MD-PhD / Biological and Biomedical Sciences">;
   fellowships?: string[];
   linkedin?: LinkedInProfile;
+  publicEmail?: string;
   labStart?: string;
   labEnd?: string;
   group: (typeof CURRENT_TEAM_GROUPS)[number];
@@ -197,6 +198,7 @@ export type SeasonalMember = {
   title: string;
   program?: string;
   linkedin?: LinkedInProfile;
+  publicEmail?: string;
   labStart?: string;
   labEnd?: string;
   summers?: number[];

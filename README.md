@@ -57,6 +57,12 @@ Current and seasonal members can opt into a discreet LinkedIn link beside their 
 
 Only HTTPS LinkedIn personal-profile URLs without tracking parameters are accepted. The link opens in a new tab, with an accessible label and no third-party scripts, cookies, or requests before activation.
 
+### Optional public email
+
+Add `publicEmail: "member@hms.harvard.edu"` to a current or seasonal member's record to show a small email icon beside their name, next to LinkedIn when present. Use only an address approved for public display; do not infer an address or copy it from private correspondence. Omit the field when no public email has been provided. Jonathan and James use their already-published Contact-page addresses; validation keeps those addresses consistent.
+
+The email icon is a native `mailto:` link with an accessible label. It opens the visitor's configured email handler without a new browser tab, a prefilled message, or a third-party service.
+
 ## Publication record
 
 ```bash

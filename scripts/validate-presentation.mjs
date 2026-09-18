@@ -136,6 +136,17 @@ for (const row of teamRows) {
   assert.equal(row.childNodes.filter((node) => node.tagName === "div").length, 3, "Roster rows have identity, appointment, and dates");
   assert.ok(!descendants(row).some((node) => node.tagName === "img"));
 }
+for (const person of [...peopleData.currentMembers, ...peopleData.seasonalMembers]) {
+  const row = teamRows.find((node) => descendants(node).some((child) => child.tagName === "h3" && text(child) === person.name));
+  assert.ok(row, `Missing team row: ${person.name}`);
+  const emailLinks = descendants(row).filter((node) => hasClass(node, "team-email"));
+  assert.equal(emailLinks.length, person.publicEmail ? 1 : 0, `Public email visibility for ${person.name}`);
+  if (person.publicEmail) {
+    assert.equal(attribute(emailLinks[0], "href"), `mailto:${person.publicEmail}`);
+    assert.equal(attribute(emailLinks[0], "aria-label"), `Email ${person.name}`);
+    assert.ok(!attribute(emailLinks[0], "target"), "Email uses the visitor's mail handler, not a blank browser tab");
+  }
+}
 for (const node of team.filter((node) => node.tagName === "time")) {
   assert.match(attribute(node, "datetime") || "", /^\d{4}(?:-(0[1-9]|1[0-2]))?$/);
 }

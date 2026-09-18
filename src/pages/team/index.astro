@@ -46,7 +46,7 @@ const directoryIndex = [
           {group.entries.map((person) => (
             <article class="team-row reveal" role="listitem">
               <div class="team-row__identity">
-                <TeamMemberName name={person.name} linkedin={person.linkedin} />
+                <TeamMemberName name={person.name} linkedin={person.linkedin} publicEmail={person.publicEmail} />
                 {group.label === "Leadership" && (
                   <a href={withBase("/jonathan-abraham/")}>View profile <span aria-hidden="true">→</span></a>
                 )}
@@ -73,7 +73,7 @@ const directoryIndex = [
         <div class="team-list" role="list">
           {peopleData.seasonalMembers.map((person) => (
             <article class="team-row reveal" role="listitem">
-              <div class="team-row__identity"><TeamMemberName name={person.name} linkedin={person.linkedin} /></div>
+              <div class="team-row__identity"><TeamMemberName name={person.name} linkedin={person.linkedin} publicEmail={person.publicEmail} /></div>
               <div class="team-row__appointment">
                 <p class="team-row__role">{person.title}</p>
                 {person.program && <div class="team-row__details"><span>{person.program}</span></div>}

@@ -4,7 +4,7 @@ import { promises as fs } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
 import { alumniSourceError } from "./lib/alumni-sources.mjs";
-import { linkedInProfileError } from "../src/lib/team-links.ts";
+import { linkedInProfileError, publicEmailError } from "../src/lib/team-links.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -627,6 +627,10 @@ async function main() {
   }
 
   const publicationTitleSet = new Set(publications.map((publication) => normalize(publication.title)));
+  const sharedContactEmails = new Map([
+    ["Jonathan Abraham, MD, PhD", siteData.contact.email],
+    ["James Spencer", siteData.contact.managerEmail]
+  ]);
 
   for (const title of jonathanProfile.representativeWork || []) {
     if (!publicationTitleSet.has(normalize(title))) {
@@ -638,6 +642,11 @@ async function main() {
     validateLabDates(person, `Current member "${person.name}"`, fail);
     const linkedinError = linkedInProfileError(person.linkedin);
     if (linkedinError) fail(`Current member "${person.name}": ${linkedinError}.`);
+    const emailError = publicEmailError(person.publicEmail);
+    if (emailError) fail(`Current member "${person.name}": ${emailError}.`);
+    if (person.publicEmail && sharedContactEmails.has(person.name) && person.publicEmail !== sharedContactEmails.get(person.name)) {
+      fail(`Current member "${person.name}" must use the same public email as the Contact page.`);
+    }
 
     if (!currentTeamGroups.has(person.group)) {
       fail(`Current member "${person.name}" has unsupported group "${person.group}"; the directory must not omit them.`);
@@ -694,6 +703,8 @@ async function main() {
     validateLabDates(person, `Seasonal member "${person.name}"`, fail);
     const linkedinError = linkedInProfileError(person.linkedin);
     if (linkedinError) fail(`Seasonal member "${person.name}": ${linkedinError}.`);
+    const emailError = publicEmailError(person.publicEmail);
+    if (emailError) fail(`Seasonal member "${person.name}": ${emailError}.`);
   }
 
   for (const group of peopleData.alumni || []) {

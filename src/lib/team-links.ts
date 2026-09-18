@@ -27,3 +27,18 @@ export function publicLinkedInUrl(profile?: LinkedInProfile): string | undefined
   if (linkedInProfileError(profile) || profile?.optedIn !== true) return undefined;
   return profile.url;
 }
+
+export function publicEmailError(email: unknown): string | null {
+  if (email === undefined) return null;
+  if (typeof email !== "string" || email.length > 254 ||
+      !/^[a-z0-9_+-]+(?:\.[a-z0-9_+-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$/i.test(email) ||
+      email.split("@")[0].length > 64) {
+    return "Public email must be one plain email address, without a mailto prefix or message parameters";
+  }
+  return null;
+}
+
+export function publicEmailHref(email?: string): string | undefined {
+  if (email === undefined || publicEmailError(email)) return undefined;
+  return `mailto:${email}`;
+}

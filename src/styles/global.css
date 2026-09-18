@@ -1682,7 +1682,13 @@ html:not(.js) .site-header {
   min-width: 0;
 }
 
-.team-linkedin {
+.team-row__links {
+  display: inline-flex;
+  flex: none;
+  gap: 0.125rem;
+}
+
+.team-profile-link {
   display: inline-flex;
   flex: 0 0 2.75rem;
   align-items: center;
@@ -1693,12 +1699,12 @@ html:not(.js) .site-header {
   border-radius: 2px;
 }
 
-.team-linkedin:hover {
+.team-profile-link:hover {
   color: var(--accent-hover);
   background: var(--surface-soft);
 }
 
-.team-linkedin svg {
+.team-profile-link svg {
   flex: none;
 }
 

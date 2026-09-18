@@ -5,6 +5,7 @@ export const peopleData: PeopleData = {
     {
       name: "Jonathan Abraham, MD, PhD",
       title: "Professor of Microbiology, Harvard Medical School",
+      publicEmail: "jonathan_abraham@hms.harvard.edu",
       group: "Leadership",
       order: 1
     },
@@ -136,6 +137,7 @@ export const peopleData: PeopleData = {
     {
       name: "James Spencer",
       title: "Lab Manager",
+      publicEmail: "james_spencer@hms.harvard.edu",
       linkedin: {
         url: "https://www.linkedin.com/in/jamesmspencer/",
         optedIn: true
