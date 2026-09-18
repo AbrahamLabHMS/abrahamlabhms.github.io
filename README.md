@@ -65,6 +65,12 @@ Unavailable or incomplete sources produce a partial report and a failed check, n
 
 ## Image optimization
 
+Publication thumbnails are joined to the citation list by DOI in `src/data/publication-figures.json`. The reusable component displays each complete figure without cropping; it opens an accessible image viewer, with a direct image-link fallback when JavaScript is unavailable.
+
+`references/publication-figures.json` records the nine approved figures' identity and reuse evidence, file checksums, and source-resolution limits. Only those approved web derivatives belong in `public/assets/images/publications/`. The supplied originals and unresolved figures remain outside this checkout; do not copy the whole review archive into public assets. New figures require a matching DOI, figure source, verified reuse terms, caption, alt text, and attribution before inclusion.
+
+After a build, run `node scripts/review-publication-figures.mjs` to check thumbnails, image viewers, keyboard focus, no-JavaScript fallbacks, both themes, and phone/tablet/desktop layouts in all three browser engines. Results are saved in `output/playwright/publication-figures/`. The same check runs before deployment.
+
 The full-resolution, open-access homepage figure is retained under `references/source-assets/`. Rebuild its responsive WebP files after replacing that source:
 
 ```bash

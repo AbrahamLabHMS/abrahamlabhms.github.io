@@ -23,6 +23,7 @@ for (const engine of ["chromium", "firefox", "webkit"]) {
           <div style="height:5000px"></div>
           <img id="last" loading="lazy" src="/last.png" width="350" height="240" alt="Last">
           <img id="broken" loading="lazy" src="/broken.png" width="40" height="40" alt="Missing">
+          <dialog><img id="deferred" loading="lazy" src="/deferred.png" width="960" height="640" alt="Deferred viewer"></dialog>
           <div style="height:1000px"></div>
           </body></html>` });
       } else {
@@ -41,6 +42,7 @@ for (const engine of ["chromium", "firefox", "webkit"]) {
     await page.evaluate(() => window.scrollTo(0, 0));
     await visitLocalImages(page);
     assert.equal(await waitForLocalImages(page, 1000), true);
+    assert.equal(await page.locator("#deferred").isVisible(), false, "Closed image viewers must not delay the visible-image audit");
     assert.equal(await page.evaluate(() => window.scrollY), 0);
     assert.equal(await page.locator("body").innerHTML(), initialMarkup);
     for (const selector of ["#middle", "#last"]) {

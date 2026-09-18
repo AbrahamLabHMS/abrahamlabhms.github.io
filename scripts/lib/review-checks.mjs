@@ -12,6 +12,7 @@ export async function waitForLocalImages(page, timeout) {
   try {
     await page.waitForFunction(
       () => [...document.images]
+        .filter((image) => image.getClientRects().length > 0)
         .filter((image) => new URL(image.currentSrc || image.src, location.href).origin === location.origin)
         .every((image) => image.complete),
       undefined,
@@ -61,6 +62,11 @@ export function collectFitSnapshot() {
   const box = (rect) => ({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom });
   const eligible = (element) => {
     for (let current = element; current; current = current.parentElement) {
+      // Closed disclosures can retain layout boxes even though their content is not painted.
+      if (current instanceof HTMLDetailsElement && !current.open) {
+        const summary = [...current.children].find((child) => child.tagName === "SUMMARY");
+        if (!summary?.contains(element)) return false;
+      }
       const style = getComputedStyle(current);
       if (style.display === "none" || style.visibility !== "visible" || Number(style.opacity) === 0 ||
           ["absolute", "fixed", "sticky"].includes(style.position) || current.hidden ||

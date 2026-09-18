@@ -103,6 +103,12 @@ async function inspectLayout(page) {
       return `${element.tagName.toLowerCase()}${classes ? `.${classes}` : ""}`;
     };
     const visible = (node) => {
+      for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+        if (parent instanceof HTMLDetailsElement && !parent.open) {
+          const summary = [...parent.children].find((child) => child.tagName === "SUMMARY");
+          if (!summary?.contains(node)) return false;
+        }
+      }
       const style = getComputedStyle(node);
       const rect = node.getBoundingClientRect();
       return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
@@ -148,6 +154,7 @@ async function inspectLayout(page) {
         return style.display === "none" || style.visibility !== "visible" || Number(style.opacity) === 0 || node.getBoundingClientRect().height === 0;
       }).length,
       brokenImages: [...document.images]
+        .filter(visible)
         .filter((image) => new URL(image.currentSrc || image.src, location.href).origin === location.origin && (!image.complete || image.naturalWidth === 0))
         .map((image) => image.currentSrc || image.getAttribute("src")),
       edgeCollisions,

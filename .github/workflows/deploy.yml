@@ -97,14 +97,18 @@ jobs:
         if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
         run: node scripts/visual-review.mjs 2>&1 | tee output/ci/visual-review.log
 
-      - name: Test lazy image review in all browser engines
+      - name: Test browser review fixtures
         if: ${{ !cancelled() && steps.browsers.outcome == 'success' }}
-        run: RUN_REVIEW_BROWSER_FIXTURES=1 node --test scripts/review-lazy-images.test.mjs 2>&1 | tee output/ci/lazy-image-tests.log
+        run: RUN_REVIEW_BROWSER_FIXTURES=1 node --test scripts/review-browser-fixtures.test.mjs scripts/review-lazy-images.test.mjs 2>&1 | tee output/ci/lazy-image-tests.log
 
       - name: Run accessibility and browser review
         # Run even if screenshot assertions failed, preserving both diagnostics.
         if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
         run: node scripts/quality-review.mjs 2>&1 | tee output/ci/quality-review.log
+
+      - name: Review publication thumbnails and image viewers
+        if: ${{ !cancelled() && steps.build.outcome == 'success' && steps.browsers.outcome == 'success' }}
+        run: node scripts/review-publication-figures.mjs 2>&1 | tee output/ci/publication-figures.log
 
       - name: Upload review artifacts
         if: always()
@@ -115,6 +119,7 @@ jobs:
             output/ci
             output/visual-review
             output/quality-review
+            output/playwright/publication-figures
           retention-days: 14
 
       - name: Upload Pages artifact

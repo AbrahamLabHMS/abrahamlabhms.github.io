@@ -140,10 +140,10 @@ async function run() {
   await fs.rm(outputRoot, { recursive: true, force: true });
   await ensureDir(screenshotRoot);
   const server = await staticSite.start(port);
+  let browser;
 
   try {
     const { chromium } = await import("playwright");
-    let browser;
 
     try {
       browser = await chromium.launch({ headless: true });
@@ -192,7 +192,8 @@ async function run() {
     for (const viewport of selectedViewports) {
       const context = await browser.newContext({
         viewport: { width: viewport.width, height: viewport.height },
-        deviceScaleFactor: 1
+        deviceScaleFactor: 1,
+        reducedMotion: "reduce"
       });
 
       for (const route of selectedRoutes) {
@@ -273,6 +274,7 @@ async function run() {
             }).length,
             documentOverflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - window.innerWidth,
             brokenImages: [...document.images]
+              .filter((img) => img.getClientRects().length > 0)
               .filter((img) => new URL(img.currentSrc || img.src, location.href).origin === location.origin && (!img.complete || img.naturalWidth === 0))
               .map((img) => img.currentSrc || img.getAttribute("src"))
           }));
@@ -354,6 +356,7 @@ async function run() {
       throw new Error(`Visual review failed:\n- ${failures.join("\n- ")}`);
     }
   } finally {
+    await browser?.close();
     await server.close();
   }
 }

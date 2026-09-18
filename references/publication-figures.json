@@ -1,0 +1,398 @@
+{
+  "reviewedAt": "2026-09-18",
+  "scope": "Nine identity- and reuse-cleared complete figures. Original sources and unresolved assets are not included in the website.",
+  "figures": [
+    {
+      "key": "mpox_replisome",
+      "doi": "10.1038/s41586-026-10937-2",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41586-026-10937-2/MediaObjects/41586_2026_10937_Fig1_HTML.png",
+      "sourceSha256": "e0a2c26bfbf6823b72ce32004269488cf587cc8dfdaf835ea34aadbff535d586",
+      "identityEvidence": "https://www.nature.com/articles/s41586-026-10937-2#Fig1",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.nature.com/articles/s41586-026-10937-2#rightslink"
+      ],
+      "creditCheck": "No third-party credit or exclusion found in the supplied figure or publisher Figure 1 caption.",
+      "restrictions": "Credit authors and source; link the license; state the technical resizing and conversion. Do not imply endorsement.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 1797,
+        "maximumOneToOneCssWidth": 1797,
+        "maximumTwoXCssWidth": 898,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/mpox-replisome-fig1-720.webp",
+          "width": 720,
+          "height": 883,
+          "sha256": "668e8c7f4ceee1f43386d80765d4bdd989f9fbdb4543d920b7deee9a34679af7"
+        },
+        {
+          "src": "/assets/images/publications/mpox-replisome-fig1-1200.webp",
+          "width": 1200,
+          "height": 1472,
+          "sha256": "9287d2645e736f45a090d145f3fb449d10152333630f73ccc025617fad022acd"
+        },
+        {
+          "src": "/assets/images/publications/mpox-replisome-fig1-1797.webp",
+          "width": 1797,
+          "height": 2205,
+          "sha256": "975b115f0372473456a3e1a3133d0dc289d66f8db408a7a845ab9a9f45088804"
+        }
+      ]
+    },
+    {
+      "key": "arena_spike",
+      "doi": "10.1038/s41564-025-02085-6",
+      "figureNumber": "Figure 2",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41564-025-02085-6/MediaObjects/41564_2025_2085_Fig2_HTML.png",
+      "sourceSha256": "4d0742751e6c5c14ef05fc5fe43d9fc332730142aab2c09c61f79a8d7bf64a59",
+      "identityEvidence": "https://www.nature.com/articles/s41564-025-02085-6#Fig2",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.nature.com/articles/s41564-025-02085-6#rightslink"
+      ],
+      "creditCheck": "No third-party credit or exclusion found in the supplied figure or publisher Figure 2 caption.",
+      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 2167,
+        "maximumOneToOneCssWidth": 2167,
+        "maximumTwoXCssWidth": 1083,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/arenavirus-gpc-figure-2-720.webp",
+          "width": 720,
+          "height": 384,
+          "sha256": "37b291f8862e88ab4563bebb70a4bb3eaa7cc088a635e09b8f493728f3243492"
+        },
+        {
+          "src": "/assets/images/publications/arenavirus-gpc-figure-2-1200.webp",
+          "width": 1200,
+          "height": 640,
+          "sha256": "8effa9f0a2cd9eaa9471284500bec7624ba67223643eba593e71e856cca1c499"
+        },
+        {
+          "src": "/assets/images/publications/arenavirus-gpc-figure-2-1800.webp",
+          "width": 1800,
+          "height": 960,
+          "sha256": "0fdd11f29b17c322c14efdcf7592cebf692ad0c2505d633d31ab4465cb6a3ae1"
+        }
+      ]
+    },
+    {
+      "key": "shifted_receptor",
+      "doi": "10.1016/j.cell.2025.03.029",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/a7c4/12406711/0fa1a327fdf4/nihms-2067620-f0001.jpg",
+      "sourceSha256": "dcb67de4a1747d54631973fb97a0661a20b259d50aebacb4684d8fc250c718a0",
+      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12406711/fullTextXML",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12406711/fullTextXML",
+        "https://api.crossref.org/works/10.1016%2Fj.cell.2025.03.029"
+      ],
+      "creditCheck": "No separate credit or exclusion in the supplied figure or deposited Figure 1 caption/permissions.",
+      "restrictions": "Credit authors and source; link license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 991,
+        "maximumOneToOneCssWidth": 991,
+        "maximumTwoXCssWidth": 495,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/shifted-receptor-fig1-720.webp",
+          "width": 720,
+          "height": 763,
+          "sha256": "7de3405a9107082c5321efe3c198157bb77ba59de031e056612189e029e1dace"
+        },
+        {
+          "src": "/assets/images/publications/shifted-receptor-fig1-991.webp",
+          "width": 991,
+          "height": 1050,
+          "sha256": "092168aae0252e3f81ca954294f794bef0093aec72b65f77807a953e4cf8e41d"
+        }
+      ]
+    },
+    {
+      "key": "nipah_pol",
+      "doi": "10.1016/j.cell.2024.12.021",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/4abe/11813165/fd94b4a69816/gr1.jpg",
+      "sourceSha256": "13fcae89cc6d686af8ca3234157684af97faedca08fda42152b63ef415143f5e",
+      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11813165/fullTextXML",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11813165/fullTextXML",
+        "https://api.crossref.org/works/10.1016%2Fj.cell.2024.12.021"
+      ],
+      "creditCheck": "No separate third-party credit or exclusion in the supplied image or deposited Figure 1 caption/permissions.",
+      "restrictions": "Credit authors and source; retain 2024 copyright notice; link license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 741,
+        "maximumOneToOneCssWidth": 741,
+        "maximumTwoXCssWidth": 370,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/nipah-pol-fig1-720.webp",
+          "width": 720,
+          "height": 608,
+          "sha256": "9d1501a50fc02e73422c8605a235c9f61fd1e165c5188bf8ecc27bd1d501e8fe"
+        },
+        {
+          "src": "/assets/images/publications/nipah-pol-fig1-741.webp",
+          "width": 741,
+          "height": 626,
+          "sha256": "0a4bc1487b67f0e73ca7210d0f162dc44e9f963482c3b6304f225cff75b2508b"
+        }
+      ]
+    },
+    {
+      "key": "submergence",
+      "doi": "10.1038/s41586-024-07740-2",
+      "figureNumber": "Figure 3",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41586-024-07740-2/MediaObjects/41586_2024_7740_Fig3_HTML.png",
+      "sourceSha256": "96089b55db481751d369bb4c482945a67c412334ff3896fc362880b4221c9d7b",
+      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11324528/fullTextXML",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11324528/fullTextXML",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC11324528/#copyright-information"
+      ],
+      "creditCheck": "No separate credit or exclusion in the deposited main Figure 3 caption or supplied figure.",
+      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 1063,
+        "maximumOneToOneCssWidth": 1063,
+        "maximumTwoXCssWidth": 531,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/submergence-fig3-720.webp",
+          "width": 720,
+          "height": 990,
+          "sha256": "bf96a9c43e8f8a996659e50da0675eb01645f2cc41cc5ae5eb73721cb995c3a7"
+        },
+        {
+          "src": "/assets/images/publications/submergence-fig3-1063.webp",
+          "width": 1063,
+          "height": 1462,
+          "sha256": "fb83323183f7c110c32b1022bacc2317827aaeda09d44507b269d5a6b776bf55"
+        }
+      ]
+    },
+    {
+      "key": "eeev_vldlr",
+      "doi": "10.1038/s41467-024-50887-9",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41467-024-50887-9/MediaObjects/41467_2024_50887_Fig1_HTML.png",
+      "sourceSha256": "92a3ec51339d60e48af1370cd6cfbfdc259dc3cda569e95ecf56e40494c1a712",
+      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11297306/fullTextXML",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11297306/fullTextXML",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC11297306/#copyright-information"
+      ],
+      "creditCheck": "No separate credit or exclusion in the deposited Figure 1 caption or supplied figure.",
+      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 1998,
+        "maximumOneToOneCssWidth": 1998,
+        "maximumTwoXCssWidth": 999,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/eeev-vldlr-fig1-720.webp",
+          "width": 720,
+          "height": 660,
+          "sha256": "e8aae68cf0791c2fcf58d9f5244090352c3ca0ae0bb8b22f48dcbb62c2da4f74"
+        },
+        {
+          "src": "/assets/images/publications/eeev-vldlr-fig1-1200.webp",
+          "width": 1200,
+          "height": 1100,
+          "sha256": "01b7b0387b2ba999640b9145ebc25f38b748ca98d472262fdc52d7bdb0179df4"
+        },
+        {
+          "src": "/assets/images/publications/eeev-vldlr-fig1-1800.webp",
+          "width": 1800,
+          "height": 1650,
+          "sha256": "9c8edfdb064759d455abbae5ae5b33420434103feb74fea37099a4905d5bab07"
+        },
+        {
+          "src": "/assets/images/publications/eeev-vldlr-fig1-1998.webp",
+          "width": 1998,
+          "height": 1831,
+          "sha256": "5659b6561936ef73f8b7d24f9518b28b8f3fc14fc45a65eaacebdd17688cf7ce"
+        }
+      ]
+    },
+    {
+      "key": "rbd_evasion",
+      "doi": "10.1126/science.abl6251",
+      "figureNumber": "Figure 4",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/25f8/9245373/458fc65585fa/science.abl6251-f4.jpg",
+      "sourceSha256": "c831f334664e4933d4b1376f7deb48123a486ac026370d5a69df5713b92b25a0",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9127715/figure/F4/",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC9127715/#copyright-information"
+      ],
+      "creditCheck": "No separate third-party credit or exclusion found for Figure 4.",
+      "restrictions": "Credit authors and source; retain copyright notice; link license; disclose resizing and conversion without implying endorsement.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 786,
+        "maximumOneToOneCssWidth": 786,
+        "maximumTwoXCssWidth": 393,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/rbd-evasion-fig4-720.webp",
+          "width": 720,
+          "height": 339,
+          "sha256": "0a57eaea8d85f0629b18cc16b868ada7ca323d24b1ff1055ba97ebcdd2d0dcd6"
+        },
+        {
+          "src": "/assets/images/publications/rbd-evasion-fig4-786.webp",
+          "width": 786,
+          "height": 370,
+          "sha256": "c8966c6962d861f92208b5e9b9cc36a8dc436187b7fc35b8c0f22349fdd406d3"
+        }
+      ]
+    },
+    {
+      "key": "tfr_denovo",
+      "doi": "10.1073/pnas.2021569118",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/b409/8092486/611f966080c6/pnas.2021569118fig01.jpg",
+      "sourceSha256": "49adc48ad85d609c0b0459a7cd7567a738a552011581689b04cf5b4cde4c4596",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8092486/figure/fig01/",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8092486/#copyright-information",
+        "https://www.pnas.org/about/rights-permissions"
+      ],
+      "creditCheck": "No separate third-party credit or figure-specific exclusion. A scholarly citation in the caption is not a reproduction credit.",
+      "restrictions": "Credit authors and source; retain copyright notice; link license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 757,
+        "maximumOneToOneCssWidth": 757,
+        "maximumTwoXCssWidth": 378,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/tfr-denovo-fig1-720.webp",
+          "width": 720,
+          "height": 603,
+          "sha256": "1345318e24ec7b93a6ac4d3e592d166c04bd37b98cfa86f2369cd872c9e5c916"
+        },
+        {
+          "src": "/assets/images/publications/tfr-denovo-fig1-757.webp",
+          "width": 757,
+          "height": 634,
+          "sha256": "4a020a8a01722842b97f8823923747af8487932aec8fb2397836173a38a2db19"
+        }
+      ]
+    },
+    {
+      "key": "arena_vaccine_ab",
+      "doi": "10.1038/s41467-018-04271-z",
+      "figureNumber": "Figure 3",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41467-018-04271-z/MediaObjects/41467_2018_4271_Fig3_HTML.jpg",
+      "sourceSha256": "7ff61800072019f21b3e69e453e6ccf4a6de2e1d95ee1fbb3e73527fcc3266cd",
+      "identityEvidence": "https://www.nature.com/articles/s41467-018-04271-z#Fig3",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.nature.com/articles/s41467-018-04271-z#rightslink"
+      ],
+      "creditCheck": "No separate third-party credit or exclusion found in Figure 3. Literature/PDB citations remain in the original publisher legend.",
+      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 2045,
+        "maximumOneToOneCssWidth": 2045,
+        "maximumTwoXCssWidth": 1022,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/arena-vaccine-ab-fig3-720.webp",
+          "width": 720,
+          "height": 439,
+          "sha256": "811b0af678941355ebc4bfabc58c73df264b38ebb279c5e69d89e173e9713fe8"
+        },
+        {
+          "src": "/assets/images/publications/arena-vaccine-ab-fig3-1200.webp",
+          "width": 1200,
+          "height": 732,
+          "sha256": "550ac2f6d398ffbe6ee53489f6b9168c1af9fb4c16f35b2f0034a928fab05d69"
+        },
+        {
+          "src": "/assets/images/publications/arena-vaccine-ab-fig3-1800.webp",
+          "width": 1800,
+          "height": 1098,
+          "sha256": "bb2d3932a33e5e5083c50b35e7a4025f8025ed5dfba9aa85c0331e516aed8ea6"
+        },
+        {
+          "src": "/assets/images/publications/arena-vaccine-ab-fig3-2045.webp",
+          "width": 2045,
+          "height": 1247,
+          "sha256": "563010aba165dfba1eb95485cfe49e8d5f369e8d2b74a1a5b20bbe96663bca05"
+        }
+      ]
+    }
+  ]
+}

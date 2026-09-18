@@ -44,14 +44,41 @@ assert.ok(!home.some((node) => node.tagName === "iframe" || hasClass(node, "map-
 const record = await page("publications/index.html");
 assert.ok(!record.some((node) => hasClass(node, "publication-print") || hasClass(node, "publication-status")), "Publications must not show print controls or a checked timestamp");
 const rows = record.filter((node) => hasClass(node, "publication-row"));
+const figures = JSON.parse(await readFile(new URL("../src/data/publication-figures.json", import.meta.url), "utf8"));
 assert.equal(rows.length, publications.length);
 assert.equal(new Set(rows.map((row) => attribute(row, "id"))).size, rows.length);
+assert.equal(record.filter((node) => hasClass(node, "publication-figure")).length, figures.length);
+for (const figure of figures) {
+  const paper = publications.find((entry) => entry.doi === figure.doi);
+  assert.ok(paper, `Figure has no matching publication: ${figure.key}`);
+  const nodes = descendants(rows.find((node) => attribute(node, "id") === publicationAnchor(paper)));
+  const thumbnail = nodes.find((node) => hasClass(node, "publication-figure__thumbnail"));
+  assert.ok(thumbnail && attribute(thumbnail, "href").endsWith(figure.image));
+  assert.ok(!nodes.some((node) => node.tagName === "summary" && text(node).includes("View figure")));
+  const viewer = nodes.find((node) => node.tagName === "dialog");
+  assert.equal(attribute(viewer, "open"), undefined, "Figure viewers must start closed");
+  for (const image of nodes.filter((node) => node.tagName === "img")) {
+    assert.equal(attribute(image, "alt"), figure.alt);
+    assert.equal(attribute(image, "width"), String(figure.width));
+    assert.equal(attribute(image, "height"), String(figure.height));
+  }
+  assert.ok(text(viewer).includes(figure.attribution));
+  for (const href of [figure.sourceUrl, figure.licenseUrl]) {
+    assert.ok(nodes.some((node) => node.tagName === "a" && attribute(node, "href") === href));
+  }
+}
 for (const publication of publications) {
   const row = rows.find((node) => attribute(node, "id") === publicationAnchor(publication));
   assert.ok(row, `Missing publication anchor: ${publication.doi}`);
   const links = descendants(row).filter((node) => node.tagName === "a").map((node) => attribute(node, "href"));
   assert.ok(links.includes(publication.link));
-  if (publication.pmcid) assert.equal(links.filter((href) => href.includes(`/articles/${publication.pmcid}/`)).length, 1);
+  if (publication.pmcid) {
+    const articlePath = `/articles/${publication.pmcid}/`;
+    assert.equal(links.filter((href) => {
+      const url = new URL(href, "https://preview.invalid");
+      return url.hostname === "pmc.ncbi.nlm.nih.gov" && url.pathname === articlePath && !url.hash;
+    }).length, 1);
+  }
 }
 
 const research = await page("research/index.html");

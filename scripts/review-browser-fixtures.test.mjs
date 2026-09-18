@@ -35,3 +35,19 @@ test("browser unresolved-image fixture respects a short timeout with no network"
   assert.equal(await waitForLocalImages(page, 80), false);
   assert.ok(performance.now() - started < 2000, "image timeout must not fall back to Playwright's default wait");
 });
+
+test("closed disclosure content is excluded until it is actually shown", { skip }, async (t) => {
+  const { chromium } = await import("playwright");
+  const browser = await chromium.launch({ headless: true });
+  t.after(() => browser.close());
+  const page = await browser.newPage();
+  await page.setContent('<details><summary id="toggle">Image credit</summary><p id="credit">Source and license</p></details><p id="next">Next citation</p>');
+  const closed = await page.evaluate(collectFitSnapshot);
+  assert.ok(closed.some((unit) => unit.selector === "#toggle"));
+  assert.ok(!closed.some((unit) => unit.selector === "#credit"));
+  assert.deepEqual(inspectFit(closed), { parentCollisions: [], siblingCollisions: [] });
+  await page.locator("summary").click();
+  const open = await page.evaluate(collectFitSnapshot);
+  assert.ok(open.some((unit) => unit.selector === "#credit"));
+  assert.deepEqual(inspectFit(open), { parentCollisions: [], siblingCollisions: [] });
+});

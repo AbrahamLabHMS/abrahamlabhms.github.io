@@ -1,0 +1,275 @@
+[
+  {
+    "key": "mpox_replisome",
+    "doi": "10.1038/s41586-026-10937-2",
+    "publicationTitle": "Structure and operating principles of a monkeypox virus replisome",
+    "figureNumber": "Figure 1",
+    "caption": "Cryo-EM structure of the MPXV replisome.",
+    "alt": "Six-panel figure with protein domain diagrams, a gel, a mass distribution plot, and several views of a molecular complex.",
+    "attribution": "Yu et al., Nature (2026), Figure 1. DOI: 10.1038/s41586-026-10937-2. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://www.nature.com/articles/s41586-026-10937-2/figures/1",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/mpox-replisome-fig1-1797.webp",
+    "width": 1797,
+    "height": 2205,
+    "variants": [
+      {
+        "src": "/assets/images/publications/mpox-replisome-fig1-720.webp",
+        "width": 720,
+        "height": 883
+      },
+      {
+        "src": "/assets/images/publications/mpox-replisome-fig1-1200.webp",
+        "width": 1200,
+        "height": 1472
+      },
+      {
+        "src": "/assets/images/publications/mpox-replisome-fig1-1797.webp",
+        "width": 1797,
+        "height": 2205
+      }
+    ]
+  },
+  {
+    "key": "arena_spike",
+    "doi": "10.1038/s41564-025-02085-6",
+    "publicationTitle": "Molecular organization of the New World arenavirus spike glycoprotein complex",
+    "figureNumber": "Figure 2",
+    "caption": "Structure of MACV GPC.",
+    "alt": "Four-panel figure containing a protein domain diagram, line and bar charts, and a molecular density map beside a structural model.",
+    "attribution": "Mann et al., Nature Microbiology (2025), Figure 2. DOI: 10.1038/s41564-025-02085-6. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://www.nature.com/articles/s41564-025-02085-6/figures/2",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/arenavirus-gpc-figure-2-1800.webp",
+    "width": 1800,
+    "height": 960,
+    "variants": [
+      {
+        "src": "/assets/images/publications/arenavirus-gpc-figure-2-720.webp",
+        "width": 720,
+        "height": 384
+      },
+      {
+        "src": "/assets/images/publications/arenavirus-gpc-figure-2-1200.webp",
+        "width": 1200,
+        "height": 640
+      },
+      {
+        "src": "/assets/images/publications/arenavirus-gpc-figure-2-1800.webp",
+        "width": 1800,
+        "height": 960
+      }
+    ]
+  },
+  {
+    "key": "shifted_receptor",
+    "doi": "10.1016/j.cell.2025.03.029",
+    "publicationTitle": "Molecular basis for shifted receptor recognition by an encephalitic arbovirus",
+    "figureNumber": "Figure 1",
+    "caption": "Structural basis for WEEV recognition of human PCDH10.",
+    "alt": "Seven lettered panels with a protein diagram, a tree, a particle model, molecular close-ups and a bar chart.",
+    "attribution": "Fan et al., Cell (2025), Figure 1. DOI: 10.1016/j.cell.2025.03.029. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12406711/figure/F1/",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/shifted-receptor-fig1-991.webp",
+    "width": 991,
+    "height": 1050,
+    "variants": [
+      {
+        "src": "/assets/images/publications/shifted-receptor-fig1-720.webp",
+        "width": 720,
+        "height": 763
+      },
+      {
+        "src": "/assets/images/publications/shifted-receptor-fig1-991.webp",
+        "width": 991,
+        "height": 1050
+      }
+    ]
+  },
+  {
+    "key": "nipah_pol",
+    "doi": "10.1016/j.cell.2024.12.021",
+    "publicationTitle": "Structural and functional analysis of the Nipah virus polymerase complex",
+    "figureNumber": "Figure 1",
+    "caption": "Structure of the NiV L-P complex.",
+    "alt": "Six lettered panels with protein domain diagrams, a mass distribution plot, an RNA diagram, a gel and two pairs of structural views.",
+    "attribution": "Hu et al., Cell (2025), Figure 1. DOI: 10.1016/j.cell.2024.12.021. Copyright The Authors 2024. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11813165/figure/fig1/",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/nipah-pol-fig1-741.webp",
+    "width": 741,
+    "height": 626,
+    "variants": [
+      {
+        "src": "/assets/images/publications/nipah-pol-fig1-720.webp",
+        "width": 720,
+        "height": 608
+      },
+      {
+        "src": "/assets/images/publications/nipah-pol-fig1-741.webp",
+        "width": 741,
+        "height": 626
+      }
+    ]
+  },
+  {
+    "key": "submergence",
+    "doi": "10.1038/s41586-024-07740-2",
+    "publicationTitle": "Shifts in receptors during submergence of an encephalitic arbovirus",
+    "figureNumber": "Figure 3",
+    "caption": "Shifts in human receptor recognition during WEEV spike protein evolution.",
+    "alt": "Three-panel figure with a dated branching diagram and labeled bar and line charts.",
+    "attribution": "Li et al., Nature (2024), Figure 3. DOI: 10.1038/s41586-024-07740-2. Copyright The Author(s) 2024. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11324528/#Fig3",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/submergence-fig3-1063.webp",
+    "width": 1063,
+    "height": 1462,
+    "variants": [
+      {
+        "src": "/assets/images/publications/submergence-fig3-720.webp",
+        "width": 720,
+        "height": 990
+      },
+      {
+        "src": "/assets/images/publications/submergence-fig3-1063.webp",
+        "width": 1063,
+        "height": 1462
+      }
+    ]
+  },
+  {
+    "key": "eeev_vldlr",
+    "doi": "10.1038/s41467-024-50887-9",
+    "publicationTitle": "Structural basis for VLDLR recognition by eastern equine encephalitis virus",
+    "figureNumber": "Figure 1",
+    "caption": "EEEV and SFV use distinct binding modes to recognize VLDLR.",
+    "alt": "Seven-panel figure with receptor diagrams, a binding matrix, and molecular maps shown from several angles.",
+    "attribution": "Yang et al., Nature Communications (2024), Figure 1. DOI: 10.1038/s41467-024-50887-9. Copyright The Author(s) 2024. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11297306/#Fig1",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/eeev-vldlr-fig1-1998.webp",
+    "width": 1998,
+    "height": 1831,
+    "variants": [
+      {
+        "src": "/assets/images/publications/eeev-vldlr-fig1-720.webp",
+        "width": 720,
+        "height": 660
+      },
+      {
+        "src": "/assets/images/publications/eeev-vldlr-fig1-1200.webp",
+        "width": 1200,
+        "height": 1100
+      },
+      {
+        "src": "/assets/images/publications/eeev-vldlr-fig1-1800.webp",
+        "width": 1800,
+        "height": 1650
+      },
+      {
+        "src": "/assets/images/publications/eeev-vldlr-fig1-1998.webp",
+        "width": 1998,
+        "height": 1831
+      }
+    ]
+  },
+  {
+    "key": "rbd_evasion",
+    "doi": "10.1126/science.abl6251",
+    "publicationTitle": "Structural basis for continued antibody evasion by the SARS-CoV-2 receptor-binding domain",
+    "figureNumber": "Figure 4",
+    "caption": "Structural basis for C1C-A3 neutralization.",
+    "alt": "Four-panel figure with a molecular ribbon model and three labeled surface views of antibody and receptor binding sites.",
+    "attribution": "Nabel et al., Science (2022), Figure 4. DOI: 10.1126/science.abl6251. Copyright The Authors 2022. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9127715/figure/F4/",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/rbd-evasion-fig4-786.webp",
+    "width": 786,
+    "height": 370,
+    "variants": [
+      {
+        "src": "/assets/images/publications/rbd-evasion-fig4-720.webp",
+        "width": 720,
+        "height": 339
+      },
+      {
+        "src": "/assets/images/publications/rbd-evasion-fig4-786.webp",
+        "width": 786,
+        "height": 370
+      }
+    ]
+  },
+  {
+    "key": "tfr_denovo",
+    "doi": "10.1073/pnas.2021569118",
+    "publicationTitle": "Transferrin receptor targeting by de novo sheet extension",
+    "figureNumber": "Figure 1",
+    "caption": "Design of edge strand-mediated complexes.",
+    "alt": "Five-panel figure with a design workflow at the top, a molecular ribbon model, and schematic strand diagrams below.",
+    "attribution": "Sahtoe et al., Proceedings of the National Academy of Sciences (2021), Figure 1. DOI: 10.1073/pnas.2021569118. Copyright The Authors 2021. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8092486/figure/fig01/",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/tfr-denovo-fig1-757.webp",
+    "width": 757,
+    "height": 634,
+    "variants": [
+      {
+        "src": "/assets/images/publications/tfr-denovo-fig1-720.webp",
+        "width": 720,
+        "height": 603
+      },
+      {
+        "src": "/assets/images/publications/tfr-denovo-fig1-757.webp",
+        "width": 757,
+        "height": 634
+      }
+    ]
+  },
+  {
+    "key": "arena_vaccine_ab",
+    "doi": "10.1038/s41467-018-04271-z",
+    "publicationTitle": "Vaccine-elicited receptor-binding site antibodies neutralize two New World hemorrhagic fever arenaviruses",
+    "figureNumber": "Figure 3",
+    "caption": "Structure of a JUNV GP1 ternary Fab complex.",
+    "alt": "Three-panel figure with a ribbon model of a protein-antibody complex, an overlaid structural comparison, and three molecular surface views.",
+    "attribution": "Clark et al., Nature Communications (2018), Figure 3. DOI: 10.1038/s41467-018-04271-z. Copyright The Author(s) 2018. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://www.nature.com/articles/s41467-018-04271-z/figures/3",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/arena-vaccine-ab-fig3-2045.webp",
+    "width": 2045,
+    "height": 1247,
+    "variants": [
+      {
+        "src": "/assets/images/publications/arena-vaccine-ab-fig3-720.webp",
+        "width": 720,
+        "height": 439
+      },
+      {
+        "src": "/assets/images/publications/arena-vaccine-ab-fig3-1200.webp",
+        "width": 1200,
+        "height": 732
+      },
+      {
+        "src": "/assets/images/publications/arena-vaccine-ab-fig3-1800.webp",
+        "width": 1800,
+        "height": 1098
+      },
+      {
+        "src": "/assets/images/publications/arena-vaccine-ab-fig3-2045.webp",
+        "width": 2045,
+        "height": 1247
+      }
+    ]
+  }
+]

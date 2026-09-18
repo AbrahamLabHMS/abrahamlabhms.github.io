@@ -80,8 +80,11 @@ test("image readiness uses the selected srcset resource and excludes remote imag
   const oldLocation = globalThis.location;
   t.after(() => { globalThis.document = oldDocument; globalThis.location = oldLocation; });
   globalThis.location = { href: "https://local.test/", origin: "https://local.test" };
-  const image = { src: "https://remote.test/image", currentSrc: "https://local.test/selected.webp", complete: false };
-  globalThis.document = { images: [image, { src: "https://remote.test/missing", complete: false }] };
+  const image = { src: "https://remote.test/image", currentSrc: "https://local.test/selected.webp", complete: false, getClientRects: () => [{}] };
+  globalThis.document = { images: [image,
+    { src: "https://remote.test/missing", complete: false, getClientRects: () => [{}] },
+    { src: "https://local.test/closed-dialog.webp", complete: false, getClientRects: () => [] }
+  ] };
   const page = { waitForFunction: async (predicate) => {
     assert.equal(predicate(), false);
     image.complete = true;
