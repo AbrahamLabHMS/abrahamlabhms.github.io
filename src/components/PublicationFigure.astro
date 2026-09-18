@@ -65,8 +65,13 @@ const captionId = `figure-caption-${figure.key}`;
 
 <dialog class="figure-viewer" id={viewerId} aria-labelledby={`${viewerId}-title`}>
   <div class="figure-viewer__header">
-    <p id={`${viewerId}-title`}>{figure.figureNumber} <span aria-hidden="true">/</span> {figure.publicationTitle}</p>
-    <form method="dialog"><button type="submit" autofocus>Close <span aria-hidden="true">×</span></button></form>
+    <p id={`${viewerId}-title`}><span class="figure-viewer__number">{figure.figureNumber}</span>{figure.publicationTitle}</p>
+    <form method="dialog">
+      <button class="figure-viewer__close" type="submit" aria-label="Close figure" autofocus>
+        <span>Close</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke="currentColor" stroke-width="1.5" /></svg>
+      </button>
+    </form>
   </div>
   <div class="figure-viewer__body">
     <div class="figure-viewer__matte">
@@ -102,6 +107,32 @@ const captionId = `figure-caption-${figure.key}`;
       link.focus({ preventScroll: true });
       viewer.showModal();
     });
+    const isBackdrop = (event: MouseEvent) => {
+      const bounds = viewer.getBoundingClientRect();
+      return event.target === viewer && (
+        event.clientX < bounds.left || event.clientX > bounds.right ||
+        event.clientY < bounds.top || event.clientY > bounds.bottom
+      );
+    };
+    let backdropPointer: number | null = null;
+    let backdropClick = false;
+    viewer.addEventListener("pointerdown", (event) => {
+      backdropClick = false;
+      backdropPointer = event.isPrimary && event.button === 0 && isBackdrop(event) ? event.pointerId : null;
+    });
+    viewer.addEventListener("pointerup", (event) => {
+      // Both ends must be on the backdrop; dragging out of a figure must not dismiss it.
+      backdropClick = backdropPointer === event.pointerId && isBackdrop(event);
+      backdropPointer = null;
+    });
+    viewer.addEventListener("click", (event) => {
+      const dismiss = backdropClick && isBackdrop(event);
+      backdropClick = false;
+      if (dismiss) viewer.close();
+    });
+    const resetBackdrop = () => { backdropPointer = null; backdropClick = false; };
+    viewer.addEventListener("pointercancel", resetBackdrop);
+    viewer.addEventListener("close", resetBackdrop);
     viewer.addEventListener("keydown", (event) => {
       if (event.key !== "Tab" || event.ctrlKey || event.metaKey) return;
       const controls = [...viewer.querySelectorAll<HTMLElement>("button, a[href]")];
@@ -217,14 +248,15 @@ const captionId = `figure-caption-${figure.key}`;
     max-width: none;
     max-height: calc(100dvh - 2rem);
     padding: 0;
-    border: 1px solid var(--line-strong);
-    border-radius: 0.25rem;
+    border: 1px solid var(--line);
+    border-block-start: 3px solid var(--accent);
+    border-radius: 0;
     color: var(--ink);
     background: var(--surface);
   }
 
   .figure-viewer::backdrop {
-    background: rgb(12 18 18 / 72%);
+    background: rgb(18 24 24 / 64%);
   }
 
   :global(html:has(.figure-viewer[open])) {
@@ -240,7 +272,7 @@ const captionId = `figure-caption-${figure.key}`;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.75rem 1.25rem;
+    padding: 1.1rem 1.5rem;
     border-bottom: 1px solid var(--line);
     background: var(--surface);
   }
@@ -248,35 +280,50 @@ const captionId = `figure-caption-${figure.key}`;
   .figure-viewer__header p {
     min-width: 0;
     max-width: 70ch;
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     line-height: 1.5;
   }
 
-  .figure-viewer__header p span {
-    padding-inline: 0.35rem;
-    color: var(--ink-quiet);
+  .figure-viewer__number {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--accent-hover);
+    font: 500 0.75rem/1.5 var(--font-mono);
   }
 
   .figure-viewer__header form {
     flex: 0 0 auto;
   }
 
-  .figure-viewer__header button {
-    display: flex;
-    gap: 0.75rem;
+  .figure-viewer__close {
+    display: inline-flex;
+    justify-content: center;
+    gap: 0.5rem;
     align-items: center;
     min-height: 2.75rem;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--line-strong);
-    background: var(--surface);
-    color: var(--ink);
-    font: 500 0.875rem/1.3 var(--font-sans);
+    min-width: 2.75rem;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ink-muted);
+    font: 600 0.8125rem/1.3 var(--font-sans);
     cursor: pointer;
   }
 
+  .figure-viewer__close:hover {
+    color: var(--accent-hover);
+    background: var(--surface-soft);
+    border-color: var(--line);
+  }
+
+  .figure-viewer__close svg {
+    flex: none;
+  }
+
   .figure-viewer__body {
-    padding: 1.25rem;
+    padding: 1.5rem;
   }
 
   .figure-viewer__matte {

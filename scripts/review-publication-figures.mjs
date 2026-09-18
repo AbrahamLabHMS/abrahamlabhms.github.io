@@ -129,13 +129,35 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
       const first = page.locator('.publication-figure__thumbnail').first();
       await first.click();
       await page.locator('.figure-viewer[open]').waitFor({ state: 'visible' });
-      await page.locator('.figure-viewer[open] button').click();
+      await page.getByRole('button', { name: 'Close figure', exact: true }).click();
       await page.locator('.figure-viewer[open]').waitFor({ state: 'hidden' });
       assert.equal(await page.locator('.figure-viewer[open]').count(), 0);
+      assert(await first.evaluate(link => document.activeElement === link));
+
+      await first.click();
+      const openViewer = page.locator('.figure-viewer[open]');
+      await openViewer.waitFor({ state: 'visible' });
+      await openViewer.locator('img').click();
+      assert.equal(await openViewer.count(), 1, 'Clicking the image must not close it');
+      await openViewer.click({ position: { x: 4, y: 4 } });
+      assert.equal(await openViewer.count(), 1, 'Clicking dialog padding must not close it');
+      const bounds = await openViewer.boundingBox();
+      const inside = { x: bounds.x + 6, y: bounds.y + 6 };
+      const outside = { x: 2, y: 2 };
+      for (const [from, to] of [[inside, outside], [outside, inside]]) {
+        await page.mouse.move(from.x, from.y);
+        await page.mouse.down();
+        await page.mouse.move(to.x, to.y);
+        await page.mouse.up();
+        assert.equal(await openViewer.count(), 1, 'Dragging across the frame must not close it');
+      }
+      await page.mouse.click(outside.x, outside.y);
+      await openViewer.waitFor({ state: 'hidden' });
+      assert(await first.evaluate(link => document.activeElement === link), 'Backdrop dismissal returns focus');
       await page.locator('.publication-figure__credit summary').first().click();
       assert.equal(await page.locator('.publication-figure__credit[open]').count(), 1);
       assert.equal(errors.length, 0, errors.join('\n'));
-      checks.push({ browser: name, width, theme, figuresVisible: figures.length, viewersChecked: figures.length, focusReturn: true, passed: true });
+      checks.push({ browser: name, width, theme, figuresVisible: figures.length, viewersChecked: figures.length, focusReturn: true, backdropDismissal: true, dragSafe: true, passed: true });
       await save();
       console.log(`${name} ${width} ${theme}: thumbnails, viewer, keyboard, and layout passed`);
       await context.close();
@@ -161,6 +183,23 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
     checks.push({ browser: name, width: 390, noJavaScript: true, thumbnailAndCreditAccessible: true, imageFallback: true, passed: true });
     await save();
     await context.close();
+
+    const touchContext = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, reducedMotion: 'reduce' });
+    try {
+      const page = await touchContext.newPage();
+      await page.goto(url, { waitUntil: 'load' });
+      const first = page.locator('.publication-figure__thumbnail').first();
+      await first.tap();
+      const viewer = page.locator('.figure-viewer[open]');
+      await viewer.waitFor({ state: 'visible' });
+      await viewer.locator('img').tap();
+      assert.equal(await viewer.count(), 1);
+      await page.touchscreen.tap(2, 2);
+      await viewer.waitFor({ state: 'hidden' });
+      assert(await first.evaluate(link => document.activeElement === link));
+      checks.push({ browser: name, width: 390, touchBackdropDismissal: true, passed: true });
+      await save();
+    } finally { await touchContext.close(); }
   } finally { await browser.close(); }
 }
 console.log(`Passed ${checks.length} thumbnail-preview checks.`);

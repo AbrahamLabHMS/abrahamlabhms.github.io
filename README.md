@@ -51,6 +51,12 @@ The homepage feature defaults to the most recent dated research article, indepen
 
 `siteData.graduatePrograms` contains general Contact-page program names. `siteData.trainingPrograms` resolves individual program tags on Team; MD-PhD combinations belong to those individual records only. Allowed current roster groups are shared by the data type, renderer, and validator so a misspelled group cannot silently hide a person.
 
+### Optional LinkedIn profiles
+
+Current and seasonal members can opt into a discreet LinkedIn link beside their name. After the member approves the exact profile URL, add `linkedin: { url: "https://www.linkedin.com/in/their-profile/", optedIn: true }` to their record in `src/data/people.ts`. Do not infer consent or add profiles found by searching. Leave the field absent until approved, and remove it if consent is withdrawn. No profiles are enabled by default.
+
+Only HTTPS LinkedIn personal-profile URLs without tracking parameters are accepted. The link opens in a new tab, with an accessible label and no third-party scripts, cookies, or requests before activation.
+
 ## Publication record
 
 ```bash

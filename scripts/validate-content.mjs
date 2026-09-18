@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
 import { alumniSourceError } from "./lib/alumni-sources.mjs";
+import { linkedInProfileError } from "../src/lib/team-links.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -635,6 +636,8 @@ async function main() {
 
   for (const person of peopleData.currentMembers || []) {
     validateLabDates(person, `Current member "${person.name}"`, fail);
+    const linkedinError = linkedInProfileError(person.linkedin);
+    if (linkedinError) fail(`Current member "${person.name}": ${linkedinError}.`);
 
     if (!currentTeamGroups.has(person.group)) {
       fail(`Current member "${person.name}" has unsupported group "${person.group}"; the directory must not omit them.`);
@@ -689,6 +692,8 @@ async function main() {
 
   for (const person of peopleData.seasonalMembers || []) {
     validateLabDates(person, `Seasonal member "${person.name}"`, fail);
+    const linkedinError = linkedInProfileError(person.linkedin);
+    if (linkedinError) fail(`Seasonal member "${person.name}": ${linkedinError}.`);
   }
 
   for (const group of peopleData.alumni || []) {

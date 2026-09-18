@@ -173,6 +173,11 @@ export const CURRENT_TEAM_GROUPS = [
   "Operations & Strategy"
 ] as const;
 
+export type LinkedInProfile = {
+  url: string;
+  optedIn: boolean;
+};
+
 export type Person = {
   name: string;
   title: string;
@@ -180,6 +185,7 @@ export type Person = {
   roleSummary?: string;
   programTags?: Array<"Virology" | "MD-PhD / Biophysics" | "MD-PhD / Biological and Biomedical Sciences">;
   fellowships?: string[];
+  linkedin?: LinkedInProfile;
   labStart?: string;
   labEnd?: string;
   group: (typeof CURRENT_TEAM_GROUPS)[number];
@@ -190,6 +196,7 @@ export type SeasonalMember = {
   name: string;
   title: string;
   program?: string;
+  linkedin?: LinkedInProfile;
   labStart?: string;
   labEnd?: string;
   summers?: number[];

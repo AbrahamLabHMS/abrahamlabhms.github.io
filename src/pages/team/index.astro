@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MembershipDates from "../../components/MembershipDates.astro";
+import TeamMemberName from "../../components/TeamMemberName.astro";
 import { peopleData } from "../../data/people";
 import { siteData } from "../../data/site";
 import { groupPeople, withBase } from "../../lib/content";
@@ -45,7 +46,7 @@ const directoryIndex = [
           {group.entries.map((person) => (
             <article class="team-row reveal" role="listitem">
               <div class="team-row__identity">
-                <h3>{person.name}</h3>
+                <TeamMemberName name={person.name} linkedin={person.linkedin} />
                 {group.label === "Leadership" && (
                   <a href={withBase("/jonathan-abraham/")}>View profile <span aria-hidden="true">→</span></a>
                 )}
@@ -72,7 +73,7 @@ const directoryIndex = [
         <div class="team-list" role="list">
           {peopleData.seasonalMembers.map((person) => (
             <article class="team-row reveal" role="listitem">
-              <div class="team-row__identity"><h3>{person.name}</h3></div>
+              <div class="team-row__identity"><TeamMemberName name={person.name} linkedin={person.linkedin} /></div>
               <div class="team-row__appointment">
                 <p class="team-row__role">{person.title}</p>
                 {person.program && <div class="team-row__details"><span>{person.program}</span></div>}

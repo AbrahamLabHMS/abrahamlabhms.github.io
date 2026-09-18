@@ -1631,7 +1631,7 @@ html:not(.js) .site-header {
   line-height: 1.35;
 }
 
-.team-row__identity a {
+.team-row__identity > a {
   display: inline-block;
   margin-top: 0.55rem;
   color: var(--accent-hover);
@@ -1639,8 +1639,38 @@ html:not(.js) .site-header {
   font-weight: 700;
 }
 
-:root[data-theme="dark"] .team-row__identity a {
+:root[data-theme="dark"] .team-row__identity > a {
   color: var(--accent);
+}
+
+.team-row__name {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.team-row__name h3 {
+  min-width: 0;
+}
+
+.team-linkedin {
+  display: inline-flex;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--ink-quiet);
+  border-radius: 2px;
+}
+
+.team-linkedin:hover {
+  color: var(--accent-hover);
+  background: var(--surface-soft);
+}
+
+.team-linkedin svg {
+  flex: none;
 }
 
 .team-row__role {
