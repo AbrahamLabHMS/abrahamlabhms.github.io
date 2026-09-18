@@ -61,6 +61,22 @@ async function assertLayout(page, label) {
   }
 }
 
+async function assertViewerLayout(viewer, width, label) {
+  const layout = await viewer.evaluate(dialog => {
+    const frame = dialog.getBoundingClientRect();
+    const matte = dialog.querySelector('.figure-viewer__matte').getBoundingClientRect();
+    const info = dialog.querySelector('.figure-viewer__info').getBoundingClientRect();
+    return {
+      overflow: dialog.scrollWidth - dialog.clientWidth,
+      contained: info.left >= frame.left && info.right <= frame.right,
+      beside: info.left >= matte.right - 1 && Math.abs(info.top - matte.top) < 1,
+      below: info.top >= matte.bottom - 1,
+    };
+  });
+  assert(layout.overflow <= 1 && layout.contained, `${label}: viewer content must stay within its frame`);
+  assert(width > 1040 ? layout.beside : layout.below, `${label}: figure details must follow the responsive reading order`);
+}
+
 try {
 for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
   const browser = await engine.launch({ headless: true, timeout: 30000 });
@@ -103,6 +119,7 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
         const image = viewer.locator('img');
         await image.scrollIntoViewIfNeeded();
         await waitForImage(image);
+        await assertViewerLayout(viewer, width, `${name} ${width} ${theme} ${figure.key}`);
         const fit = await image.evaluate(image => {
           const rect = image.getBoundingClientRect();
           return { ratio: rect.width / rect.height, expected: Number(image.getAttribute('width')) / Number(image.getAttribute('height')), loaded: image.complete && image.naturalWidth > 0, width: rect.width, nativeWidth: Number(image.getAttribute('width')) };
@@ -137,6 +154,12 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
       await first.click();
       const openViewer = page.locator('.figure-viewer[open]');
       await openViewer.waitFor({ state: 'visible' });
+      await openViewer.evaluate(dialog => dialog.scrollTop = dialog.scrollHeight);
+      await page.keyboard.press('Escape');
+      await openViewer.waitFor({ state: 'hidden' });
+      await first.click();
+      await openViewer.waitFor({ state: 'visible' });
+      assert.equal(await openViewer.evaluate(dialog => dialog.scrollTop), 0, 'Reopening a figure starts at its title');
       await openViewer.locator('img').click();
       assert.equal(await openViewer.count(), 1, 'Clicking the image must not close it');
       await openViewer.click({ position: { x: 4, y: 4 } });
@@ -157,7 +180,7 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
       await page.locator('.publication-figure__credit summary').first().click();
       assert.equal(await page.locator('.publication-figure__credit[open]').count(), 1);
       assert.equal(errors.length, 0, errors.join('\n'));
-      checks.push({ browser: name, width, theme, figuresVisible: figures.length, viewersChecked: figures.length, focusReturn: true, backdropDismissal: true, dragSafe: true, passed: true });
+      checks.push({ browser: name, width, theme, figuresVisible: figures.length, viewersChecked: figures.length, responsiveViewer: true, scrollReset: true, focusReturn: true, backdropDismissal: true, dragSafe: true, passed: true });
       await save();
       console.log(`${name} ${width} ${theme}: thumbnails, viewer, keyboard, and layout passed`);
       await context.close();

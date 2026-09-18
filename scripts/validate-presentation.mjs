@@ -70,7 +70,16 @@ for (const figure of figures) {
 for (const publication of publications) {
   const row = rows.find((node) => attribute(node, "id") === publicationAnchor(publication));
   assert.ok(row, `Missing publication anchor: ${publication.doi}`);
-  const links = descendants(row).filter((node) => node.tagName === "a").map((node) => attribute(node, "href"));
+  const rowNodes = descendants(row);
+  assert.equal(text(rowNodes.find((node) => node.tagName === "h3")), publication.title, "Paper titles remain verbatim");
+  assert.equal(text(rowNodes.find((node) => hasClass(node, "publication-row__citation"))), publication.citation, "Citations remain verbatim");
+  for (const node of rowNodes.filter((node) => hasClass(node, "publication-row__meta") || hasClass(node, "publication-row__outputs"))) {
+    assert.ok(text(node).trim(), "Do not render empty publication metadata");
+  }
+  const typeLabel = rowNodes.find((node) => hasClass(node, "publication-row__type"));
+  if (publication.articleType === "Research article") assert.equal(typeLabel, undefined, "Routine article labels should not repeat on every row");
+  else if (publication.articleType) assert.equal(text(typeLabel), publication.articleType, "Preprints and commentaries remain clearly identified");
+  const links = rowNodes.filter((node) => node.tagName === "a").map((node) => attribute(node, "href"));
   assert.ok(links.includes(publication.link));
   if (publication.pmcid) {
     const articlePath = `/articles/${publication.pmcid}/`;
