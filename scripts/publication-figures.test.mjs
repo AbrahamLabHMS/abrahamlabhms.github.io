@@ -24,6 +24,13 @@ test("publication figures have unique paper matches and resolved reuse evidence"
     for (const field of ["caption", "alt", "attribution"]) assert.ok(figure[field]?.trim());
     assert.ok(figure.attribution.includes(figure.doi) && figure.attribution.includes(figure.license));
     assert.ok(approval.licenseEvidence.length && approval.creditCheck && approval.restrictions);
+    if (figure.license === "Cell Press author reuse") {
+      assert.ok(matches[0].authors.includes("Abraham J"));
+      assert.equal(figure.licenseUrl, "https://www.cell.com/cell/information-for-authors/journal-policies#permissions");
+      assert.ok(approval.licenseEvidence.includes(figure.licenseUrl));
+      assert.ok(approval.reuseBasis && /author/i.test(approval.restrictions));
+      assert.doesNotMatch(figure.attribution, /CC BY|Creative Commons/);
+    }
     for (const url of [figure.sourceUrl, figure.licenseUrl, approval.identityEvidence, ...approval.licenseEvidence]) {
       assert.equal(new URL(url).protocol, "https:");
     }

@@ -32,6 +32,43 @@
     ]
   },
   {
+    "key": "hsv1_hp",
+    "doi": "10.1016/j.cell.2025.11.041",
+    "publicationTitle": "Mechanisms of HSV-1 helicase-primase inhibition and replication fork complex assembly",
+    "figureNumber": "Figure 1",
+    "caption": "Overall structure of the pritelivir-bound HSV-1 H/P complex.",
+    "alt": "Five lettered panels with protein domain diagrams, a mass distribution plot, molecular density maps, and ribbon models.",
+    "attribution": "Yu et al., Cell (2026), Figure 1. DOI: 10.1016/j.cell.2025.11.041. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13082216/figure/F1/",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/hsv1-hp-fig1-1812.webp",
+    "width": 1812,
+    "height": 1131,
+    "variants": [
+      {
+        "src": "/assets/images/publications/hsv1-hp-fig1-720.webp",
+        "width": 720,
+        "height": 449
+      },
+      {
+        "src": "/assets/images/publications/hsv1-hp-fig1-1200.webp",
+        "width": 1200,
+        "height": 749
+      },
+      {
+        "src": "/assets/images/publications/hsv1-hp-fig1-1800.webp",
+        "width": 1800,
+        "height": 1124
+      },
+      {
+        "src": "/assets/images/publications/hsv1-hp-fig1-1812.webp",
+        "width": 1812,
+        "height": 1131
+      }
+    ]
+  },
+  {
     "key": "arena_spike",
     "doi": "10.1038/s41564-025-02085-6",
     "publicationTitle": "Molecular organization of the New World arenavirus spike glycoprotein complex",
@@ -118,29 +155,39 @@
     ]
   },
   {
-    "key": "submergence",
-    "doi": "10.1038/s41586-024-07740-2",
-    "publicationTitle": "Shifts in receptors during submergence of an encephalitic arbovirus",
-    "figureNumber": "Figure 3",
-    "caption": "Shifts in human receptor recognition during WEEV spike protein evolution.",
-    "alt": "Three-panel figure with a dated branching diagram and labeled bar and line charts.",
-    "attribution": "Li et al., Nature (2024), Figure 3. DOI: 10.1038/s41586-024-07740-2. Copyright The Author(s) 2024. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
-    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11324528/#Fig3",
+    "key": "dna_pol_resist",
+    "doi": "10.1016/j.cell.2024.07.048",
+    "publicationTitle": "Viral DNA polymerase structures reveal mechanisms of antiviral drug resistance",
+    "figureNumber": "Figure 1",
+    "caption": "Structure of the DNA-bound HSV polymerase holoenzyme.",
+    "alt": "Three lettered panels with protein domain diagrams, a ribbon model bound to DNA, and a rotated molecular surface view.",
+    "attribution": "Shankar et al., Cell (2024), Figure 1. DOI: 10.1016/j.cell.2024.07.048. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11787825/figure/F1/",
     "license": "CC BY 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
-    "image": "/assets/images/publications/submergence-fig3-1063.webp",
-    "width": 1063,
-    "height": 1462,
+    "image": "/assets/images/publications/dna-pol-resist-fig1-1920.webp",
+    "width": 1920,
+    "height": 1083,
     "variants": [
       {
-        "src": "/assets/images/publications/submergence-fig3-720.webp",
+        "src": "/assets/images/publications/dna-pol-resist-fig1-720.webp",
         "width": 720,
-        "height": 990
+        "height": 406
       },
       {
-        "src": "/assets/images/publications/submergence-fig3-1063.webp",
-        "width": 1063,
-        "height": 1462
+        "src": "/assets/images/publications/dna-pol-resist-fig1-1200.webp",
+        "width": 1200,
+        "height": 677
+      },
+      {
+        "src": "/assets/images/publications/dna-pol-resist-fig1-1800.webp",
+        "width": 1800,
+        "height": 1015
+      },
+      {
+        "src": "/assets/images/publications/dna-pol-resist-fig1-1920.webp",
+        "width": 1920,
+        "height": 1083
       }
     ]
   },
@@ -182,6 +229,60 @@
     ]
   },
   {
+    "key": "submergence",
+    "doi": "10.1038/s41586-024-07740-2",
+    "publicationTitle": "Shifts in receptors during submergence of an encephalitic arbovirus",
+    "figureNumber": "Figure 3",
+    "caption": "Shifts in human receptor recognition during WEEV spike protein evolution.",
+    "alt": "Three-panel figure with a dated branching diagram and labeled bar and line charts.",
+    "attribution": "Li et al., Nature (2024), Figure 3. DOI: 10.1038/s41586-024-07740-2. Copyright The Author(s) 2024. CC BY 4.0. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11324528/#Fig3",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "image": "/assets/images/publications/submergence-fig3-1063.webp",
+    "width": 1063,
+    "height": 1462,
+    "variants": [
+      {
+        "src": "/assets/images/publications/submergence-fig3-720.webp",
+        "width": 720,
+        "height": 990
+      },
+      {
+        "src": "/assets/images/publications/submergence-fig3-1063.webp",
+        "width": 1063,
+        "height": 1462
+      }
+    ]
+  },
+  {
+    "key": "entero_toxin",
+    "doi": "10.1016/j.cell.2022.02.002",
+    "publicationTitle": "Emerging enterococcus pore-forming toxins with MHC/HLA-I as receptors",
+    "figureNumber": "Figure 2",
+    "caption": "Crystal structure of the Epx4 octameric pore.",
+    "alt": "Six lettered panels with a ring-shaped molecular model, close-up views, a structural overlay, and colored surface models.",
+    "attribution": "Xiong et al., Cell (2022), Figure 2. DOI: 10.1016/j.cell.2022.02.002. Copyright Elsevier Inc. 2022. Cell Press author reuse. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8978092/figure/F2/",
+    "license": "Cell Press author reuse",
+    "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+    "image": "/assets/images/publications/entero-toxin-fig2-750.webp",
+    "width": 750,
+    "height": 689,
+    "variants": [
+      {
+        "src": "/assets/images/publications/entero-toxin-fig2-720.webp",
+        "width": 720,
+        "height": 661
+      },
+      {
+        "src": "/assets/images/publications/entero-toxin-fig2-750.webp",
+        "width": 750,
+        "height": 689
+      }
+    ]
+  },
+  {
     "key": "rbd_evasion",
     "doi": "10.1126/science.abl6251",
     "publicationTitle": "Structural basis for continued antibody evasion by the SARS-CoV-2 receptor-binding domain",
@@ -205,6 +306,33 @@
         "src": "/assets/images/publications/rbd-evasion-fig4-786.webp",
         "width": 786,
         "height": 370
+      }
+    ]
+  },
+  {
+    "key": "sars2_immunocomp",
+    "doi": "10.1016/j.cell.2021.03.027",
+    "publicationTitle": "SARS-CoV-2 evolution in an immunocompromised host reveals shared neutralization escape mechanisms",
+    "figureNumber": "Figure 4",
+    "caption": "Predicted effects of RBD mutations on C1A-VH3-53 neutralizing antibody binding.",
+    "alt": "Six lettered panels comparing molecular close-ups, with each panel divided into structure and model views.",
+    "attribution": "Clark et al., Cell (2021), Figure 4. DOI: 10.1016/j.cell.2021.03.027. Copyright Elsevier Inc. 2021. Cell Press author reuse. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7962548/figure/fig4/",
+    "license": "Cell Press author reuse",
+    "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+    "image": "/assets/images/publications/sars2-immunocomp-fig4-726.webp",
+    "width": 726,
+    "height": 610,
+    "variants": [
+      {
+        "src": "/assets/images/publications/sars2-immunocomp-fig4-720.webp",
+        "width": 720,
+        "height": 605
+      },
+      {
+        "src": "/assets/images/publications/sars2-immunocomp-fig4-726.webp",
+        "width": 726,
+        "height": 610
       }
     ]
   },
@@ -269,6 +397,33 @@
         "src": "/assets/images/publications/arena-vaccine-ab-fig3-2045.webp",
         "width": 2045,
         "height": 1247
+      }
+    ]
+  },
+  {
+    "key": "arena_neut_2015",
+    "doi": "10.1016/j.chom.2015.11.005",
+    "publicationTitle": "Molecular basis for antibody-mediated neutralization of New World hemorrhagic fever mammarenaviruses",
+    "figureNumber": "Figure 1",
+    "caption": "Structure of a JUNV GP1-neutralizing antibody complex.",
+    "alt": "Single-panel ribbon model of a protein bound to an antibody fragment, with labeled loops.",
+    "attribution": "Mahmutovic et al., Cell Host & Microbe (2015), Figure 1. DOI: 10.1016/j.chom.2015.11.005. Copyright Elsevier Inc. 2015. Cell Press author reuse. Complete figure; resized and format-converted. No panels or labels removed.",
+    "sourceUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4685251/figure/F1/",
+    "license": "Cell Press author reuse",
+    "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+    "image": "/assets/images/publications/arena-neut-2015-fig1-800.webp",
+    "width": 800,
+    "height": 434,
+    "variants": [
+      {
+        "src": "/assets/images/publications/arena-neut-2015-fig1-720.webp",
+        "width": 720,
+        "height": 391
+      },
+      {
+        "src": "/assets/images/publications/arena-neut-2015-fig1-800.webp",
+        "width": 800,
+        "height": 434
       }
     ]
   }

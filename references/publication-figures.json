@@ -1,6 +1,6 @@
 {
   "reviewedAt": "2026-09-18",
-  "scope": "Nine identity- and reuse-cleared complete figures. Original sources and unresolved assets are not included in the website.",
+  "scope": "14 identity- and reuse-cleared complete figures. Original sources and unresolved assets are not included in the website. Author-reuse approvals are limited to this author's lab website and do not grant third-party reuse rights.",
   "figures": [
     {
       "key": "mpox_replisome",
@@ -44,6 +44,60 @@
           "width": 1797,
           "height": 2205,
           "sha256": "975b115f0372473456a3e1a3133d0dc289d66f8db408a7a845ab9a9f45088804"
+        }
+      ]
+    },
+    {
+      "key": "hsv1_hp",
+      "doi": "10.1016/j.cell.2025.11.041",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/3475/13082216/d850faa4ae7f/nihms-2127621-f0002.jpg",
+      "sourceSha256": "b1d3ab9487dd7c484e64163e4a892ec631740ee44a8d3aa25e9980d5922304f3",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13082216/#F1",
+      "identityNote": "The rendered PMC Figure 1 heading and image URL match the supplied master exactly. Its full caption has no third-party reproduction credit. The supplied file is the author-manuscript rendition.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://api.crossref.org/works/10.1016%2Fj.cell.2025.11.041",
+        "https://www.cell.com/cell/information-for-authors/journal-policies#permissions"
+      ],
+      "reuseBasis": "Publisher-deposited Crossref record identifies the version of record as CC BY 4.0. Cell Press's explicit author-content reuse policy additionally covers this author's manuscript figure on his lab website; PMC presence alone is not the basis.",
+      "creditCheck": "No third-party credit or exclusion in the complete supplied image or PMC Figure 1 caption.",
+      "restrictions": "Credit authors and source, link the CC license, and disclose resizing/format conversion. No scientific alterations. Do not imply endorsement.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 1812,
+        "maximumOneToOneCssWidth": 1812,
+        "maximumTwoXCssWidth": 906,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/hsv1-hp-fig1-720.webp",
+          "width": 720,
+          "height": 449,
+          "sha256": "c1a532e8b161aa3590a9cef019a2b5eedef4da2d9c5f38bd4aad263771b1acc3"
+        },
+        {
+          "src": "/assets/images/publications/hsv1-hp-fig1-1200.webp",
+          "width": 1200,
+          "height": 749,
+          "sha256": "b73f11fa56758dc35c3e63b03035cd2dba70fc8e8ff4a039765e6ce3b96dc298"
+        },
+        {
+          "src": "/assets/images/publications/hsv1-hp-fig1-1800.webp",
+          "width": 1800,
+          "height": 1124,
+          "sha256": "4ce15b2806602737ff9f941398bf6f47a9fee44cd32d275f876cbc8de7419bdb"
+        },
+        {
+          "src": "/assets/images/publications/hsv1-hp-fig1-1812.webp",
+          "width": 1812,
+          "height": 1131,
+          "sha256": "ca1d60e320237de0801a89cbc2b6ef800613778b296ad37b8fef047fad8f5a92"
         }
       ]
     },
@@ -173,42 +227,57 @@
       ]
     },
     {
-      "key": "submergence",
-      "doi": "10.1038/s41586-024-07740-2",
-      "figureNumber": "Figure 3",
+      "key": "dna_pol_resist",
+      "doi": "10.1016/j.cell.2024.07.048",
+      "figureNumber": "Figure 1",
       "identityStatus": "verified",
       "rightsStatus": "resolved",
-      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41586-024-07740-2/MediaObjects/41586_2024_7740_Fig3_HTML.png",
-      "sourceSha256": "96089b55db481751d369bb4c482945a67c412334ff3896fc362880b4221c9d7b",
-      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11324528/fullTextXML",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/b526/11787825/b6f45b45f595/nihms-2014412-f0002.jpg",
+      "sourceSha256": "afa847df8fbdf3b0fae0ac018e7758317eb8377a278ed51167d220ec8f61f731",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11787825/#F1",
+      "identityNote": "Rendered PMC Figure 1 title and linked image match the supplied master. The deposited published PDF also labels this composition Figure 1.",
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "licenseEvidence": [
-        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11324528/fullTextXML",
-        "https://pmc.ncbi.nlm.nih.gov/articles/PMC11324528/#copyright-information"
+        "https://eprints.whiterose.ac.uk/id/eprint/217625/1/1-s2.0-S0092867424008420-main.pdf",
+        "https://api.crossref.org/works/10.1016%2Fj.cell.2024.07.048",
+        "https://www.cell.com/cell/information-for-authors/journal-policies#permissions"
       ],
-      "creditCheck": "No separate credit or exclusion in the deposited main Figure 3 caption or supplied figure.",
-      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
+      "reuseBasis": "The publisher's version deposited by the University of York prints an article-level CC BY 4.0 license; Crossref independently registers it. Author reuse also covers the matching manuscript rendition.",
+      "creditCheck": "No third-party credit or exclusion in the complete supplied image or full PMC Figure 1 caption.",
+      "restrictions": "Credit authors and source, link the CC license, and disclose resizing/format conversion. No scientific alterations. Do not imply endorsement.",
       "checkedAt": "2026-09-18",
       "resolution": {
-        "status": "higher-resolution-recommended",
-        "nativeWidth": 1063,
-        "maximumOneToOneCssWidth": 1063,
-        "maximumTwoXCssWidth": 531,
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 1920,
+        "maximumOneToOneCssWidth": 1920,
+        "maximumTwoXCssWidth": 960,
         "standardImageColumnCssWidth": 600
       },
       "variants": [
         {
-          "src": "/assets/images/publications/submergence-fig3-720.webp",
+          "src": "/assets/images/publications/dna-pol-resist-fig1-720.webp",
           "width": 720,
-          "height": 990,
-          "sha256": "bf96a9c43e8f8a996659e50da0675eb01645f2cc41cc5ae5eb73721cb995c3a7"
+          "height": 406,
+          "sha256": "bde91583b9869b0a52651679b20beda93efb22a0ba3a28b40d4a61118b96e95c"
         },
         {
-          "src": "/assets/images/publications/submergence-fig3-1063.webp",
-          "width": 1063,
-          "height": 1462,
-          "sha256": "fb83323183f7c110c32b1022bacc2317827aaeda09d44507b269d5a6b776bf55"
+          "src": "/assets/images/publications/dna-pol-resist-fig1-1200.webp",
+          "width": 1200,
+          "height": 677,
+          "sha256": "7515d878ef1458e3bfe1218dfe00f1f47406c3688161f7d5c745bcc0070a96d0"
+        },
+        {
+          "src": "/assets/images/publications/dna-pol-resist-fig1-1800.webp",
+          "width": 1800,
+          "height": 1015,
+          "sha256": "e8660d7854f1eb33863366cd40aafe9e8740e0dfe43f54afc8c2aaf33cfc1ce8"
+        },
+        {
+          "src": "/assets/images/publications/dna-pol-resist-fig1-1920.webp",
+          "width": 1920,
+          "height": 1083,
+          "sha256": "79220b7a54ec53954fcb6bebb68186b431377dbd62548080e05b8b1c7c3f68db"
         }
       ]
     },
@@ -265,6 +334,89 @@
       ]
     },
     {
+      "key": "submergence",
+      "doi": "10.1038/s41586-024-07740-2",
+      "figureNumber": "Figure 3",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41586-024-07740-2/MediaObjects/41586_2024_7740_Fig3_HTML.png",
+      "sourceSha256": "96089b55db481751d369bb4c482945a67c412334ff3896fc362880b4221c9d7b",
+      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11324528/fullTextXML",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11324528/fullTextXML",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC11324528/#copyright-information"
+      ],
+      "creditCheck": "No separate credit or exclusion in the deposited main Figure 3 caption or supplied figure.",
+      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 1063,
+        "maximumOneToOneCssWidth": 1063,
+        "maximumTwoXCssWidth": 531,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/submergence-fig3-720.webp",
+          "width": 720,
+          "height": 990,
+          "sha256": "bf96a9c43e8f8a996659e50da0675eb01645f2cc41cc5ae5eb73721cb995c3a7"
+        },
+        {
+          "src": "/assets/images/publications/submergence-fig3-1063.webp",
+          "width": 1063,
+          "height": 1462,
+          "sha256": "fb83323183f7c110c32b1022bacc2317827aaeda09d44507b269d5a6b776bf55"
+        }
+      ]
+    },
+    {
+      "key": "entero_toxin",
+      "doi": "10.1016/j.cell.2022.02.002",
+      "figureNumber": "Figure 2",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/51a0/8978092/b77595b44709/nihms-1777956-f0003.jpg",
+      "sourceSha256": "761becd0d1eeb801779d5ec0591b1e080663f4b045bd2543f709dec6e9ddc913",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8978092/#F2",
+      "identityNote": "Rendered PMC Figure 2 heading and image URL match the supplied master. Jonathan Abraham is a coauthor. The supplied file is the author-manuscript rendition.",
+      "license": "Cell Press author reuse",
+      "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+      "licenseEvidence": [
+        "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+        "https://www.elsevier.com/about/policies-and-standards/copyright",
+        "https://api.crossref.org/works/10.1016%2Fj.cell.2022.02.002"
+      ],
+      "reuseBasis": "Cell Press explicitly permits authors to reuse their own published content with citation. This is the author's lab website, managed at his lab manager's direction. The Elsevier user license is not represented as a CC license or used as blanket republication permission.",
+      "creditCheck": "No third-party credit or exclusion found in the complete supplied image or PMC Figure 2 caption.",
+      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the original article and publisher; preserve all panels and labels. No scientific alterations.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 750,
+        "maximumOneToOneCssWidth": 750,
+        "maximumTwoXCssWidth": 375,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/entero-toxin-fig2-720.webp",
+          "width": 720,
+          "height": 661,
+          "sha256": "d724bd250613ae5480329d604b7ddc361ce7f28efb08f6aaf0c112401a515856"
+        },
+        {
+          "src": "/assets/images/publications/entero-toxin-fig2-750.webp",
+          "width": 750,
+          "height": 689,
+          "sha256": "2f9af93d16bd8ed7a9fafb89d367454bf97697bfebfdb1ae1aa7ceb8126916ad"
+        }
+      ]
+    },
+    {
       "key": "rbd_evasion",
       "doi": "10.1126/science.abl6251",
       "figureNumber": "Figure 4",
@@ -300,6 +452,49 @@
           "width": 786,
           "height": 370,
           "sha256": "c8966c6962d861f92208b5e9b9cc36a8dc436187b7fc35b8c0f22349fdd406d3"
+        }
+      ]
+    },
+    {
+      "key": "sars2_immunocomp",
+      "doi": "10.1016/j.cell.2021.03.027",
+      "figureNumber": "Figure 4",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/e94f/7962548/f1de42667e3c/gr4_lrg.jpg",
+      "sourceSha256": "b5f63b0c6cae84bb5048fcddc93e3e09a085898673600390218e3403dff3481f",
+      "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7962548/fullTextXML",
+      "identityNote": "Deposited XML verifies DOI, Figure 4 heading and gr4_lrg.jpg. Blank title in the new manifest is filled from this source, preserving the antibody identifier.",
+      "license": "Cell Press author reuse",
+      "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+      "licenseEvidence": [
+        "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+        "https://www.elsevier.com/about/policies-and-standards/copyright",
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7962548/fullTextXML"
+      ],
+      "reuseBasis": "Cell Press explicitly permits authors to reuse their own published content with citation. Jonathan Abraham is a coauthor and this is his lab website. The conditional COVID research-reuse notice is not the basis for this approval.",
+      "creditCheck": "No third-party credit or exclusion in the supplied figure, deposited caption, or figure permissions.",
+      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the original article and publisher; preserve all panels and labels. No scientific alterations.",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 726,
+        "maximumOneToOneCssWidth": 726,
+        "maximumTwoXCssWidth": 363,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/sars2-immunocomp-fig4-720.webp",
+          "width": 720,
+          "height": 605,
+          "sha256": "3cc6800e7d727823e86f1c64f70c7a12559c7c6d29011abce054df676394873f"
+        },
+        {
+          "src": "/assets/images/publications/sars2-immunocomp-fig4-726.webp",
+          "width": 726,
+          "height": 610,
+          "sha256": "e44c48711c52e64f39feea68cc045abcd193b5971051999addfdb6841a7cf737"
         }
       ]
     },
@@ -391,6 +586,50 @@
           "width": 2045,
           "height": 1247,
           "sha256": "563010aba165dfba1eb95485cfe49e8d5f369e8d2b74a1a5b20bbe96663bca05"
+        }
+      ]
+    },
+    {
+      "key": "arena_neut_2015",
+      "doi": "10.1016/j.chom.2015.11.005",
+      "figureNumber": "Figure 1",
+      "identityStatus": "verified",
+      "rightsStatus": "resolved",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/867d/4685251/29dbd5678bc6/nihms740322f1.jpg",
+      "sourceSha256": "2966db7f2c84d8bf8bd6ed510a24fd5ba6a368fc8149fd7540e1d62444be8cad",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4685251/#F1",
+      "identityNote": "Rendered PMC Figure 1 heading and exact nihms740322f1.jpg match. The 2016 correction concerns text and supplementary Figure S2B, not this main Figure 1.",
+      "license": "Cell Press author reuse",
+      "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+      "licenseEvidence": [
+        "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
+        "https://www.elsevier.com/about/policies-and-standards/copyright",
+        "https://api.crossref.org/works/10.1016%2Fj.chom.2015.11.005"
+      ],
+      "reuseBasis": "The verified Cell Press policy applies to authors' own content in Cell Press journals, including Cell Host & Microbe. Jonathan Abraham is a coauthor. Use is on his lab website, with citation, not third-party relicensing.",
+      "creditCheck": "No separate third-party credit or exclusion in the supplied image or full PMC Figure 1 caption.",
+      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the original article and publisher; preserve all panels and labels. No scientific alterations.",
+      "correctionEvidence": "https://www.cell.com/cell-host-microbe/fulltext/S1931-3128(16)30049-X",
+      "checkedAt": "2026-09-18",
+      "resolution": {
+        "status": "higher-resolution-recommended",
+        "nativeWidth": 800,
+        "maximumOneToOneCssWidth": 800,
+        "maximumTwoXCssWidth": 400,
+        "standardImageColumnCssWidth": 600
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/arena-neut-2015-fig1-720.webp",
+          "width": 720,
+          "height": 391,
+          "sha256": "d60529eec55431af3cbe6d0fd740c1adb84f61c0acb3a367fa519b369cd86898"
+        },
+        {
+          "src": "/assets/images/publications/arena-neut-2015-fig1-800.webp",
+          "width": 800,
+          "height": 434,
+          "sha256": "8dc56bd4f6f256608beab36ac07f6823a9a83bcf6d555caa0c3f223c85ee39cc"
         }
       ]
     }

@@ -136,6 +136,10 @@ export const peopleData: PeopleData = {
     {
       name: "James Spencer",
       title: "Lab Manager",
+      linkedin: {
+        url: "https://www.linkedin.com/in/jamesmspencer/",
+        optedIn: true
+      },
       labStart: "2025-08",
       group: "Operations & Strategy",
       order: 19
