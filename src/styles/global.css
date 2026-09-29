@@ -1480,6 +1480,10 @@ html:not(.js) .site-header {
   line-height: 1.65;
 }
 
+.profile-dossier__actions {
+  margin-top: 1.75rem;
+}
+
 .profile-dossier__links {
   display: flex;
   flex-direction: column;

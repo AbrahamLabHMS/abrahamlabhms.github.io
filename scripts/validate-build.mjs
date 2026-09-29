@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import { normalizeBasePath } from "./lib/site-paths.mjs";
 import { attribute, createBuildTargetValidator, elements } from "./lib/build-targets.mjs";
 import { siteData } from "../src/data/site.ts";
+import { jonathanProfile } from "../src/data/jonathan.ts";
 import { alumniSourceError } from "./lib/alumni-sources.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -52,6 +53,19 @@ for (const relativePath of requiredPages) {
 }
 
 const allFiles = await walk(siteRoot);
+const cvUrl = jonathanProfile.cvUrl;
+if (!/^\/assets\/documents\/[a-z0-9-]+\.pdf$/.test(cvUrl || "")) {
+  failures.push("Jonathan's CV must use a local PDF in assets/documents.");
+} else {
+  const cvFile = path.join(siteRoot, cvUrl.slice(1));
+  if (!await exists(cvFile) || (await fs.readFile(cvFile)).subarray(0, 5).toString() !== "%PDF-") {
+    failures.push("Jonathan's CV PDF is missing or invalid.");
+  }
+  const profileHtml = await fs.readFile(path.join(siteRoot, "jonathan-abraham/index.html"), "utf8");
+  if (!elements(profileHtml).some((node) => node.tagName === "a" && attribute(node, "href") === `${basePath}${cvUrl}`)) {
+    failures.push("Jonathan's profile must link to his CV PDF.");
+  }
+}
 const htmlFiles = allFiles.filter((filePath) => filePath.endsWith(".html"));
 for (const htmlFile of htmlFiles) {
   const html = await fs.readFile(htmlFile, "utf8");

@@ -63,6 +63,10 @@ Add `publicEmail: "member@hms.harvard.edu"` to a current or seasonal member's re
 
 The email icon is a native `mailto:` link with an accessible label. It opens the visitor's configured email handler without a new browser tab, a prefilled message, or a third-party service.
 
+## Jonathan's CV
+
+The profile links to a dated PDF in `public/assets/documents/`, through `jonathanProfile.cvUrl` in `src/data/jonathan.ts`. To update it, export the approved Word document without changing its content, check every PDF page, add the new dated PDF, and update that path. Keep the editable source and review files outside public assets. The build checks that the PDF exists and the profile links to it.
+
 ## Publication record
 
 ```bash

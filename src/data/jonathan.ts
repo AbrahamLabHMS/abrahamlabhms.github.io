@@ -6,6 +6,7 @@ export const jonathanProfile = {
   secondaryTitle: "Investigator, Howard Hughes Medical Institute",
   clinicalTitle: "Associate Physician, Division of Infectious Diseases, Brigham and Women's Hospital",
   pubmedUrl: "https://pubmed.ncbi.nlm.nih.gov/?term=Abraham+Jonathan%5BFull+Author+Name%5D&sort=date",
+  cvUrl: "/assets/documents/jonathan-abraham-cv-2026-09-27.pdf",
   overview:
     "Jonathan Abraham studies the molecular mechanisms of viral infection in medically important viruses.",
   biography: [

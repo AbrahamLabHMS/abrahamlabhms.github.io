@@ -230,6 +230,7 @@ export type JonathanProfile = {
   secondaryTitle: string;
   clinicalTitle: string;
   pubmedUrl: string;
+  cvUrl: string;
   overview: string;
   biography: string[];
   appointments: Array<{

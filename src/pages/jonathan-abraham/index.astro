@@ -39,6 +39,11 @@ const personData = {
         <p>{jonathanProfile.title}</p>
         <p>{jonathanProfile.secondaryTitle}</p>
         <p>{jonathanProfile.clinicalTitle}</p>
+        <div class="button-row profile-dossier__actions">
+          <a class="button button--secondary" href={withBase(jonathanProfile.cvUrl)} type="application/pdf" target="_blank" rel="noopener noreferrer" aria-label="Curriculum vitae (PDF, opens in a new tab)">
+            Curriculum vitae (PDF)
+          </a>
+        </div>
       </header>
       <div class="profile-dossier__summary reveal">
         <p class="profile-dossier__overview">{jonathanProfile.overview}</p>
