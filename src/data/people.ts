@@ -130,6 +130,10 @@ export const peopleData: PeopleData = {
     {
       name: "Jayda Gilliard",
       title: "Research Technician",
+      linkedin: {
+        url: "https://www.linkedin.com/in/jayda-gilliard/",
+        optedIn: true
+      },
       labStart: "2026-08",
       group: "Research Staff",
       order: 18
