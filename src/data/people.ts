@@ -82,6 +82,10 @@ export const peopleData: PeopleData = {
     {
       name: "Jessica Oros",
       title: "Graduate Student",
+      linkedin: {
+        url: "https://www.linkedin.com/in/jessica-oros-116j/",
+        optedIn: true
+      },
       programTags: ["Virology"],
       labStart: "2024-04",
       group: "Graduate Students",
