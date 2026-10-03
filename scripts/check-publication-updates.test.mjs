@@ -132,6 +132,58 @@ test("invalid JSON is a source failure", async () => {
   assert.equal(reportExitCode(report), 1);
 });
 
+test("oversized source data leaves independent checks and a saved incomplete report", async () => {
+  const { report, calls } = await check({ pubmedSearch: () => Response.json({
+    esearchresult: { count: "0", idlist: [] }, padding: "x".repeat(9 * 1024 * 1024)
+  }) });
+  assert.equal(report.status, "incomplete");
+  assert.match(report.sourceErrors.join("\n"), /response size limit/);
+  assert.ok(calls.some((url) => url.hostname === "www.ebi.ac.uk"));
+  assert.ok(calls.some((url) => url.hostname === "api.crossref.org"));
+  const outputDir = await fs.mkdtemp(path.join(os.tmpdir(), "publication-limit-"));
+  try {
+    await writePublicationReport(report, { outputDir, summaryPath: null });
+    const saved = JSON.parse(await fs.readFile(path.join(outputDir, "report.json"), "utf8"));
+    assert.equal(saved.status, "incomplete");
+    assert.deepEqual(saved.sourceErrors, report.sourceErrors);
+    assert.equal(reportExitCode(saved), 1);
+  } finally {
+    await fs.rm(outputDir, { recursive: true, force: true });
+  }
+});
+
+test("search responses cannot exceed the requested page size", async () => {
+  for (const overrides of [
+    { discovery: { hitCount: 150000, resultList: { result: Array(150000).fill(null) } } },
+    { pubmedSearch: { esearchresult: { count: "150000", idlist: Array(150000).fill("1") } } }
+  ]) {
+    const { report, calls } = await check(overrides);
+    assert.equal(report.status, "incomplete");
+    assert.equal(report.sourceErrors.length, 1);
+    assert.match(report.sourceErrors[0], /requested limit/);
+    assert.ok(calls.some((url) => url.hostname === "api.crossref.org"));
+    assert.match(renderMarkdown(report), /Status: INCOMPLETE/);
+  }
+  const { report } = await check({
+    discovery: { hitCount: 100, resultList: { result: Array(100).fill(discoveryRecord(candidateDoi,
+      { bookOrReportDetails: { publisher: "medRxiv" } })) } },
+    pubmedSearch: { esearchresult: { count: "100", idlist: Array(100).fill("1") } }
+  });
+  assert.equal(report.status, "complete");
+});
+
+test("large diagnostic lists render without spreading function arguments", async () => {
+  const { report } = await check();
+  report.status = "incomplete";
+  report.sourceErrors = Array(150000).fill("Invalid source record");
+  report.localIssues = ["Local issue"];
+  report.remoteMetadataIssues = ["Remote issue"];
+  const markdown = renderMarkdown(report);
+  assert.equal(markdown.split("- Invalid source record").length - 1, 150000);
+  assert.match(markdown, /- Local issue/);
+  assert.match(markdown, /- Remote issue/);
+});
+
 test("truncated search responses cannot be reported as complete", async () => {
   for (const overrides of [
     { pubmedSearch: { esearchresult: { count: "101", idlist: ["1"] } } },

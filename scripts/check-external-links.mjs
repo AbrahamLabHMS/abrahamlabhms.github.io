@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promises as fs } from "node:fs";
 import { attribute, elements } from "./lib/build-targets.mjs";
+import { publicLinkFetch } from "./lib/public-link-request.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -38,7 +39,6 @@ export function classifyStatus(status) {
 async function probeUrl(url, fetchImpl) {
   try {
     const response = await fetchImpl(url, {
-      redirect: "follow",
       headers: { Accept: "text/html,application/xhtml+xml,application/json;q=0.8,*/*;q=0.5", "User-Agent": userAgent },
       signal: AbortSignal.timeout(20000)
     });
@@ -50,7 +50,7 @@ async function probeUrl(url, fetchImpl) {
   }
 }
 
-export async function checkUrl(url, fetchImpl = fetch) {
+export async function checkUrl(url, fetchImpl = publicLinkFetch) {
   const first = await probeUrl(url, fetchImpl);
   if (first.state !== "broken") return first;
   const confirmation = await probeUrl(url, fetchImpl);

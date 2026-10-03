@@ -4,11 +4,13 @@ import { promises as fs } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
 import { acceptedSourceVariations } from "./lib/publication-metadata-variations.mjs";
+import { createMetadataReader } from "./lib/metadata-json.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const require = createRequire(import.meta.url);
 const userAgent = "AbrahamLabWebsite/1.0 (mailto:james_spencer@hms.harvard.edu)";
+const searchRecordLimit = 100;
 
 function transpileTsModule(source, filePath) {
   const result = ts.transpileModule(source, {
@@ -31,15 +33,6 @@ async function loadPublications() {
   const filePath = path.join(repoRoot, "src", "data", "publications.ts");
   const source = await fs.readFile(filePath, "utf8");
   return transpileTsModule(source, filePath).publications;
-}
-
-async function fetchJson(url, fetchImpl) {
-  const response = await fetchImpl(url, {
-    headers: { Accept: "application/json", "User-Agent": userAgent },
-    signal: AbortSignal.timeout(20000)
-  });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText} for ${url}`);
-  return response.json();
 }
 
 function normalizeDoi(value) {
@@ -128,6 +121,9 @@ function requireCompleteSearch(records, count, source) {
   if (Number(count) !== records.length) {
     throw new Error(`${source} returned ${records.length} of ${count} records; the search is incomplete`);
   }
+  if (records.length > searchRecordLimit) {
+    throw new Error(`${source} returned more than the requested limit of ${searchRecordLimit} records`);
+  }
   return records;
 }
 
@@ -172,7 +168,7 @@ async function findPubMedCandidates(publications, localDois, localPmids, fromDat
   const affiliation = '("Harvard Medical School"[Affiliation] OR "Howard Hughes Medical Institute"[Affiliation] OR "Brigham and Women\'s Hospital"[Affiliation])';
   const term = `Abraham Jonathan[Full Author Name] AND ${affiliation} AND ("${fromDate.replaceAll("-", "/")}"[Date - Publication] : "${toDate.replaceAll("-", "/")}"[Date - Publication])`;
   const searchUrl = new URL("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi");
-  searchUrl.search = new URLSearchParams({ db: "pubmed", term, retmode: "json", retmax: "100", sort: "pub date" });
+  searchUrl.search = new URLSearchParams({ db: "pubmed", term, retmode: "json", retmax: String(searchRecordLimit), sort: "pub date" });
   const search = await getJson(searchUrl);
   const ids = requireCompleteSearch(search.esearchresult?.idlist, search.esearchresult?.count, "PubMed");
   if (!ids.length) return [];
@@ -210,7 +206,7 @@ async function findPubMedCandidates(publications, localDois, localPmids, fromDat
 async function findBioRxivCandidates(publications, localDois, fromDate, toDate, getJson, sourceErrors) {
   const query = `SRC:PPR AND AUTH:"Abraham J" AND FIRST_PDATE:[${fromDate} TO ${toDate}]`;
   const searchUrl = new URL("https://www.ebi.ac.uk/europepmc/webservices/rest/search");
-  searchUrl.search = new URLSearchParams({ query, format: "json", pageSize: "100", resultType: "core" });
+  searchUrl.search = new URLSearchParams({ query, format: "json", pageSize: String(searchRecordLimit), resultType: "core" });
   const search = await getJson(searchUrl);
   const possible = requireCompleteSearch(search.resultList?.result, search.hitCount, "Europe PMC preprint discovery");
 
@@ -450,11 +446,13 @@ export function renderMarkdown(report) {
   }
 
   if (report.localIssues.length) {
-    lines.push("", "## Local metadata issues", ...report.localIssues.map((item) => `- ${plain(item)}`));
+    lines.push("", "## Local metadata issues");
+    for (const item of report.localIssues) lines.push(`- ${plain(item)}`);
   }
 
   if (report.remoteMetadataIssues.length) {
-    lines.push("", "## Remote metadata differences", ...report.remoteMetadataIssues.map((item) => `- ${plain(item)}`));
+    lines.push("", "## Remote metadata differences");
+    for (const item of report.remoteMetadataIssues) lines.push(`- ${plain(item)}`);
   }
 
   if (report.acceptedMetadataVariations?.length) {
@@ -466,7 +464,8 @@ export function renderMarkdown(report) {
   }
 
   if (report.sourceErrors.length) {
-    lines.push("", "## Failed source checks", ...report.sourceErrors.map((item) => `- ${plain(item)}`));
+    lines.push("", "## Failed source checks");
+    for (const item of report.sourceErrors) lines.push(`- ${plain(item)}`);
   }
 
   if (report.status === "complete" && !report.candidates.length && !report.publishedPreprints.length && !report.versionUpdates.length && !report.localIssues.length && !report.remoteMetadataIssues.length) {
@@ -477,12 +476,8 @@ export function renderMarkdown(report) {
 }
 
 export async function collectPublicationReport({ publications, fetchImpl = globalThis.fetch, now = new Date() }) {
-  const cache = new Map();
-  const getJson = (url) => {
-    const key = String(url);
-    if (!cache.has(key)) cache.set(key, fetchJson(url, fetchImpl));
-    return cache.get(key);
-  };
+  const getJson = createMetadataReader({ fetchImpl,
+    headers: { Accept: "application/json", "User-Agent": userAgent } });
   const localDois = new Set(publications.map((item) => normalizeDoi(item.doi)).filter(Boolean));
   const localPmids = new Set(publications.map((item) => String(item.pmid || "")).filter(Boolean));
   const localIssues = [];
