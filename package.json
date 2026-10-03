@@ -7,6 +7,7 @@
     "test": "node --test scripts/*.test.mjs",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host 127.0.0.1",
     "security:check": "node scripts/validate-security.mjs",
+    "audit:dependencies": "node scripts/audit-dependencies.mjs",
     "build": "node scripts/validate-security.mjs && node scripts/validate-content.mjs && ASTRO_TELEMETRY_DISABLED=1 astro build",
     "postbuild": "node scripts/validate-build.mjs && node scripts/validate-presentation.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host 127.0.0.1",

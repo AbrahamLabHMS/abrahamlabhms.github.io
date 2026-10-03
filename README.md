@@ -25,6 +25,8 @@ The GitHub Actions workflow in `.github/workflows/deploy.yml` validates and buil
 
 Pull requests run the same checks without publishing. A manual run is review-only by default; enable its `publish` input on `main` to publish after all checks pass. The former separate visual-review workflow is consolidated into this release workflow to avoid duplicate runs.
 
+Run `npm run audit:dependencies` for the release dependency gate. It retains npm's high/critical blocking threshold, with one [approved, time-limited exception](references/security-exception-2026-10-02.md) ending October 16, 2026, Eastern time. Raw audit evidence and the separate decision are saved to `output/ci/`; an accepted exception is not a clean audit. All other release checks remain required.
+
 ## GitHub Pages configuration
 
 This repository is intended to publish through the custom GitHub Actions workflow in `.github/workflows/deploy.yml`.

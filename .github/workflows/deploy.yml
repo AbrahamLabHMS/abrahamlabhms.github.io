@@ -34,6 +34,8 @@ jobs:
     name: Required site checks
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    outputs:
+      exception_expires_at: ${{ steps.audit.outputs.exception_expires_at }}
     permissions:
       contents: read
     env:
@@ -67,7 +69,8 @@ jobs:
         run: npm ci 2>&1 | tee output/ci/install.log
 
       - name: Audit dependencies
-        run: npm audit --audit-level=high 2>&1 | tee output/ci/audit.log
+        id: audit
+        run: npm run audit:dependencies 2>&1 | tee output/ci/audit.log
 
       - name: Run offline regression tests
         run: npm test 2>&1 | tee output/ci/regression-tests.log
@@ -142,6 +145,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+      - name: Recheck temporary security exception expiry
+        env:
+          EXCEPTION_EXPIRES_AT: ${{ needs.checks.outputs.exception_expires_at }}
+        run: |
+          if [[ -n "$EXCEPTION_EXPIRES_AT" ]]; then
+            deadline=$(date -u -d "$EXCEPTION_EXPIRES_AT" +%s)
+            now=$(date -u +%s)
+            if (( now >= deadline )); then
+              printf 'Temporary security exception expired; deployment blocked.\n' >&2
+              exit 1
+            fi
+          fi
+
       - name: Configure Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
 
