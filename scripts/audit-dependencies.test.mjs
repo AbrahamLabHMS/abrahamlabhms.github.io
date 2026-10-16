@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import yaml from "js-yaml";
-import { evaluateAudit, exception } from "./audit-dependencies.mjs";
+import { evaluateAudit } from "./audit-dependencies.mjs";
 
 function fixture() {
   const fixAvailable = { name: "astro", version: "2.10.9", isSemVerMajor: true };
@@ -19,21 +19,16 @@ function fixture() {
       },
       metadata: { vulnerabilities: { info: 0, low: 0, moderate: 0, high: 2, critical: 0, total: 2 } },
     },
-    context: {
-      exitCode: 1, now: new Date("2026-10-02T22:00:00Z"),
-      configSha256: exception.configSha256,
-      installed: { ...exception.versions },
-      lock: { packages: Object.fromEntries(Object.entries(exception.versions).map(([name, version]) => [`node_modules/${name}`, { version }])) },
-    },
+    context: { exitCode: 1 },
   };
 }
 
-test("only the reviewed advisory chain receives the temporary exception", () => {
+test("the formerly excepted advisory now blocks deployment", () => {
   const { report, context } = fixture();
   const result = evaluateAudit(report, context);
-  assert.equal(result.passed, true);
-  assert.equal(result.exceptionUsed, true);
-  assert.equal(result.expiresAt, "2026-10-17T04:00:00Z");
+  assert.equal(result.passed, false);
+  assert.equal(result.exceptionUsed, false);
+  assert.equal(result.expiresAt, undefined);
 });
 
 for (const [name, mutate] of Object.entries({
@@ -46,9 +41,6 @@ for (const [name, mutate] of Object.entries({
   "critical severity": ({ report }) => { report.vulnerabilities.astro.severity = "critical"; report.metadata.vulnerabilities.high--; report.metadata.vulnerabilities.critical++; },
   "critical advisory under high aggregate": ({ report }) => { report.vulnerabilities["http-cache-semantics"].via[0].severity = "critical"; },
   "a nested install": ({ report }) => report.vulnerabilities["http-cache-semantics"].nodes.push("node_modules/other/node_modules/http-cache-semantics"),
-  "lockfile version drift": ({ context }) => { context.lock.packages["node_modules/astro"].version = "7.3.3"; },
-  "installed version drift": ({ context }) => { context.installed["http-cache-semantics"] = "4.2.1"; },
-  "config drift": ({ context }) => { context.configSha256 = "different"; },
   "a newly suggested fix": ({ report }) => { report.vulnerabilities["http-cache-semantics"].fixAvailable = true; },
   "exact expiry": ({ context }) => { context.now = new Date("2026-10-17T04:00:00Z"); },
   "after expiry": ({ context }) => { context.now = new Date("2026-10-18T00:00:00Z"); },
@@ -73,13 +65,13 @@ for (const [name, mutate] of Object.entries({
   });
 }
 
-test("the last instant before expiry remains valid", () => {
+test("the retired exception cannot accept an advisory even before its former expiry", () => {
   const { report, context } = fixture();
   context.now = new Date("2026-10-17T03:59:59.999Z");
-  assert.equal(evaluateAudit(report, context).passed, true);
+  assert.equal(evaluateAudit(report, context).passed, false);
 });
 
-test("a clean audit does not depend on an expired exception", () => {
+test("a clean audit passes independently of the former exception date", () => {
   const report = { auditReportVersion: 2, vulnerabilities: {}, metadata: { vulnerabilities: { info: 0, low: 0, moderate: 0, high: 0, critical: 0, total: 0 } } };
   const result = evaluateAudit(report, { exitCode: 0, now: new Date("2026-10-18T00:00:00Z") });
   assert.equal(result.passed, true);
@@ -122,18 +114,14 @@ test("malformed reports never receive an exception", () => {
   for (const report of [null, [], {}, "invalid"]) assert.equal(evaluateAudit(report, {}).passed, false);
 });
 
-test("CI keeps the audit mandatory and rechecks expiry before deployment", () => {
+test("CI keeps the audit mandatory with no temporary exception plumbing", () => {
   const workflow = yaml.load(readFileSync(new URL("../.github/workflows/deploy.yml", import.meta.url), "utf8"));
   const audit = workflow.jobs.checks.steps.find((step) => step.id === "audit");
   assert.match(audit.run, /^npm run audit:dependencies /);
   assert.doesNotMatch(audit.run, /\|\|\s*true/);
   assert.equal(audit["continue-on-error"], undefined);
   assert.equal(workflow.jobs.deploy.needs, "checks");
-  assert.equal(workflow.jobs.checks.outputs.exception_expires_at, "${{ steps.audit.outputs.exception_expires_at }}");
-  const steps = workflow.jobs.deploy.steps;
-  const expiry = steps.findIndex((step) => step.name === "Recheck temporary security exception expiry");
-  assert.ok(expiry >= 0 && expiry < steps.findIndex((step) => step.id === "deployment"));
-  assert.equal(steps[expiry].env.EXCEPTION_EXPIRES_AT, "${{ needs.checks.outputs.exception_expires_at }}");
-  assert.match(steps[expiry].run, /now >= deadline/);
-  assert.equal(steps[expiry]["continue-on-error"], undefined);
+  assert.equal(workflow.jobs.checks.outputs?.exception_expires_at, undefined);
+  assert.ok(!workflow.jobs.deploy.steps.some((step) => step.env?.EXCEPTION_EXPIRES_AT));
+  assert.ok(workflow.jobs.deploy.steps.some((step) => step.id === "deployment"));
 });

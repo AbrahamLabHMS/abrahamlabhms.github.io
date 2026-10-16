@@ -77,7 +77,7 @@ const topics = researchTopics.map((topic) => ({
               <li>
                 <p class="research-papers__finding">{paper.finding}</p>
                 <a href={paper.link} target="_blank" rel="noreferrer">{paper.title}<span aria-hidden="true"> ↗</span></a>
-                <p class="research-papers__citation">{paper.journal} · {paper.year}</p>
+                <p class="research-papers__citation"><time datetime={String(paper.year)}>{paper.year}</time></p>
               </li>
             ))}
           </ul>

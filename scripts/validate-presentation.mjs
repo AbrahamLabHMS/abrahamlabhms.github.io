@@ -5,7 +5,7 @@ import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
 import { siteData } from "../src/data/site.ts";
 import { researchEntities, researchTopics, researchIntro } from "../src/data/research.ts";
-import { homepagePublication, publicationAnchor } from "../src/lib/content.ts";
+import { formatDateLabel, homepagePublication, publicationAnchor, publicationSections } from "../src/lib/content.ts";
 
 const page = async (route) => elements(await readFile(new URL(`../_site/${route}`, import.meta.url), "utf8"));
 const hasClass = (node, name) => (attribute(node, "class") || "").split(/\s+/).includes(name);
@@ -44,6 +44,24 @@ assert.ok(!home.some((node) => node.tagName === "iframe" || hasClass(node, "map-
 const record = await page("publications/index.html");
 assert.ok(!record.some((node) => hasClass(node, "publication-print") || hasClass(node, "publication-status")), "Publications must not show print controls or a checked timestamp");
 const rows = record.filter((node) => hasClass(node, "publication-row"));
+const sections = record.filter((node) => hasClass(node, "publication-record"));
+assert.deepEqual(sections.map((node) => attribute(node, "id")), publicationSections(publications).map((section) => section.id));
+for (const section of publicationSections(publications)) {
+  const sectionNode = sections.find((node) => attribute(node, "id") === section.id);
+  const sectionRows = descendants(sectionNode).filter((node) => hasClass(node, "publication-row"));
+  assert.deepEqual(sectionRows.map((node) => attribute(node, "id")), section.years.flatMap((year) => year.entries.map(publicationAnchor)), "Sections must retain newest-first ordering and separate preprints");
+  assert.equal(text(descendants(sectionNode).find((node) => node.tagName === "h2")), section.label);
+  if (section.note) assert.ok(text(sectionNode).includes(section.note));
+  const filters = descendants(sectionNode).find((node) => hasClass(node, "publication-filters"));
+  if (section.id === "published-papers") {
+    assert.ok(filters, "Peer-reviewed publications need article-type filters");
+    assert.notEqual(attribute(filters, "hidden"), undefined, "Filter controls must be hidden until JavaScript is ready");
+    const buttons = descendants(filters).filter((node) => node.tagName === "button");
+    assert.deepEqual(buttons.map((node) => text(node).trim()), ["All", "Research articles", "Reviews", "Commentaries"]);
+    assert.deepEqual(buttons.map((node) => attribute(node, "aria-pressed")), ["true", "false", "false", "false"]);
+    for (const button of buttons) assert.equal(attribute(button, "aria-controls"), `${section.id}-list`);
+  } else assert.equal(filters, undefined, "Preprints stay separate from article-type filters");
+}
 const figures = JSON.parse(await readFile(new URL("../src/data/publication-figures.json", import.meta.url), "utf8"));
 assert.equal(rows.length, publications.length);
 assert.equal(new Set(rows.map((row) => attribute(row, "id"))).size, rows.length);
@@ -70,15 +88,22 @@ for (const figure of figures) {
 for (const publication of publications) {
   const row = rows.find((node) => attribute(node, "id") === publicationAnchor(publication));
   assert.ok(row, `Missing publication anchor: ${publication.doi}`);
+  assert.equal(attribute(row, "data-article-type"), publication.articleType);
+  assert.equal(attribute(row, "hidden"), undefined, "Every publication must be available without JavaScript");
   const rowNodes = descendants(row);
-  assert.equal(text(rowNodes.find((node) => node.tagName === "h3")), publication.title, "Paper titles remain verbatim");
-  assert.equal(text(rowNodes.find((node) => hasClass(node, "publication-row__citation"))), publication.citation, "Citations remain verbatim");
+  assert.equal(text(rowNodes.find((node) => node.tagName === "h4")), publication.title, "Paper titles remain verbatim");
+  assert.equal(text(rowNodes.find((node) => hasClass(node, "publication-row__citation"))), publication.authors, "Visible author lists must remain verbatim without journal names");
+  const metadata = rowNodes.find((node) => hasClass(node, "publication-row__meta"));
+  const date = descendants(metadata).find((node) => node.tagName === "time");
+  assert.equal(attribute(date, "datetime"), publication.publishedAt ?? String(publication.year));
+  assert.equal(text(date), publication.publishedAt ? formatDateLabel(publication.publishedAt) : String(publication.year));
+  if (publication.journal) assert.ok(!text(metadata).includes(publication.journal), "Journal names must not return to citation metadata");
   for (const node of rowNodes.filter((node) => hasClass(node, "publication-row__meta") || hasClass(node, "publication-row__outputs"))) {
     assert.ok(text(node).trim(), "Do not render empty publication metadata");
   }
   const typeLabel = rowNodes.find((node) => hasClass(node, "publication-row__type"));
   if (publication.articleType === "Research article") assert.equal(typeLabel, undefined, "Routine article labels should not repeat on every row");
-  else if (publication.articleType) assert.equal(text(typeLabel), publication.articleType, "Preprints and commentaries remain clearly identified");
+  else if (publication.articleType) assert.equal(text(typeLabel), publication.articleType, "Preprints, reviews, and commentaries remain clearly identified");
   const links = rowNodes.filter((node) => node.tagName === "a").map((node) => attribute(node, "href"));
   assert.ok(links.includes(publication.link));
   if (publication.pmcid) {
@@ -90,7 +115,22 @@ for (const publication of publications) {
   }
 }
 
+const sectionNav = record.find((node) => node.tagName === "nav" && attribute(node, "aria-label") === "Publication sections");
+assert.deepEqual(descendants(sectionNav).filter((node) => node.tagName === "a").map((node) => attribute(node, "href")), publicationSections(publications).map((section) => `#${section.id}`));
+for (const node of record.filter((node) => node.tagName === "a" && (attribute(node, "href") || "").startsWith("#"))) {
+  const id = decodeURIComponent(attribute(node, "href").slice(1));
+  assert.ok(record.some((target) => attribute(target, "id") === id), `Broken publication jump link: ${id}`);
+}
+
 const research = await page("research/index.html");
+for (const node of [
+  ...home.filter((node) => hasClass(node, "publication-feature__source") || hasClass(node, "dossier-ledger__meta")),
+  ...research.filter((node) => hasClass(node, "research-papers__citation"))
+]) {
+  for (const journal of new Set(publications.map((paper) => paper.journal).filter(Boolean))) {
+    assert.ok(!text(node).includes(journal), "Paper references on Home and Research must also use journal-neutral metadata");
+  }
+}
 assert.equal(text(research.find((node) => node.tagName === "h1")), researchIntro.title);
 assert.ok(!research.some((node) => node.tagName === "meta" && attribute(node, "name") === "robots" && (attribute(node, "content") || "").includes("noindex")));
 assert.ok(attribute(research.find((node) => node.tagName === "link" && attribute(node, "rel") === "canonical"), "href").endsWith("/research/"));

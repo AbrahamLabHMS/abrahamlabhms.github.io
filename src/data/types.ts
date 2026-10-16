@@ -141,7 +141,7 @@ export type Publication = {
   imagePosition?: string;
   imageAlt?: string;
   visualReuseStatus?: "open-access" | "lab-approved" | "link-only";
-  articleType: "Research article" | "Preprint" | "Commentary";
+  articleType: "Research article" | "Preprint" | "Review" | "Commentary";
   correspondingAuthor: true;
   correspondenceSource: string;
   figureCredit?: string;

@@ -1,13 +1,19 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { publications } from "../../data/publications";
-import { groupPublicationsByYear, publicationAnchor } from "../../lib/content";
+import { formatDateLabel, publicationAnchor, publicationSections } from "../../lib/content";
 import { siteData } from "../../data/site";
 import { jonathanProfile } from "../../data/jonathan";
 import PublicationFigure from "../../components/PublicationFigure.astro";
 import publicationFigures from "../../data/publication-figures.json";
 
-const groupedPublications = groupPublicationsByYear(publications);
+const sections = publicationSections(publications);
+const articleFilters = [
+  { value: "all", label: "All" },
+  { value: "Research article", label: "Research articles" },
+  { value: "Review", label: "Reviews" },
+  { value: "Commentary", label: "Commentaries" }
+].filter(({ value }) => value === "all" || publications.some((item) => item.articleType === value));
 const figuresByDoi = new Map(publicationFigures.map(figure => [figure.doi, figure]));
 const pdbUrl = (id: string) => `https://www.rcsb.org/structure/${id}`;
 const emdbUrl = (id: string) => `https://www.ebi.ac.uk/emdb/${id}`;
@@ -41,37 +47,63 @@ const isPrimaryDestination = (link: string, primary: string) => {
     </div>
   </section>
 
-  <nav class="publication-index" aria-label="Publication years">
+  <nav class="publication-index" aria-label="Publication sections">
     <div class="shell publication-index__inner">
-      <span>Jump to year</span>
       <ol>
-        {groupedPublications.map((yearGroup) => (
-          <li><a href={`#publications-${yearGroup.year}`}>{yearGroup.year}</a></li>
+        {sections.map((section) => (
+          <li><a href={`#${section.id}`}>{section.label}</a></li>
         ))}
       </ol>
     </div>
   </nav>
 
-  <section class="publication-record" aria-label="Publication record">
-    <div class="shell publication-record__list">
-      {groupedPublications.map((yearGroup) => (
-        <section class="publication-year" aria-labelledby={`publications-${yearGroup.year}`}>
-          <h2 id={`publications-${yearGroup.year}`}>{yearGroup.year}</h2>
+  {sections.map((section) => (
+  <section class="publication-record" id={section.id} aria-labelledby={`${section.id}-title`}>
+    <div class="shell">
+      <header class="publication-record__heading">
+        <div>
+          <h2 id={`${section.id}-title`}>{section.label}</h2>
+          {section.note && <p>{section.note}</p>}
+        </div>
+        {section.years.length > 1 && (
+          <nav class="publication-years" aria-label={`${section.label} by year`}>
+            <ol>
+              {section.years.map((yearGroup) => (
+                <li><a href={`#${section.id === "preprints" ? "preprints" : "publications"}-${yearGroup.year}`}>{yearGroup.year}</a></li>
+              ))}
+            </ol>
+          </nav>
+        )}
+      </header>
+      {section.id === "published-papers" && (
+        <div class="publication-filters" data-publication-filters hidden>
+          <div class="publication-filters__choices" role="group" aria-label="Filter peer-reviewed publications by type">
+            {articleFilters.map((filter) => (
+              <button type="button" data-publication-type={filter.value} aria-pressed={filter.value === "all" ? "true" : "false"} aria-controls={`${section.id}-list`}>
+                {filter.label}
+              </button>
+            ))}
+          </div>
+          <p class="publication-filters__status" role="status" aria-live="polite" aria-atomic="true"></p>
+        </div>
+      )}
+      <div class="publication-record__list" id={`${section.id}-list`}>
+      {section.years.map((yearGroup) => (
+        <section class="publication-year" aria-labelledby={`${section.id === "preprints" ? "preprints" : "publications"}-${yearGroup.year}`}>
+          <h3 class="publication-year__label" id={`${section.id === "preprints" ? "preprints" : "publications"}-${yearGroup.year}`}>{yearGroup.year}</h3>
           <ol>
             {yearGroup.entries.map((item) => (
-              <li class:list={["publication-row reveal", figuresByDoi.has(item.doi ?? "") && "publication-row--with-figure"]} id={publicationAnchor(item)}>
+              <li class:list={["publication-row reveal", figuresByDoi.has(item.doi ?? "") && "publication-row--with-figure"]} id={publicationAnchor(item)} data-article-type={item.articleType}>
                 <div class="publication-row__record">
-                  {(item.journal || (item.articleType && item.articleType !== "Research article") || item.openAccess) && (
+                  <div class="publication-row__body">
+                    <h4 class="publication-row__title"><a href={item.link} target="_blank" rel="noreferrer">{item.title}</a></h4>
+                    <p class="publication-row__citation">{item.authors}</p>
+                  </div>
                     <div class="publication-row__meta">
-                      {item.journal && <strong>{item.journal}</strong>}
+                      <time datetime={item.publishedAt ?? String(item.year)}>{item.publishedAt ? formatDateLabel(item.publishedAt) : item.year}</time>
                       {item.articleType && item.articleType !== "Research article" && <span class:list={["publication-row__type", item.articleType === "Preprint" && "publication-row__type--preprint"]}>{item.articleType}</span>}
                       {item.openAccess && <span class="publication-row__access">Open access</span>}
                     </div>
-                  )}
-                  <div class="publication-row__body">
-                    <h3><a href={item.link} target="_blank" rel="noreferrer">{item.title}</a></h3>
-                    <p class="publication-row__citation">{item.citation}</p>
-                  </div>
                   <div class="publication-row__links">
                     {item.pmid && !isPrimaryDestination(`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}/`, item.link) && <a href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}/`} target="_blank" rel="noreferrer" aria-label={`PubMed: ${item.title}`}>PubMed <span aria-hidden="true">↗</span></a>}
                     {item.pmcid && !isPrimaryDestination(`https://pmc.ncbi.nlm.nih.gov/articles/${item.pmcid}/`, item.link) && <a href={`https://pmc.ncbi.nlm.nih.gov/articles/${item.pmcid}/`} target="_blank" rel="noreferrer" aria-label={`Full text: ${item.title}`}>Full text <span aria-hidden="true">↗</span></a>}
@@ -129,6 +161,57 @@ const isPrimaryDestination = (link: string, primary: string) => {
           </ol>
         </section>
       ))}
+      </div>
     </div>
   </section>
+  ))}
 </BaseLayout>
+
+<script>
+  const record = document.getElementById("published-papers");
+  const filters = record?.querySelector<HTMLElement>("[data-publication-filters]");
+  const status = filters?.querySelector<HTMLElement>('[role="status"]');
+
+  if (record && filters && status) {
+    const buttons = [...filters.querySelectorAll<HTMLButtonElement>("button[data-publication-type]")];
+    const rows = [...record.querySelectorAll<HTMLElement>(".publication-row")];
+    const years = [...record.querySelectorAll<HTMLElement>(".publication-year")];
+    const yearLinks = [...record.querySelectorAll<HTMLAnchorElement>(".publication-years a")];
+
+    const applyFilter = (type: string) => {
+      let visible = 0;
+      for (const row of rows) {
+        row.hidden = type !== "all" && row.dataset.articleType !== type;
+        if (!row.hidden) visible += 1;
+      }
+      for (const year of years) {
+        year.hidden = !year.querySelector(".publication-row:not([hidden])");
+        const link = yearLinks.find((item) => item.hash.slice(1) === year.getAttribute("aria-labelledby"));
+        if (link?.parentElement) link.parentElement.hidden = year.hidden;
+      }
+      for (const button of buttons) {
+        button.setAttribute("aria-pressed", String(button.dataset.publicationType === type));
+      }
+      status.textContent = `${visible} publication${visible === 1 ? "" : "s"} shown`;
+    };
+
+    for (const button of buttons) {
+      button.addEventListener("click", () => applyFilter(button.dataset.publicationType!));
+    }
+
+    // A saved citation or year link must still reveal its target after filtering.
+    const revealHashTarget = () => {
+      let id: string;
+      try { id = decodeURIComponent(window.location.hash.slice(1)); }
+      catch { return; }
+      const target = document.getElementById(id);
+      if (!target || !record.contains(target) || !target.closest("[hidden]")) return;
+      applyFilter("all");
+      requestAnimationFrame(() => target.scrollIntoView({ block: "start", behavior: "instant" }));
+    };
+
+    window.addEventListener("hashchange", revealHashTarget);
+    applyFilter("all");
+    filters.hidden = false;
+  }
+</script>

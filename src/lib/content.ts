@@ -65,6 +65,23 @@ export function groupPublicationsByYear(items: Publication[]) {
     .map(([year, entries]) => ({ year, entries }));
 }
 
+export function publicationSections(items: Publication[]) {
+  return [
+    {
+      id: "published-papers",
+      label: "Peer-reviewed publications",
+      note: "",
+      years: groupPublicationsByYear(items.filter((item) => item.articleType !== "Preprint"))
+    },
+    {
+      id: "preprints",
+      label: "Preprints",
+      note: "These papers have not been peer reviewed.",
+      years: groupPublicationsByYear(items.filter((item) => item.articleType === "Preprint"))
+    }
+  ].filter((section) => section.years.length > 0);
+}
+
 export function groupPeople(items: Person[]) {
   const grouped = new Map<Person["group"], Person[]>();
 

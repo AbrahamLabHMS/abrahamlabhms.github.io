@@ -3,6 +3,21 @@ import type { Publication } from "./types";
 export const publications: Publication[] = [
   {
     year: 2026,
+    title: "Functional and Structural Studies of Alphavirus-Receptor Interactions",
+    authors: "Li W, Abraham J",
+    journal: "Annual Review of Virology",
+    publishedAt: "2026-09-25",
+    citation: "Li W, Abraham J. Annual Review of Virology. 2026;13:181-200.",
+    link: "https://doi.org/10.1146/annurev-virology-100424-120316",
+    doi: "10.1146/annurev-virology-100424-120316",
+    pmid: "42791211",
+    openAccess: true,
+    articleType: "Review",
+    correspondingAuthor: true,
+    correspondenceSource: "https://www.annualreviews.org/content/journals/10.1146/annurev-virology-100424-120316"
+  },
+  {
+    year: 2026,
     title: "Structure and operating principles of a monkeypox virus replisome",
     authors: "Yu Z, Sathyanarayana P, Tan JMJ, Hu S, Fan X, Gao A, Kranzusch PJ, Loparo JJ, Abraham J",
     journal: "Nature",

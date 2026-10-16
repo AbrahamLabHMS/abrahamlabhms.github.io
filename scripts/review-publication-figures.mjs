@@ -33,7 +33,7 @@ async function assertLayout(page, label) {
     overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
     textOnlyRows: [...document.querySelectorAll('.publication-row:not(.publication-row--with-figure)')].map(row => {
       const frame = row.getBoundingClientRect();
-      const content = [...row.querySelectorAll('.publication-row__record, h3, .publication-row__citation')];
+      const content = [...row.querySelectorAll('.publication-row__record, .publication-row__title, .publication-row__citation')];
       return {
         id: row.id,
         fullWidth: content.every(node => Math.abs(node.getBoundingClientRect().width - frame.width) <= 1),
@@ -90,6 +90,92 @@ async function assertViewerLayout(viewer, width, label) {
   assert(width > 1040 ? layout.beside : layout.below, `${label}: figure details must follow the responsive reading order`);
 }
 
+async function assertSectionNavigation(page) {
+  const nav = page.getByRole('navigation', { name: 'Publication sections', exact: true });
+  const jump = async (link) => {
+    const href = await link.getAttribute('href');
+    const id = decodeURIComponent(href.slice(1));
+    await link.focus();
+    await page.keyboard.press('Enter');
+    // Poll from Node so this also works when in-page JavaScript is disabled.
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const positioned = await page.evaluate(({ href, id }) => {
+        const target = document.getElementById(id);
+        const header = document.querySelector('.site-header');
+        if (!target || !header || location.hash !== href) return false;
+        const top = target.getBoundingClientRect().top;
+        const headerBounds = header.getBoundingClientRect();
+        return top >= Math.max(0, headerBounds.bottom) - 1 && top <= headerBounds.height + 80;
+      }, { href, id });
+      if (positioned) return;
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    assert.fail(`Jump target did not settle below the header: ${href}`);
+  };
+  await jump(nav.getByRole('link', { name: 'Preprints', exact: true }));
+  assert.equal(await page.locator('#preprints .publication-row').count(), publications.filter(paper => paper.articleType === 'Preprint').length);
+  await jump(nav.getByRole('link', { name: 'Peer-reviewed publications', exact: true }));
+  assert.equal(await page.locator('#published-papers .publication-row').count(), publications.filter(paper => paper.articleType !== 'Preprint').length);
+  const years = page.getByRole('navigation', { name: 'Peer-reviewed publications by year', exact: true }).getByRole('link');
+  await jump(years.nth(1));
+}
+
+async function assertPublicationFilters(page, screenshotPrefix) {
+  const section = page.locator('#published-papers');
+  const controls = section.getByRole('group', { name: 'Filter peer-reviewed publications by type' });
+  const published = publications.filter(paper => paper.articleType !== 'Preprint');
+  const preprintIds = await page.locator('#preprints .publication-row:visible').evaluateAll(rows => rows.map(row => row.id));
+  const filterCases = [
+    ['Research articles', 'Research article'], ['Reviews', 'Review'],
+    ['Commentaries', 'Commentary'], ['All', 'all']
+  ];
+  for (const [label, type] of filterCases) {
+    const button = controls.getByRole('button', { name: label, exact: true });
+    await button.focus();
+    await page.keyboard.press(label === 'Research articles' ? 'Space' : 'Enter');
+    const expected = type === 'all' ? published : published.filter(paper => paper.articleType === type);
+    const visibleIds = await section.locator('.publication-row:visible').evaluateAll(rows => rows.map(row => row.id));
+    assert.deepEqual(new Set(visibleIds), new Set(expected.map(paper => `paper-${paper.doi.toLowerCase()}`)));
+    assert.equal(await controls.locator('[aria-pressed="true"]').count(), 1);
+    assert.equal(await button.getAttribute('aria-pressed'), 'true');
+    assert(await button.evaluate(button => document.activeElement === button), 'Filtering must retain keyboard focus');
+    assert.equal(await section.getByRole('status').textContent(), `${expected.length} publication${expected.length === 1 ? '' : 's'} shown`);
+    assert.deepEqual(await page.locator('#preprints .publication-row:visible').evaluateAll(rows => rows.map(row => row.id)), preprintIds, 'Filters must never hide preprints');
+    const years = [...new Set(expected.map(paper => String(paper.year)))].sort().reverse();
+    assert.deepEqual(await section.locator('.publication-year__label:visible').allTextContents(), years);
+    assert.deepEqual(await section.locator('.publication-years a:visible').allTextContents(), years, 'Hidden years must not leave dead year links');
+    const bounds = await controls.locator('button').evaluateAll(buttons => buttons.map(button => {
+      const rect = button.getBoundingClientRect();
+      return { left: rect.left, right: rect.right, width: rect.width, height: rect.height, viewport: innerWidth };
+    }));
+    assert(bounds.every(rect => rect.width >= 44 && rect.height >= 44 && rect.left >= 0 && rect.right <= rect.viewport), 'Filter controls must remain touch-sized and within the viewport');
+    if (label === 'Reviews') {
+      await page.evaluate(() => scrollTo(0, 0));
+      await page.screenshot({ path: path.join(output, `${screenshotPrefix}-reviews.png`) });
+    }
+  }
+
+  await controls.getByRole('button', { name: 'Reviews', exact: true }).click();
+  const targetId = `paper-${published.find(paper => paper.articleType === 'Research article').doi.toLowerCase()}`;
+  await page.evaluate(id => { location.hash = encodeURIComponent(id); }, targetId);
+  await page.waitForFunction(id => {
+    const row = document.getElementById(id);
+    return row && !row.hidden && row.getBoundingClientRect().top < innerHeight;
+  }, targetId);
+  assert.equal(await controls.getByRole('button', { name: 'All', exact: true }).getAttribute('aria-pressed'), 'true', 'A citation hash must reveal a filtered-out paper');
+
+  await controls.getByRole('button', { name: 'Reviews', exact: true }).click();
+  const hiddenYearId = await section.locator('.publication-year[hidden] .publication-year__label').first().getAttribute('id');
+  await page.evaluate(id => { location.hash = id; }, hiddenYearId);
+  await page.waitForFunction(id => !document.getElementById(id).closest('[hidden]'), hiddenYearId);
+  assert.equal(await section.locator('.publication-row:visible').count(), published.length, 'A saved year link must reveal a filtered-out year');
+
+  await controls.getByRole('button', { name: 'Reviews', exact: true }).click();
+  await page.evaluate(() => { location.hash = '%E0%A4%A'; });
+  await controls.getByRole('button', { name: 'All', exact: true }).click();
+  await page.evaluate(() => { location.hash = 'published-papers'; });
+}
+
 try {
 for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
   const browser = await engine.launch({ headless: true, timeout: 30000 });
@@ -122,6 +208,8 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
         assert.equal(axe.violations.length, 0, JSON.stringify(axe.violations.map(item => ({ id: item.id, targets: item.nodes.map(node => node.target) }))));
       }
 
+      await assertSectionNavigation(page);
+      await assertPublicationFilters(page, `${name}-${width}-${theme}`);
       for (const figure of figures) {
         const link = page.locator(`[data-figure-key="${figure.key}"] .publication-figure__thumbnail`);
         const viewer = page.locator(`#figure-viewer-${figure.key}`);
@@ -193,7 +281,7 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
       await page.locator('.publication-figure__credit summary').first().click();
       assert.equal(await page.locator('.publication-figure__credit[open]').count(), 1);
       assert.equal(errors.length, 0, errors.join('\n'));
-      checks.push({ browser: name, width, theme, figuresVisible: figures.length, viewersChecked: figures.length, responsiveViewer: true, scrollReset: true, focusReturn: true, backdropDismissal: true, dragSafe: true, passed: true });
+      checks.push({ browser: name, width, theme, sectionNavigation: true, publicationFilters: true, citationHashRecovery: true, figuresVisible: figures.length, viewersChecked: figures.length, responsiveViewer: true, scrollReset: true, focusReturn: true, backdropDismissal: true, dragSafe: true, passed: true });
       await save();
       console.log(`${name} ${width} ${theme}: thumbnails, viewer, keyboard, and layout passed`);
       await context.close();
@@ -202,6 +290,9 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, javaScriptEnabled: false, colorScheme: 'dark' });
     const page = await context.newPage();
     await page.goto(url, { waitUntil: 'load' });
+    await assertSectionNavigation(page);
+    assert.equal(await page.locator('.publication-row:visible').count(), publications.length, 'All publications must remain accessible without JavaScript');
+    assert.equal(await page.locator('.publication-filters:visible').count(), 0, 'Do not show nonfunctional filters without JavaScript');
     const first = page.locator('.publication-figure__thumbnail').first();
     assert(await first.isVisible());
     await first.focus();
@@ -216,7 +307,7 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
     await credit.locator('summary').focus();
     await page.keyboard.press('Enter');
     assert.equal(await credit.getAttribute('open'), '');
-    checks.push({ browser: name, width: 390, noJavaScript: true, thumbnailAndCreditAccessible: true, imageFallback: true, passed: true });
+    checks.push({ browser: name, width: 390, noJavaScript: true, sectionNavigation: true, allPublicationsVisible: true, thumbnailAndCreditAccessible: true, imageFallback: true, passed: true });
     await save();
     await context.close();
 
@@ -224,6 +315,10 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
     try {
       const page = await touchContext.newPage();
       await page.goto(url, { waitUntil: 'load' });
+      const filters = page.getByRole('group', { name: 'Filter peer-reviewed publications by type' });
+      await filters.getByRole('button', { name: 'Reviews', exact: true }).tap();
+      assert.equal(await page.locator('#published-papers .publication-row:visible').count(), publications.filter(paper => paper.articleType === 'Review').length);
+      await filters.getByRole('button', { name: 'All', exact: true }).tap();
       const first = page.locator('.publication-figure__thumbnail').first();
       await first.tap();
       const viewer = page.locator('.figure-viewer[open]');
@@ -233,7 +328,7 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
       await page.touchscreen.tap(2, 2);
       await viewer.waitFor({ state: 'hidden' });
       assert(await first.evaluate(link => document.activeElement === link));
-      checks.push({ browser: name, width: 390, touchBackdropDismissal: true, passed: true });
+      checks.push({ browser: name, width: 390, touchFilters: true, touchBackdropDismissal: true, passed: true });
       await save();
     } finally { await touchContext.close(); }
   } finally { await browser.close(); }

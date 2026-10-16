@@ -1,5 +1,10 @@
 # Temporary dependency security exception
 
+**Retired October 16, 2026.** The release now locks `http-cache-semantics` to
+4.3.0 and passes the unmodified npm audit without an exception. The acceptance
+branch and expiry plumbing have been removed. This document remains a historical
+record, not active permission to bypass security checks.
+
 Approved by James on October 2, 2026: "Publish the fixes with that one temporary security exception."
 
 **Expires after October 16, 2026, Eastern time** (`2026-10-17T04:00:00Z`). This accepts one known risk; it does not fix the dependency or declare the audit clean.

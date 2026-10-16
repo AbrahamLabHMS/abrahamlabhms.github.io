@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { groupPeople, homepagePublication, recentPublicationLabel } from "../src/lib/content.ts";
+import { groupPeople, homepagePublication, recentPublicationLabel, publicationSections } from "../src/lib/content.ts";
 import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
 import { alumniSourceError } from "./lib/alumni-sources.mjs";
@@ -16,13 +16,43 @@ test("homepage uses the newest research article, independent of hero or curation
   const newer = article("10.1234/newer", "2026-01-01");
   const preprint = article("10.1234/preprint", "2026-08-01", "Preprint");
   const commentary = article("10.1234/commentary", "2026-08-02", "Commentary");
-  assert.equal(homepagePublication([preprint, older, commentary, newer]), newer);
+  const review = article("10.1234/review", "2026-09-25", "Review");
+  assert.equal(homepagePublication([preprint, older, review, commentary, newer]), newer);
   older.image = "/another.webp";
   assert.equal(homepagePublication([older, newer, preprint]), newer);
   const newest = article("10.1234/next", "2026-09-01");
   assert.equal(homepagePublication([older, newest, newer, preprint]), newest);
 });
 
+test("publication sections separate preprints and retain reviews in the published record", () => {
+  const early = article("10.1234/early", "2025-01-01");
+  const recent = article("10.1234/recent", "2026-02-01");
+  const review = article("10.1234/review", "2026-09-25", "Review");
+  const preprint = article("10.1234/preprint", "2026-08-01", "Preprint");
+  const olderPreprint = article("10.1234/preprint-old", "2025-06-01", "Preprint");
+  const commentary = article("10.1234/commentary", "2022-06-09", "Commentary");
+  const items = [early, preprint, recent, olderPreprint, commentary, review];
+  const sections = publicationSections(items);
+  assert.deepEqual(sections.map((section) => section.id), ["published-papers", "preprints"]);
+  assert.equal(sections[0].label, "Peer-reviewed publications");
+  assert.deepEqual(sections[0].years.flatMap((year) => year.entries), [review, recent, early, commentary]);
+  assert.deepEqual(sections[1].years.flatMap((year) => year.entries), [preprint, olderPreprint]);
+  assert.match(sections[1].note, /not been peer reviewed/);
+  assert.equal(sections.flatMap((section) => section.years.flatMap((year) => year.entries)).length, items.length);
+  assert.equal(items[0], early, "Grouping does not mutate source ordering");
+  assert.deepEqual(publicationSections([]), []);
+  assert.deepEqual(publicationSections([review]).map((section) => section.id), ["published-papers"]);
+});
+
+test("the new review is sourced and does not replace the homepage research feature", () => {
+  const review = publications.find((item) => item.doi === "10.1146/annurev-virology-100424-120316");
+  assert.equal(review?.articleType, "Review");
+  assert.equal(review?.authors, "Li W, Abraham J");
+  assert.equal(review?.pmid, "42791211");
+  assert.equal(review?.publishedAt, "2026-09-25");
+  assert.equal(review?.homepageProof, undefined);
+  assert.equal(homepagePublication(publications).doi, "10.1038/s41586-026-10937-2");
+});
 test("an explicit preprint override retains an explicit preprint label", () => {
   const preprint = article("10.1234/preprint", "2026-08-01", "Preprint");
   const chosen = homepagePublication([article("10.1234/article", "2026-01-01"), preprint], preprint.doi);

@@ -83,7 +83,7 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
       <div class="shell publication-feature__grid">
         <header class="publication-feature__heading reveal">
           <p class="overline">{recentPublicationLabel(recentPaper)}</p>
-          <p class="publication-feature__source">{recentPaper.journal}<br />{recentPaper.publishedAt ? <time datetime={recentPaper.publishedAt}>{formatDateLabel(recentPaper.publishedAt)}</time> : recentPaper.year}</p>
+          <p class="publication-feature__source">{recentPaper.publishedAt ? <time datetime={recentPaper.publishedAt}>{formatDateLabel(recentPaper.publishedAt)}</time> : recentPaper.year}</p>
         </header>
         <article class="publication-feature__body reveal">
           <h2>{recentPaper.title}</h2>
@@ -106,7 +106,7 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
       <div class="dossier-ledger">
         {otherRecentPapers.map((paper) => (
           <article class="dossier-ledger__row reveal">
-            <p class="dossier-ledger__meta">{paper.articleType} · {paper.journal} · {paper.publishedAt ? <time datetime={paper.publishedAt}>{formatDateLabel(paper.publishedAt)}</time> : paper.year}</p>
+            <p class="dossier-ledger__meta">{paper.articleType} · {paper.publishedAt ? <time datetime={paper.publishedAt}>{formatDateLabel(paper.publishedAt)}</time> : paper.year}</p>
             <h3><a href={paper.link} target="_blank" rel="noreferrer">{paper.title}</a></h3>
             <span class="dossier-ledger__action" aria-hidden="true">↗</span>
           </article>

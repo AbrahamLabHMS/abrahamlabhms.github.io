@@ -66,6 +66,7 @@ const expectedProgramTagsByPerson = new Map([
 ]);
 
 const expectedCorrespondingDois = new Set([
+  "10.1146/annurev-virology-100424-120316",
   "10.1038/s41586-026-10937-2",
   "10.64898/2026.08.22.744730",
   "10.64898/2026.07.28.741352",
@@ -111,6 +112,12 @@ const expectedPmcidsByDoi = new Map([
 
 // Bibliographic review completed 2026-09-07; see references/content-source-brief.md.
 const reviewedPublicationFields = new Map([
+  ["10.1146/annurev-virology-100424-120316", {
+    title: "Functional and Structural Studies of Alphavirus-Receptor Interactions",
+    authors: "Li W, Abraham J",
+    journal: "Annual Review of Virology", year: 2026, publishedAt: "2026-09-25", pmid: "42791211", articleType: "Review",
+    correspondenceSource: "https://www.annualreviews.org/content/journals/10.1146/annurev-virology-100424-120316"
+  }],
   ["10.1038/s41586-026-10937-2", {
     title: "Structure and operating principles of a monkeypox virus replisome",
     authors: "Yu Z, Sathyanarayana P, Tan JMJ, Hu S, Fan X, Gao A, Kranzusch PJ, Loparo JJ, Abraham J",
@@ -476,8 +483,12 @@ async function main() {
       fail(`Publication "${title}" needs verified corresponding-author source data.`);
     }
 
-    if (!new Set(["Research article", "Preprint", "Commentary"]).has(publication.articleType)) {
+    if (!new Set(["Research article", "Preprint", "Review", "Commentary"]).has(publication.articleType)) {
       fail(`Publication "${title}" has an unsupported articleType.`);
+    }
+
+    if (!normalize(publication.authors) || !publication.citation.startsWith(`${publication.authors}. `)) {
+      fail(`Publication "${title}" needs a separate author list matching its complete internal citation.`);
     }
 
     if (publication.articleType === "Preprint" && publication.openAccess !== true) {
@@ -599,26 +610,30 @@ async function main() {
     fail("The Lachesin v1 citation must retain Gisa Gerold in the order verified in XML/PDF front matter, not the stale bioRxiv summary API.");
   }
 
-  const topThree = sortedPublications.slice(0, 3);
+  // Reviews and commentaries belong in the record, not the recent original-research selection.
+  const researchPublications = sortedPublications.filter((publication) =>
+    publication.articleType === "Research article" || publication.articleType === "Preprint"
+  );
+  const topThree = researchPublications.slice(0, 3);
   const topThreeTitles = new Set(topThree.map((publication) => normalize(publication.title)));
   for (const publication of homepageProofPublications) {
     if (!topThreeTitles.has(normalize(publication.title))) {
-      fail(`Homepage proof publication "${publication.title}" is not among the 3 most recent publications.`);
+      fail(`Homepage proof publication "${publication.title}" is not among the 3 most recent research papers or preprints.`);
     }
   }
 
   for (const publication of topThree) {
     if (!publication.homepageProof) {
-      fail(`One of the 3 most recent publications is missing homepageProof: "${publication.title}".`);
+      fail(`One of the 3 most recent research papers or preprints is missing homepageProof: "${publication.title}".`);
     }
   }
 
   if (leadFeaturePublications[0]) {
     const leadFeature = leadFeaturePublications[0];
-    const newestPublication = sortedPublications[0];
+    const newestPublication = researchPublications.find((publication) => publication.articleType === "Research article");
     if (normalize(leadFeature.title) !== normalize(newestPublication.title)) {
       fail(
-        `leadFeature should point at the newest publication. Expected "${newestPublication.title}", got "${leadFeature.title}".`
+        `leadFeature should point at the newest research article. Expected "${newestPublication.title}", got "${leadFeature.title}".`
       );
     }
     if (!leadFeature.homepageProof) {
