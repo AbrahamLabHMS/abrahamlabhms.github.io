@@ -32,3 +32,9 @@ jump; it continues to check operation without JavaScript.
   320, 390, 430, 768, 820, 1024, 1280, and 1440 in light and dark themes.
 - Desktop light and phone dark screenshots were inspected for section order,
   navigation wrapping, and readable spacing.
+
+The first GitHub release attempt passed 350 compatibility checks and 42
+accessibility scans but stopped on an immediate URL assertion after a keyboard
+citation jump. The browser test now waits for that native fragment navigation
+to commit before checking the same destination. The page and release gates are
+unchanged by this test repair.

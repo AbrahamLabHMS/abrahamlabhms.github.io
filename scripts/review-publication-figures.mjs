@@ -147,9 +147,12 @@ async function assertPublicationLinks(page) {
   for (const group of publicationGroups) {
     const row = page.locator(`#${group.id} .publication-row`).first();
     const link = row.locator('.publication-row__permalink');
+    const id = await row.getAttribute('id');
     await link.focus();
     await page.keyboard.press('Enter');
-    assert.equal(decodeURIComponent(new URL(page.url()).hash.slice(1)), await row.getAttribute('id'));
+    // Native fragment navigation may commit after the key event completes.
+    await page.waitForURL(destination => decodeURIComponent(destination.hash.slice(1)) === id, { timeout: 5000 });
+    assert.equal(decodeURIComponent(new URL(page.url()).hash.slice(1)), id);
     assert(await row.isVisible(), 'Every saved citation remains visible in its new section');
   }
   await page.goto(`${url}#publications-2020`, { waitUntil: 'load' });
@@ -301,8 +304,10 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
       await page.goto(url, { waitUntil: 'load' });
       const nav = page.getByRole('navigation', { name: 'Publication sections', exact: true });
       await nav.getByRole('link', { name: 'Reviews', exact: true }).tap();
+      await page.waitForURL(destination => destination.hash === '#reviews', { timeout: 5000 });
       assert.equal(new URL(page.url()).hash, '#reviews');
       await nav.getByRole('link', { name: 'Preprints', exact: true }).tap();
+      await page.waitForURL(destination => destination.hash === '#preprints', { timeout: 5000 });
       assert.equal(new URL(page.url()).hash, '#preprints');
       const first = page.locator('.publication-figure__thumbnail').first();
       await first.tap();
