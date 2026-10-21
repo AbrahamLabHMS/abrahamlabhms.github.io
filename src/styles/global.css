@@ -1244,7 +1244,7 @@ html:not(.js) .site-header {
 }
 
 .publication-record + .publication-record {
-  padding-block: 5rem var(--section-space);
+  padding-block-start: 5rem;
 }
 
 .publication-record:last-child {
@@ -1291,52 +1291,6 @@ html:not(.js) .site-header {
 
 .publication-record__list {
   border-block-start: 1px solid var(--line-strong);
-}
-
-.publication-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.publication-filters__choices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.5rem;
-  min-width: 0;
-}
-
-.publication-filters button {
-  min-height: 2.75rem;
-  min-width: 2.75rem;
-  padding: 0.5rem 0.75rem;
-  border: 0;
-  border-block-end: 2px solid transparent;
-  border-radius: 0;
-  background: transparent;
-  color: var(--ink-muted);
-  font: 500 0.875rem/1.4 var(--font-sans);
-  cursor: pointer;
-}
-
-.publication-filters button:hover {
-  color: var(--accent-hover);
-}
-
-.publication-filters button[aria-pressed="true"] {
-  border-block-end-color: var(--accent);
-  color: var(--ink);
-}
-
-.publication-filters__status {
-  margin: 0;
-  color: var(--ink-muted);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
 }
 
 .publication-year {
@@ -2740,12 +2694,6 @@ html:not(.js) .site-header {
     font-size: 1.5rem;
   }
 
-  .publication-filters__choices {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-  }
-
   .publication-index__inner {
     padding-block: 0.4rem;
   }
@@ -2900,7 +2848,6 @@ html:not(.js) .site-header {
   .page-publications .site-header,
   .page-publications .site-footer,
   .page-publications .publication-index,
-  .page-publications .publication-filters,
   .page-publications .publication-years,
   .page-publications .page-intro__actions {
     display: none !important;

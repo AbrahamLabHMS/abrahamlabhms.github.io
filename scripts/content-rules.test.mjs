@@ -24,7 +24,7 @@ test("homepage uses the newest research article, independent of hero or curation
   assert.equal(homepagePublication([older, newest, newer, preprint]), newest);
 });
 
-test("publication sections separate preprints and retain reviews in the published record", () => {
+test("publication sections put preprints before research articles, reviews, and commentaries", () => {
   const early = article("10.1234/early", "2025-01-01");
   const recent = article("10.1234/recent", "2026-02-01");
   const review = article("10.1234/review", "2026-09-25", "Review");
@@ -33,15 +33,38 @@ test("publication sections separate preprints and retain reviews in the publishe
   const commentary = article("10.1234/commentary", "2022-06-09", "Commentary");
   const items = [early, preprint, recent, olderPreprint, commentary, review];
   const sections = publicationSections(items);
-  assert.deepEqual(sections.map((section) => section.id), ["published-papers", "preprints"]);
-  assert.equal(sections[0].label, "Peer-reviewed publications");
-  assert.deepEqual(sections[0].years.flatMap((year) => year.entries), [review, recent, early, commentary]);
-  assert.deepEqual(sections[1].years.flatMap((year) => year.entries), [preprint, olderPreprint]);
-  assert.match(sections[1].note, /not been peer reviewed/);
+  assert.deepEqual(sections.map((section) => section.id), ["preprints", "published-papers", "reviews", "commentaries"]);
+  assert.equal(sections[1].label, "Peer-reviewed research articles");
+  assert.deepEqual(sections[0].years.flatMap((year) => year.entries), [preprint, olderPreprint]);
+  assert.deepEqual(sections[1].years.flatMap((year) => year.entries), [recent, early]);
+  assert.deepEqual(sections[2].years.flatMap((year) => year.entries), [review]);
+  assert.deepEqual(sections[3].years.flatMap((year) => year.entries), [commentary]);
+  assert.match(sections[0].note, /not been peer reviewed/);
   assert.equal(sections.flatMap((section) => section.years.flatMap((year) => year.entries)).length, items.length);
   assert.equal(items[0], early, "Grouping does not mutate source ordering");
   assert.deepEqual(publicationSections([]), []);
-  assert.deepEqual(publicationSections([review]).map((section) => section.id), ["published-papers"]);
+  assert.deepEqual(publicationSections([review]).map((section) => section.id), ["reviews"]);
+});
+
+test("publication groups preserve every paper and all old year bookmarks without duplicate IDs", () => {
+  const sections = publicationSections(publications);
+  const grouped = sections.flatMap(section => section.years.flatMap(year => year.entries));
+  assert.equal(grouped.length, publications.length);
+  assert.deepEqual(new Set(grouped.map(paper => paper.doi)), new Set(publications.map(paper => paper.doi)));
+  const ids = sections.flatMap(section => [section.id, ...section.years.flatMap(year => [year.id, year.legacyId].filter(Boolean))]);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const section of sections) {
+    for (const year of section.years) {
+      assert.ok(year.entries.every(paper => paper.articleType === section.articleType));
+    }
+  }
+  for (const paper of publications) {
+    const prefix = paper.articleType === "Preprint" ? "preprints" : "publications";
+    assert.ok(ids.includes(`${prefix}-${paper.year}`), `Missing legacy year: ${prefix}-${paper.year}`);
+  }
+  const reviewsOnly = publicationSections([article("10.1234/review", "2027-01-01", "Review")]);
+  assert.equal(reviewsOnly[0].years[0].id, "reviews-2027");
+  assert.equal(reviewsOnly[0].years[0].legacyId, "publications-2027");
 });
 
 test("the new review is sourced and does not replace the homepage research feature", () => {

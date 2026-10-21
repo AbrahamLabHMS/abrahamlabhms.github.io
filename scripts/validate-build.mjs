@@ -126,7 +126,7 @@ if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(sitemap)) {
 }
 
 const publicationsPage = await fs.readFile(path.join(siteRoot, "publications", "index.html"), "utf8");
-for (const marker of ["<h1>Publications</h1>", "Jonathan Abraham on PubMed", 'id="published-papers"', 'id="preprints"', "Peer-reviewed publications", "These papers have not been peer reviewed.", "PDB", "EMDB", "Open access"]) {
+for (const marker of ["<h1>Publications</h1>", "Jonathan Abraham on PubMed", 'id="preprints"', 'id="published-papers"', 'id="reviews"', 'id="commentaries"', "Peer-reviewed research articles", "These papers have not been peer reviewed.", "PDB", "EMDB", "Open access"]) {
   if (!publicationsPage.includes(marker)) failures.push(`Publications page is missing "${marker}".`);
 }
 for (const marker of ["Publications checked", "Print or save PDF", "window.print()", "publication-status"] ) {

@@ -49,18 +49,15 @@ assert.deepEqual(sections.map((node) => attribute(node, "id")), publicationSecti
 for (const section of publicationSections(publications)) {
   const sectionNode = sections.find((node) => attribute(node, "id") === section.id);
   const sectionRows = descendants(sectionNode).filter((node) => hasClass(node, "publication-row"));
-  assert.deepEqual(sectionRows.map((node) => attribute(node, "id")), section.years.flatMap((year) => year.entries.map(publicationAnchor)), "Sections must retain newest-first ordering and separate preprints");
+  assert.deepEqual(sectionRows.map((node) => attribute(node, "id")), section.years.flatMap((year) => year.entries.map(publicationAnchor)), "Sections must retain newest-first ordering within each publication type");
+  assert.ok(sectionRows.every((node) => attribute(node, "data-article-type") === section.articleType), "Do not mix publication types across sections");
   assert.equal(text(descendants(sectionNode).find((node) => node.tagName === "h2")), section.label);
   if (section.note) assert.ok(text(sectionNode).includes(section.note));
-  const filters = descendants(sectionNode).find((node) => hasClass(node, "publication-filters"));
-  if (section.id === "published-papers") {
-    assert.ok(filters, "Peer-reviewed publications need article-type filters");
-    assert.notEqual(attribute(filters, "hidden"), undefined, "Filter controls must be hidden until JavaScript is ready");
-    const buttons = descendants(filters).filter((node) => node.tagName === "button");
-    assert.deepEqual(buttons.map((node) => text(node).trim()), ["All", "Research articles", "Reviews", "Commentaries"]);
-    assert.deepEqual(buttons.map((node) => attribute(node, "aria-pressed")), ["true", "false", "false", "false"]);
-    for (const button of buttons) assert.equal(attribute(button, "aria-controls"), `${section.id}-list`);
-  } else assert.equal(filters, undefined, "Preprints stay separate from article-type filters");
+  assert.ok(!descendants(sectionNode).some((node) => hasClass(node, "publication-filters")), "Type sections replace the old filter toolbar");
+  for (const year of section.years) {
+    assert.ok(record.some((node) => attribute(node, "id") === year.id), "Every year needs a unique destination");
+    if (year.legacyId) assert.ok(record.some((node) => attribute(node, "id") === year.legacyId), "Keep former publication-year bookmarks");
+  }
 }
 const figures = JSON.parse(await readFile(new URL("../src/data/publication-figures.json", import.meta.url), "utf8"));
 assert.equal(rows.length, publications.length);

@@ -66,20 +66,49 @@ export function groupPublicationsByYear(items: Publication[]) {
 }
 
 export function publicationSections(items: Publication[]) {
-  return [
-    {
-      id: "published-papers",
-      label: "Peer-reviewed publications",
-      note: "",
-      years: groupPublicationsByYear(items.filter((item) => item.articleType !== "Preprint"))
-    },
+  const groups = [
     {
       id: "preprints",
       label: "Preprints",
       note: "These papers have not been peer reviewed.",
-      years: groupPublicationsByYear(items.filter((item) => item.articleType === "Preprint"))
+      articleType: "Preprint",
+      yearPrefix: "preprints"
+    },
+    {
+      id: "published-papers",
+      label: "Peer-reviewed research articles",
+      note: "",
+      articleType: "Research article",
+      yearPrefix: "publications"
+    },
+    {
+      id: "reviews",
+      label: "Reviews",
+      note: "",
+      articleType: "Review",
+      yearPrefix: "reviews"
+    },
+    {
+      id: "commentaries",
+      label: "Commentaries",
+      note: "",
+      articleType: "Commentary",
+      yearPrefix: "commentaries"
     }
-  ].filter((section) => section.years.length > 0);
+  ] as const;
+  const linkedYears = new Set<number>();
+
+  return groups.map(({ yearPrefix, ...section }) => ({
+    ...section,
+    years: groupPublicationsByYear(items.filter((item) => item.articleType === section.articleType)).map((year) => {
+      const id = `${yearPrefix}-${year.year}`;
+      // Keep old journal-year bookmarks when that year now contains only a review or commentary.
+      const legacyId = section.articleType !== "Preprint" && !linkedYears.has(year.year)
+        ? `publications-${year.year}` : undefined;
+      if (section.articleType !== "Preprint") linkedYears.add(year.year);
+      return { ...year, id, legacyId: legacyId === id ? undefined : legacyId };
+    })
+  })).filter((section) => section.years.length > 0);
 }
 
 export function groupPeople(items: Person[]) {
