@@ -60,6 +60,11 @@ if (!/^\/assets\/documents\/[a-z0-9-]+\.pdf$/.test(cvUrl || "")) {
   const cvFile = path.join(siteRoot, cvUrl.slice(1));
   if (!await exists(cvFile) || (await fs.readFile(cvFile)).subarray(0, 5).toString() !== "%PDF-") {
     failures.push("Jonathan's CV PDF is missing or invalid.");
+  } else {
+    const legacyCvFile = path.join(siteRoot, "assets/documents/jonathan-abraham-cv-2026-09-27.pdf");
+    if (!await exists(legacyCvFile) || !(await fs.readFile(legacyCvFile)).equals(await fs.readFile(cvFile))) {
+      failures.push("Jonathan's former CV URL must serve the current website PDF.");
+    }
   }
   const profileHtml = await fs.readFile(path.join(siteRoot, "jonathan-abraham/index.html"), "utf8");
   if (!elements(profileHtml).some((node) => node.tagName === "a" && attribute(node, "href") === `${basePath}${cvUrl}`)) {

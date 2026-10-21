@@ -67,7 +67,9 @@ The email icon is a native `mailto:` link with an accessible label. It opens the
 
 ## Jonathan's CV
 
-The profile links to a dated PDF in `public/assets/documents/`, through `jonathanProfile.cvUrl` in `src/data/jonathan.ts`. To update it, export the approved Word document without changing its content, check every PDF page, add the new dated PDF, and update that path. Keep the editable source and review files outside public assets. The build checks that the PDF exists and the profile links to it.
+The profile links to a dated PDF in `public/assets/documents/`, through `jonathanProfile.cvUrl` in `src/data/jonathan.ts`. Prepare a separate website edition of the approved Word document: retain authors, titles, years, and contribution notes, but replace journal citation details with verified, linked PMIDs. Keep journal names only in editorial-service entries and omit "Featured in" notes. Do not overwrite the source CV or infer a PMID from title similarity alone; distinguish final articles from same-title preprints.
+
+Check every exported PDF page and its links, add the new dated PDF, and update that path. Keep the editable source and verification files outside public assets. The former `jonathan-abraham-cv-2026-09-27.pdf` URL remains a compatibility copy of the current website edition; update it together with the dated download so older links do not serve the superseded citation format. The build checks that the PDF exists, the profile links to it, and the compatibility copy matches.
 
 ## Publication record
 
