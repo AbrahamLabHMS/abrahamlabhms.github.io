@@ -10,13 +10,6 @@ export const peopleData: PeopleData = {
       order: 1
     },
     {
-      name: "Pan Yang, Ph.D.",
-      title: "Instructor of Microbiology",
-      labStart: "2019-07",
-      group: "Postdoctoral Fellows & Instructors",
-      order: 2
-    },
-    {
       name: "Wanyu Li, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2023-07",
@@ -160,6 +153,13 @@ export const peopleData: PeopleData = {
     {
       label: "Postdoctoral and Research Fellows",
       entries: [
+        {
+          name: "Pan Yang, Ph.D.",
+          destination: "Next position: National Institutes of Health (NIH)",
+          labStart: "2019-07",
+          // Last day: September 29, 2026, confirmed by James Spencer.
+          labEnd: "2026-09"
+        },
         { name: "Dan Olal, Ph.D.", labStart: "2019-02" },
         {
           name: "Poorna Goswami, Ph.D.",
