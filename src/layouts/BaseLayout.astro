@@ -253,6 +253,14 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
           navToggle.setAttribute("aria-expanded", String(isOpen));
         });
 
+        nav.addEventListener("focusin", (event) => {
+          const target = event.target;
+          if (mobileNav.matches && nav.classList.contains("is-open") && target instanceof HTMLAnchorElement) {
+            // Keep the full link and its outline inside the scrollable menu.
+            target.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
+          }
+        });
+
         nav.querySelectorAll("a").forEach((link) => {
           link.addEventListener("click", () => closeNav());
         });

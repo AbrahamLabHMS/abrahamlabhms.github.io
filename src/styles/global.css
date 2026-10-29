@@ -613,6 +613,10 @@ html:not(.js) .site-header {
   text-decoration: none;
 }
 
+.endorsement-band__marks a:focus-visible {
+  outline-color: currentColor;
+}
+
 .endorsement-band__marks a:first-child img {
   width: 25rem;
   max-height: 6.5rem;
@@ -2277,6 +2281,11 @@ html:not(.js) .site-header {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
+    /* The percentage follows the actual header height, including enlarged text. */
+    max-height: calc(100dvh - 100% - 1px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-padding-block: 0.6rem;
     padding: 0.6rem 1.25rem 1.25rem;
     border-block-end: 1px solid var(--line);
     background: var(--header-bg);
@@ -2287,6 +2296,7 @@ html:not(.js) .site-header {
   }
 
   .js .site-nav__link {
+    flex-shrink: 0;
     min-height: 3rem;
     display: flex;
     align-items: center;

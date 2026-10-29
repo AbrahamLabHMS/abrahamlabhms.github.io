@@ -305,6 +305,134 @@ async function checkKeyboard(browser, browserName, origin, failures) {
   await context.close();
 }
 
+async function checkShortNavigation(browser, browserName, origin, failures, records) {
+  const cases = [
+    { width: 640, height: 320, enlarged: false },
+    { width: 320, height: 256, enlarged: false },
+    { width: 320, height: 256, enlarged: true }
+  ];
+  const screenshotRoot = path.join(outputRoot, "navigation-focus");
+  await fs.mkdir(screenshotRoot, { recursive: true });
+  for (const viewport of cases) {
+    for (const theme of themes) {
+      const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, colorScheme: theme, reducedMotion: "reduce" });
+      try {
+        for (const route of [primaryRoutes[0], primaryRoutes.find((route) => route.slug === "contact")]) {
+          const page = await context.newPage();
+          const label = `${browserName} short-menu ${route.slug} ${viewport.width}x${viewport.height} ${theme}${viewport.enlarged ? " enlarged-text" : ""}`;
+          await page.goto(routeUrl(origin, route.path), { waitUntil: "domcontentloaded" });
+          await preparePage(page, theme);
+          if (viewport.enlarged) await page.evaluate(enlargeText);
+          const toggle = page.locator(".nav-toggle");
+          const nav = page.locator(".site-nav");
+          const links = nav.locator("a");
+          await toggle.focus();
+          await page.keyboard.press("Enter");
+          const checkLink = async (index) => {
+            const check = await links.nth(index).evaluate((link) => {
+              const rect = link.getBoundingClientRect();
+              const nav = link.closest(".site-nav");
+              const frame = nav.getBoundingClientRect();
+              const style = getComputedStyle(link);
+              const outline = Math.max(0, parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset));
+              const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+              return {
+                name: link.textContent.trim(),
+                focused: document.activeElement === link && link.matches(":focus-visible"),
+                visible: rect.top - outline >= Math.max(0, frame.top) - 1
+                  && rect.bottom + outline <= Math.min(innerHeight, frame.bottom) + 1
+                  && rect.left - outline >= frame.left - 1 && rect.right + outline <= frame.right + 1,
+                unobscured: hit === link || link.contains(hit),
+                menuFits: frame.bottom <= innerHeight + 1,
+                scrollTop: nav.scrollTop
+              };
+            });
+            records.push({ browser: browserName, mode: "short-menu", route: route.slug, viewport, theme, check });
+            if (!check.focused || !check.visible || !check.unobscured || !check.menuFits) {
+              failures.push(`${label}: ${check.name} or its focus outline is clipped or obscured.`);
+            }
+          };
+          const count = await links.count();
+          for (let index = 0; index < count; index += 1) {
+            await page.keyboard.press(tabKey(browserName));
+            // Firefox makes an overflowing scroll container a native Tab stop.
+            if (index === 0 && await nav.evaluate((node) => node === document.activeElement)) {
+              await page.keyboard.press(tabKey(browserName));
+            }
+            await checkLink(index);
+          }
+          if (browserName === "chromium") {
+            await page.screenshot({ path: path.join(screenshotRoot, `${route.slug}-${viewport.width}-${theme}${viewport.enlarged ? "-enlarged" : ""}.png`) });
+          }
+          for (let index = count - 2; index >= 0; index -= 1) {
+            await page.keyboard.press(`Shift+${tabKey(browserName)}`);
+            await checkLink(index);
+          }
+          await page.keyboard.press("Escape");
+          if (await nav.isVisible() || !await toggle.evaluate((node) => node === document.activeElement)) {
+            failures.push(`${label}: Escape did not close the menu and restore focus.`);
+          }
+          await page.close();
+        }
+      } finally {
+        await context.close();
+      }
+    }
+  }
+}
+
+async function checkLogoFocusContrast(browser, browserName, origin, failures, records) {
+  const screenshotRoot = path.join(outputRoot, "logo-focus");
+  await fs.mkdir(screenshotRoot, { recursive: true });
+  for (const width of [390, 820, 1440]) {
+    for (const theme of themes) {
+      const context = await browser.newContext({ viewport: { width, height: 1000 }, colorScheme: theme, reducedMotion: "reduce" });
+      try {
+        const page = await context.newPage();
+        await page.goto(routeUrl(origin, "/"), { waitUntil: "domcontentloaded" });
+        await preparePage(page, theme);
+        const logos = page.locator(".endorsement-band__marks a");
+        await logos.first().focus();
+        // Use real keyboard traversal so :focus-visible is exercised on both links.
+        for (const index of [1, 0]) {
+          await page.keyboard.press(index === 1 ? tabKey(browserName) : `Shift+${tabKey(browserName)}`);
+          const check = await logos.nth(index).evaluate((link) => {
+            const luminance = (color) => {
+              const components = color.match(/[\d.]+/g)?.map(Number) ?? [];
+              if (components.length < 3 || (components.length === 4 && components[3] !== 1)) return NaN;
+              const rgb = components.slice(0, 3).map((channel) => {
+                const value = channel / 255;
+                return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+              });
+              return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+            };
+            const style = getComputedStyle(link);
+            const background = getComputedStyle(link.closest(".endorsement-band")).backgroundColor;
+            const a = luminance(style.outlineColor);
+            const b = luminance(background);
+            return {
+              focused: document.activeElement === link && link.matches(":focus-visible"),
+              outline: style.outlineColor,
+              background,
+              outlineWidth: parseFloat(style.outlineWidth),
+              contrast: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)
+            };
+          });
+          records.push({ browser: browserName, mode: "logo-focus", width, theme, index, check });
+          if (!check.focused || check.outlineWidth < 2 || !Number.isFinite(check.contrast) || check.contrast < 3) {
+            failures.push(`${browserName} logo-focus ${width} ${theme} link ${index + 1}: focus must be visible with at least 3:1 contrast.`);
+          }
+          if (browserName === "chromium" && width === 820 && index === 1) {
+            await page.screenshot({ path: path.join(screenshotRoot, `${width}-${theme}.png`) });
+          }
+        }
+      } finally {
+        await context.close();
+      }
+    }
+  }
+}
+
 async function checkHeroFraming(browser, browserName, origin, failures) {
   for (const theme of themes) {
     for (const width of [390, 820, 1440, 2300, 2560]) {
@@ -602,7 +730,7 @@ async function checkLegacyRoutes(origin, failures) {
   }
 }
 
-async function writeReports({ failures, records, axeResults }) {
+async function writeReports({ failures, records, axeResults, interactionChecks }) {
   await fs.mkdir(outputRoot, { recursive: true });
   const report = {
     generatedAt: new Date().toISOString(),
@@ -615,6 +743,7 @@ async function writeReports({ failures, records, axeResults }) {
     legacyRoutes,
     failures,
     compatibilityChecks: records,
+    interactionChecks,
     accessibilityChecks: axeResults
   };
   await fs.writeFile(path.join(outputRoot, "quality-report.json"), JSON.stringify(report, null, 2), "utf8");
@@ -626,6 +755,7 @@ async function writeReports({ failures, records, axeResults }) {
     `- Browser engines: ${selectedBrowsers.join(", ")}`,
     `- Keyboard navigation: ${selectedBrowsers.map((name) => `${name}: ${tabKey(name)}`).join(", ")}`,
     `- Compatibility page checks: ${records.length}`,
+    `- Navigation and logo-focus checks: ${interactionChecks.length}`,
     `- Automated WCAG 2.1 AA scans: ${axeResults.length}`,
     `- Axe violations: ${axeViolationCount}`,
     `- Total failures: ${failures.length}`,
@@ -645,6 +775,7 @@ async function run() {
   const failures = [];
   const records = [];
   const axeResults = [];
+  const interactionChecks = [];
 
   try {
     const [{ default: AxeBuilder }, playwright] = await Promise.all([
@@ -669,6 +800,8 @@ async function run() {
 
       try {
         await checkKeyboard(browser, browserName, server.origin, failures);
+        await checkShortNavigation(browser, browserName, server.origin, failures, interactionChecks);
+        await checkLogoFocusContrast(browser, browserName, server.origin, failures, interactionChecks);
         await checkHeroFraming(browser, browserName, server.origin, failures);
         await checkPhotoCredit(browser, browserName, server.origin, failures);
         await checkMapFallback(browser, browserName, server.origin, failures);
@@ -686,7 +819,7 @@ async function run() {
     await server.close();
   }
 
-  await writeReports({ failures, records, axeResults });
+  await writeReports({ failures, records, axeResults, interactionChecks });
   if (failures.length) {
     if (process.env.GITHUB_ACTIONS === "true") {
       console.error(`::error title=Site quality review failed::${annotation(failures.join("\n"))}`);
