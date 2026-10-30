@@ -65,10 +65,17 @@ export const peopleData: PeopleData = {
       order: 10
     },
     {
+      name: "Mingyu Jung",
+      title: "Postdoctoral Fellow",
+      labStart: "2026-10",
+      group: "Postdoctoral Fellows & Instructors",
+      order: 20
+    },
+    {
       name: "Jesse Plung",
       title: "Graduate Student",
       programTags: ["Virology"],
-      labStart: "2024-07",
+      labStart: "2023-08",
       group: "Graduate Students",
       order: 11
     },

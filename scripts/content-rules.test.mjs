@@ -174,6 +174,17 @@ test("the three confirmed 2024 graduate starts stay aligned with James's correct
   }
 });
 
+test("October 30 roster corrections include Mingyu and Jesse's confirmed start date", () => {
+  const mingyu = peopleData.currentMembers.filter((person) => person.name === "Mingyu Jung");
+  assert.equal(mingyu.length, 1);
+  assert.equal(mingyu[0].title, "Postdoctoral Fellow");
+  assert.equal(mingyu[0].group, "Postdoctoral Fellows & Instructors");
+  assert.equal(mingyu[0].labStart, "2026-10");
+  const postdocs = groupPeople(peopleData.currentMembers).find((group) => group.label === "Postdoctoral Fellows & Instructors");
+  assert.ok(postdocs.entries.includes(mingyu[0]));
+  assert.equal(peopleData.currentMembers.find((person) => person.name === "Jesse Plung")?.labStart, "2023-08");
+});
+
 test("Pan remains an alumnus with only the confirmed end month and no public destination", async () => {
   const matches = peopleData.alumni.flatMap((group) => group.entries).filter((person) => person.name === "Pan Yang, Ph.D.");
   assert.deepEqual(matches, [{ name: "Pan Yang, Ph.D.", labEnd: "2026-09" }]);
