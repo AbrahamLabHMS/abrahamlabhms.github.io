@@ -7,7 +7,7 @@ import { collectFitSnapshot, inspectFit, waitForLocalImages, waitForSystemTheme 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const siteRoot = path.join(repoRoot, "_site");
-const outputRoot = path.join(repoRoot, "output", "visual-review");
+const outputRoot = path.resolve(repoRoot, process.env.VISUAL_REVIEW_OUTPUT || "output/visual-review");
 const screenshotRoot = path.join(outputRoot, "screenshots");
 const port = Number(process.env.VISUAL_REVIEW_PORT || 4173);
 const basePath = normalizeBasePath(process.env.SITE_BASE_PATH);

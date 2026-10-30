@@ -7,7 +7,7 @@ import { createStaticSiteTools, normalizeBasePath } from './lib/static-site-serv
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const figures = JSON.parse(await fs.readFile(path.join(root, 'src/data/publication-figures.json'), 'utf8'));
-const output = path.join(root, 'output/playwright/publication-figures');
+const output = path.resolve(root, process.env.FIGURE_REVIEW_OUTPUT || 'output/playwright/publication-figures');
 await fs.mkdir(output, { recursive: true });
 process.env.PLAYWRIGHT_BROWSERS_PATH ||= path.join(root, '.cache/ms-playwright');
 const { chromium, firefox, webkit } = await import('playwright');

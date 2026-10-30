@@ -431,7 +431,8 @@ async function main() {
   const expectedGraduatePrograms = [
     { label: "Virology", href: "https://virologyphd.hms.harvard.edu/" },
     { label: "Biophysics", href: "https://biophysics.fas.harvard.edu/" },
-    { label: "Biological and Biomedical Sciences", href: "https://bbsphd.hms.harvard.edu/" }
+    { label: "Biological and Biomedical Sciences", href: "https://bbsphd.hms.harvard.edu/" },
+    { label: "Chemical Biology", href: "https://chembiophd.hms.harvard.edu/" }
   ];
   if (JSON.stringify(siteData.graduatePrograms) !== JSON.stringify(expectedGraduatePrograms)) {
     fail("Contact graduate programs must use general program names and official URLs, not individual MD-PhD labels.");
@@ -443,8 +444,8 @@ async function main() {
     if (!chosen || !chosen.publishedAt || !chosen.journal) {
       fail("Homepage publication override must name a verified record with a date and journal or preprint server.");
     }
-  } else if (!publications.some((item) => item.articleType === "Research article" && item.publishedAt)) {
-    fail("Homepage needs a dated research article, or an explicit publication override.");
+  } else if (!publications.some((item) => ["Research article", "Preprint"].includes(item.articleType) && item.correspondingAuthor && item.publishedAt)) {
+    fail("Homepage needs a dated corresponding-author research article or preprint, or an explicit publication override.");
   }
 
   const publicationTitles = new Map();

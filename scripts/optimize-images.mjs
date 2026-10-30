@@ -5,23 +5,10 @@ import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
-const source = path.join(repoRoot, "references", "source-assets", "arenavirus-gpc-figure-2.png");
-const outputDir = path.join(repoRoot, "public", "assets", "images", "publications");
+const source = path.join(repoRoot, "public", "assets", "images", "publications", "arena-spike-fig1-2165.webp");
 const socialOutputDir = path.join(repoRoot, "public", "assets", "images", "social");
 const filmSource = path.join(repoRoot, "public", "assets", "images", "editorial", "inside-labs-hms-film-still.webp");
-const widths = [720, 1200, 1800];
-
-await fs.mkdir(outputDir, { recursive: true });
 await fs.mkdir(socialOutputDir, { recursive: true });
-
-for (const width of widths) {
-  const output = path.join(outputDir, `arenavirus-gpc-figure-2-${width}.webp`);
-  await sharp(source)
-    .resize({ width, withoutEnlargement: true })
-    .webp({ quality: 84, effort: 5 })
-    .toFile(output);
-  console.log(path.relative(repoRoot, output));
-}
 
 const socialImages = [
   {
@@ -30,6 +17,7 @@ const socialImages = [
   },
   {
     source,
+    fit: "contain",
     output: path.join(socialOutputDir, "abraham-lab-science.jpg")
   },
   {
@@ -40,7 +28,7 @@ const socialImages = [
 
 for (const image of socialImages) {
   await sharp(image.source)
-    .resize({ width: 1200, height: 630, fit: "cover", position: "centre" })
+    .resize({ width: 1200, height: 630, fit: image.fit || "cover", position: "centre", background: "#ffffff", withoutEnlargement: image.fit === "contain" })
     .jpeg({ quality: 88, progressive: true, chromaSubsampling: "4:4:4" })
     .toFile(image.output);
   console.log(path.relative(repoRoot, image.output));

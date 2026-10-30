@@ -30,9 +30,9 @@ export function homepagePublication(items: Publication[], overrideDoi?: string) 
     return selected;
   }
 
-  // Imagery and curation flags must not silently pin an older article.
+  // Imagery and curation flags must not silently pin an older research item.
   return [...items]
-    .filter((item) => item.articleType === "Research article" && item.correspondingAuthor && item.publishedAt)
+    .filter((item) => (item.articleType === "Research article" || item.articleType === "Preprint") && item.correspondingAuthor && item.publishedAt)
     .sort(comparePublicationDates)[0];
 }
 

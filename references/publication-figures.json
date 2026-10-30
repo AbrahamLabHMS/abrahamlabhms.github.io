@@ -1,6 +1,6 @@
 {
-  "reviewedAt": "2026-09-18",
-  "scope": "14 identity- and reuse-cleared complete figures. Original sources and unresolved assets are not included in the website. Author-reuse approvals are limited to this author's lab website and do not grant third-party reuse rights.",
+  "reviewedAt": "2026-10-29",
+  "scope": "16 complete figures cleared for this lab website, including two user-confirmed preprint file mappings corroborated by visual comparison. October 29 changes cover five selected figures; the supplied lachesin mapping is held because newly retrieved public evidence conflicts with the confirmation. Original sources and held assets remain outside the website. Author-reuse approvals do not grant third-party reuse rights.",
   "figures": [
     {
       "key": "mpox_replisome",
@@ -104,45 +104,70 @@
     {
       "key": "arena_spike",
       "doi": "10.1038/s41564-025-02085-6",
-      "figureNumber": "Figure 2",
+      "figureNumber": "Figure 1",
       "identityStatus": "verified",
       "rightsStatus": "resolved",
-      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41564-025-02085-6/MediaObjects/41564_2025_2085_Fig2_HTML.png",
-      "sourceSha256": "4d0742751e6c5c14ef05fc5fe43d9fc332730142aab2c09c61f79a8d7bf64a59",
-      "identityEvidence": "https://www.nature.com/articles/s41564-025-02085-6#Fig2",
+      "sourceOrigin": "publisher-or-repository",
+      "sourceFile": "arena-spike-fig1-master.png",
+      "sourceDirectory": "../Website Figure Review/2026-10-29/sources",
+      "sourceUrl": "https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41564-025-02085-6/MediaObjects/41564_2025_2085_Fig1_HTML.png",
+      "sourceSha256": "044deccfc18b6e4d2ce32afeea42acb449805e887cfa1edead2d9daeb08c10f6",
+      "identityEvidence": "https://www.nature.com/articles/s41564-025-02085-6/figures/1",
+      "identityNote": "The publisher Figure 1 page resolves the complete downloaded image. All five panels were visually inspected.",
       "license": "CC BY 4.0",
       "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
       "licenseEvidence": [
-        "https://www.nature.com/articles/s41564-025-02085-6#rightslink"
+        "https://www.nature.com/articles/s41564-025-02085-6#rightslink",
+        "https://www.nature.com/articles/s41564-025-02085-6/figures/1"
       ],
-      "creditCheck": "No third-party credit or exclusion found in the supplied figure or publisher Figure 2 caption.",
-      "restrictions": "Credit authors and source; link the license; disclose resizing/format conversion.",
-      "checkedAt": "2026-09-18",
+      "reuseBasis": "The current publisher article states CC BY 4.0; its image inclusion clause applies because Figure 1 has no contrary credit line.",
+      "creditCheck": "No separate third-party credit or exclusion appears in the publisher Figure 1 caption or image. The article's CC BY 4.0 notice includes images unless a credit line states otherwise.",
+      "restrictions": "Credit authors, source, figure number and license; disclose resizing and format conversion. Preserve every panel and label; do not imply endorsement.",
+      "checkedAt": "2026-10-29",
       "resolution": {
         "status": "sufficient-for-standard-column",
-        "nativeWidth": 2167,
-        "maximumOneToOneCssWidth": 2167,
-        "maximumTwoXCssWidth": 1083,
+        "nativeWidth": 2165,
+        "nativeHeight": 1282,
+        "maximumOneToOneCssWidth": 2165,
+        "maximumTwoXCssWidth": 1082,
         "standardImageColumnCssWidth": 600
+      },
+      "preparation": {
+        "script": "scripts/prepare-oct29-publication-figures.mjs",
+        "outputStem": "arena-spike-fig1",
+        "widths": [
+          720,
+          1200,
+          1800,
+          2165
+        ],
+        "transform": "full-frame-resize-only",
+        "encoding": "lossless-webp"
       },
       "variants": [
         {
-          "src": "/assets/images/publications/arenavirus-gpc-figure-2-720.webp",
+          "src": "/assets/images/publications/arena-spike-fig1-720.webp",
           "width": 720,
-          "height": 384,
-          "sha256": "37b291f8862e88ab4563bebb70a4bb3eaa7cc088a635e09b8f493728f3243492"
+          "height": 426,
+          "sha256": "88df4c17a3efa0b1e1c056da3480caf75dd3692e5c66d11d8521283850c339e7"
         },
         {
-          "src": "/assets/images/publications/arenavirus-gpc-figure-2-1200.webp",
+          "src": "/assets/images/publications/arena-spike-fig1-1200.webp",
           "width": 1200,
-          "height": 640,
-          "sha256": "8effa9f0a2cd9eaa9471284500bec7624ba67223643eba593e71e856cca1c499"
+          "height": 711,
+          "sha256": "ac7132b8c6ecdc21e00313dd66740db2f9cf3d4cbeff08919ccedc25589818a1"
         },
         {
-          "src": "/assets/images/publications/arenavirus-gpc-figure-2-1800.webp",
+          "src": "/assets/images/publications/arena-spike-fig1-1800.webp",
           "width": 1800,
-          "height": 960,
-          "sha256": "0fdd11f29b17c322c14efdcf7592cebf692ad0c2505d633d31ab4465cb6a3ae1"
+          "height": 1066,
+          "sha256": "683562bf021f17ff0bf4cd2e4164bb3f97fcd2173792b3ad975794fd0d12b193"
+        },
+        {
+          "src": "/assets/images/publications/arena-spike-fig1-2165.webp",
+          "width": 2165,
+          "height": 1282,
+          "sha256": "cdf12d4c2f8f71fccb3c020fe61c1ca80f7536d607b6c24c875267eab7aa4377"
         }
       ]
     },
@@ -458,13 +483,16 @@
     {
       "key": "sars2_immunocomp",
       "doi": "10.1016/j.cell.2021.03.027",
-      "figureNumber": "Figure 4",
+      "figureNumber": "Figure 3",
       "identityStatus": "verified",
       "rightsStatus": "resolved",
-      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/e94f/7962548/f1de42667e3c/gr4_lrg.jpg",
-      "sourceSha256": "b5f63b0c6cae84bb5048fcddc93e3e09a085898673600390218e3403dff3481f",
+      "sourceOrigin": "publisher-or-repository",
+      "sourceFile": "sars2-immunocomp-fig3-master.jpg",
+      "sourceDirectory": "../Website Figure Review/2026-10-29/sources",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/e94f/7962548/ecf6ca323cdd/gr3_lrg.jpg",
+      "sourceSha256": "b2121c5e1389d26dca53985fd04c42a55e4f5c9779dac821555c6751c9812ec8",
       "identityEvidence": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7962548/fullTextXML",
-      "identityNote": "Deposited XML verifies DOI, Figure 4 heading and gr4_lrg.jpg. Blank title in the new manifest is filled from this source, preserving the antibody identifier.",
+      "identityNote": "Europe PMC deposited XML identifies the DOI, Figure 3 and gr3_lrg.jpg; the PMC HTML resolves the downloaded CDN image. All three panels were visually inspected.",
       "license": "Cell Press author reuse",
       "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
       "licenseEvidence": [
@@ -472,29 +500,40 @@
         "https://www.elsevier.com/about/policies-and-standards/copyright",
         "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7962548/fullTextXML"
       ],
-      "reuseBasis": "Cell Press explicitly permits authors to reuse their own published content with citation. Jonathan Abraham is a coauthor and this is his lab website. The conditional COVID research-reuse notice is not the basis for this approval.",
-      "creditCheck": "No third-party credit or exclusion in the supplied figure, deposited caption, or figure permissions.",
-      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the original article and publisher; preserve all panels and labels. No scientific alterations.",
-      "checkedAt": "2026-09-18",
+      "reuseBasis": "Retain the previously reviewed Cell Press author-reuse basis for Jonathan Abraham's lab website. The current Elsevier copyright policy confirms retained author rights for reuse of portions and their own figures in new works. The Cell-specific policy endpoint returned 403 on 2026-10-29; its prior 2026-09-18 verification is not represented as a new successful fetch. This is not a Creative Commons sublicense.",
+      "creditCheck": "No separate third-party reproduction credit or exclusion appears in the complete deposited Figure 3 caption, permissions, or image. The caption's scholarly reference is preserved at the source and is not a reproduction credit.",
+      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the article and publisher; preserve every panel and label. No scientific alterations.",
+      "checkedAt": "2026-10-29",
       "resolution": {
-        "status": "higher-resolution-recommended",
-        "nativeWidth": 726,
-        "maximumOneToOneCssWidth": 726,
-        "maximumTwoXCssWidth": 363,
+        "status": "native-resolution-preserved",
+        "nativeWidth": 738,
+        "nativeHeight": 490,
+        "maximumOneToOneCssWidth": 738,
+        "maximumTwoXCssWidth": 369,
         "standardImageColumnCssWidth": 600
+      },
+      "preparation": {
+        "script": "scripts/prepare-oct29-publication-figures.mjs",
+        "outputStem": "sars2-immunocomp-fig3",
+        "widths": [
+          720,
+          738
+        ],
+        "transform": "full-frame-resize-only",
+        "encoding": "lossless-webp"
       },
       "variants": [
         {
-          "src": "/assets/images/publications/sars2-immunocomp-fig4-720.webp",
+          "src": "/assets/images/publications/sars2-immunocomp-fig3-720.webp",
           "width": 720,
-          "height": 605,
-          "sha256": "3cc6800e7d727823e86f1c64f70c7a12559c7c6d29011abce054df676394873f"
+          "height": 478,
+          "sha256": "95ec36761f5752ed25b7b13bb80b3080bdab0bc26fe2c954082efd8a7c5ce07a"
         },
         {
-          "src": "/assets/images/publications/sars2-immunocomp-fig4-726.webp",
-          "width": 726,
-          "height": 610,
-          "sha256": "e44c48711c52e64f39feea68cc045abcd193b5971051999addfdb6841a7cf737"
+          "src": "/assets/images/publications/sars2-immunocomp-fig3-738.webp",
+          "width": 738,
+          "height": 490,
+          "sha256": "1218d237dad69370ccaef0da18212c3cb4f507222f19093f5686569e811d6a97"
         }
       ]
     },
@@ -592,46 +631,282 @@
     {
       "key": "arena_neut_2015",
       "doi": "10.1016/j.chom.2015.11.005",
-      "figureNumber": "Figure 1",
+      "figureNumber": "Figure 2",
       "identityStatus": "verified",
       "rightsStatus": "resolved",
-      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/867d/4685251/29dbd5678bc6/nihms740322f1.jpg",
-      "sourceSha256": "2966db7f2c84d8bf8bd6ed510a24fd5ba6a368fc8149fd7540e1d62444be8cad",
-      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4685251/#F1",
-      "identityNote": "Rendered PMC Figure 1 heading and exact nihms740322f1.jpg match. The 2016 correction concerns text and supplementary Figure S2B, not this main Figure 1.",
+      "sourceOrigin": "publisher-or-repository",
+      "sourceFile": "arena-neut-2015-fig2-master.jpg",
+      "sourceDirectory": "../Website Figure Review/2026-10-29/sources",
+      "sourceUrl": "https://cdn.ncbi.nlm.nih.gov/pmc/blobs/867d/4685251/a2874cb61ebd/nihms740322f2.jpg",
+      "sourceSha256": "be4b6401adc4e71e5de9756e69fd9d2b0fb522b192e877be3fbae8a59b13e75b",
+      "identityEvidence": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4685251/#F2",
+      "identityNote": "The current PMC Figure 2 listing identifies nihms740322f2.jpg. The complete downloaded figure was visually inspected; all four insets and the central model are retained.",
       "license": "Cell Press author reuse",
       "licenseUrl": "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
       "licenseEvidence": [
         "https://www.cell.com/cell/information-for-authors/journal-policies#permissions",
         "https://www.elsevier.com/about/policies-and-standards/copyright",
-        "https://api.crossref.org/works/10.1016%2Fj.chom.2015.11.005"
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4685251/#F2"
       ],
-      "reuseBasis": "The verified Cell Press policy applies to authors' own content in Cell Press journals, including Cell Host & Microbe. Jonathan Abraham is a coauthor. Use is on his lab website, with citation, not third-party relicensing.",
-      "creditCheck": "No separate third-party credit or exclusion in the supplied image or full PMC Figure 1 caption.",
-      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the original article and publisher; preserve all panels and labels. No scientific alterations.",
-      "correctionEvidence": "https://www.cell.com/cell-host-microbe/fulltext/S1931-3128(16)30049-X",
-      "checkedAt": "2026-09-18",
+      "reuseBasis": "Retain the previously reviewed Cell Press author-reuse basis for Jonathan Abraham's lab website. The current Elsevier copyright policy confirms retained author rights for reuse of portions and their own figures in new works. The Cell-specific policy endpoint returned 403 on 2026-10-29; its prior 2026-09-18 verification is not represented as a new successful fetch. This is not a Creative Commons sublicense.",
+      "creditCheck": "No separate third-party reproduction credit or exclusion appears in the complete PMC Figure 2 caption or image.",
+      "restrictions": "Author-managed lab website use only under retained author rights, not a sublicense to visitors. Cite the article and publisher; preserve every panel and label. No scientific alterations.",
+      "checkedAt": "2026-10-29",
       "resolution": {
-        "status": "higher-resolution-recommended",
+        "status": "native-resolution-preserved",
         "nativeWidth": 800,
+        "nativeHeight": 669,
         "maximumOneToOneCssWidth": 800,
         "maximumTwoXCssWidth": 400,
         "standardImageColumnCssWidth": 600
       },
+      "preparation": {
+        "script": "scripts/prepare-oct29-publication-figures.mjs",
+        "outputStem": "arena-neut-2015-fig2",
+        "widths": [
+          720,
+          800
+        ],
+        "transform": "full-frame-resize-only",
+        "encoding": "lossless-webp"
+      },
       "variants": [
         {
-          "src": "/assets/images/publications/arena-neut-2015-fig1-720.webp",
+          "src": "/assets/images/publications/arena-neut-2015-fig2-720.webp",
           "width": 720,
-          "height": 391,
-          "sha256": "d60529eec55431af3cbe6d0fd740c1adb84f61c0acb3a367fa519b369cd86898"
+          "height": 602,
+          "sha256": "e30347dc68e0aab781280b778efe73a347e43237f38b453e4549656b7b070dcc"
         },
         {
-          "src": "/assets/images/publications/arena-neut-2015-fig1-800.webp",
+          "src": "/assets/images/publications/arena-neut-2015-fig2-800.webp",
           "width": 800,
-          "height": 434,
-          "sha256": "8dc56bd4f6f256608beab36ac07f6823a9a83bcf6d555caa0c3f223c85ee39cc"
+          "height": 669,
+          "sha256": "e046f1e3a3bc307e8089948bbbc5a91fb206c8212f52ff01c078b96e22727645"
         }
       ]
+    },
+    {
+      "key": "orthoflavi_ldlr",
+      "doi": "10.64898/2026.08.22.744730",
+      "figureNumber": "Figure 1",
+      "identityStatus": "user-confirmed",
+      "rightsStatus": "resolved",
+      "sourceOrigin": "user-supplied",
+      "sourceFile": "Fig1_bioxiv.jpg",
+      "sourceDirectory": "../Website Figure Review/2026-10-29/sources",
+      "sourceUrl": "https://www.biorxiv.org/content/10.64898/2026.08.22.744730v1",
+      "sourceSha256": "41ce5de01ed570bd150e2d91e634ed5bf45b8159f769222924b99037b50a1bba",
+      "identityEvidence": "https://www.biorxiv.org/content/early/2026/08/24/2026.08.22.744730.source.xml",
+      "identityNote": "James Spencer explicitly confirmed the supplied file's DOI and figure number for website use on 2026-10-29. Visual comparison corroborates the posted figure's panel content and layout; no byte-identical or independent pixel match is claimed.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.biorxiv.org/content/early/2026/08/24/2026.08.22.744730.source.xml",
+        "https://api.biorxiv.org/details/biorxiv/10.64898/2026.08.22.744730/na/json"
+      ],
+      "reuseBasis": "The posted version 1 XML explicitly states CC BY 4.0 and links the license. The bioRxiv API reports cc_by. The author-supplied file was provided for website use and its mapping was explicitly confirmed by James.",
+      "creditCheck": "The complete supplied image and posted Figure 1 caption were inspected. No separate reproduction credit, third-party exclusion, or figure-specific permissions element was found.",
+      "restrictions": "Credit authors, source, figure number and license; disclose resizing and format conversion. Preserve every panel and label; do not imply endorsement.",
+      "checkedAt": "2026-10-29",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 1965,
+        "nativeHeight": 1411,
+        "maximumOneToOneCssWidth": 1965,
+        "maximumTwoXCssWidth": 982,
+        "standardImageColumnCssWidth": 600
+      },
+      "preparation": {
+        "script": "scripts/prepare-oct29-publication-figures.mjs",
+        "outputStem": "orthoflavi-ldlr-fig1",
+        "widths": [
+          720,
+          1200,
+          1800,
+          1965
+        ],
+        "transform": "full-frame-resize-only",
+        "encoding": "lossless-webp"
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/orthoflavi-ldlr-fig1-720.webp",
+          "width": 720,
+          "height": 517,
+          "sha256": "a66f8788290fc7787208ab812252726205eae5e367a23a237a6d626cd63bde50"
+        },
+        {
+          "src": "/assets/images/publications/orthoflavi-ldlr-fig1-1200.webp",
+          "width": 1200,
+          "height": 862,
+          "sha256": "997c813af596fedefe53dbfe962934c6764809fc3fb6296297d2d293cc834c55"
+        },
+        {
+          "src": "/assets/images/publications/orthoflavi-ldlr-fig1-1800.webp",
+          "width": 1800,
+          "height": 1293,
+          "sha256": "baff863012c68f8afc0bff24d4940f770b85cafb25aee84639f541d65c234ef8"
+        },
+        {
+          "src": "/assets/images/publications/orthoflavi-ldlr-fig1-1965.webp",
+          "width": 1965,
+          "height": 1411,
+          "sha256": "5e70b82d82c00f7595685e13225c7de8cc23da8d5aa6b2b9a6ebf9fe4e0440ad"
+        }
+      ],
+      "userConfirmation": {
+        "confirmedBy": "James Spencer",
+        "confirmedAt": "2026-10-29",
+        "sourceFile": "Fig1_bioxiv.jpg",
+        "doi": "10.64898/2026.08.22.744730",
+        "figureNumber": "Figure 1",
+        "scope": "Supplied full figure for the lab website."
+      },
+      "downloadsComparison": {
+        "sourceFile": "Fig1_bioxiv.jpg",
+        "sha256": "41ce5de01ed570bd150e2d91e634ed5bf45b8159f769222924b99037b50a1bba",
+        "status": "byte-identical-to-preserved-source"
+      },
+      "publicComparison": {
+        "sourceUrl": "https://www.biorxiv.org/content/biorxiv/early/2026/08/24/2026.08.22.744730/F1.large.jpg",
+        "status": "visual-content-corroborated-not-pixel-matched"
+      }
+    },
+    {
+      "key": "chikv_mosq",
+      "doi": "10.64898/2026.07.28.741352",
+      "figureNumber": "Figure 1",
+      "identityStatus": "user-confirmed",
+      "rightsStatus": "resolved",
+      "sourceOrigin": "user-supplied",
+      "sourceFile": "Fig1 CHIKV structure in comple with Lachesin v24_BG1_JA_BG1.png",
+      "sourceDirectory": "../Website Figure Review/2026-10-29/sources",
+      "sourceUrl": "https://www.biorxiv.org/content/10.64898/2026.07.28.741352v1",
+      "sourceSha256": "af3334ca583e682304f72bd2e14af9174ce17b1fc447b995041c67625e48d994",
+      "identityEvidence": "https://www.biorxiv.org/content/early/2026/07/29/2026.07.28.741352.source.xml",
+      "identityNote": "James Spencer explicitly confirmed the supplied file's DOI and figure number for website use on 2026-10-29. Visual comparison corroborates the posted figure's panel content and layout; no byte-identical or independent pixel match is claimed.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.biorxiv.org/content/early/2026/07/29/2026.07.28.741352.source.xml",
+        "https://api.biorxiv.org/details/biorxiv/10.64898/2026.07.28.741352/na/json"
+      ],
+      "reuseBasis": "The posted version 1 XML explicitly states CC BY 4.0 and links the license. The bioRxiv API reports cc_by. The author-supplied file was provided for website use and its mapping was explicitly confirmed by James.",
+      "creditCheck": "The complete supplied image and posted Figure 1 caption were inspected. No separate reproduction credit, third-party exclusion, or figure-specific permissions element was found.",
+      "restrictions": "Credit authors, source, figure number and license; disclose resizing and format conversion. Preserve every panel and label; do not imply endorsement.",
+      "checkedAt": "2026-10-29",
+      "resolution": {
+        "status": "sufficient-for-standard-column",
+        "nativeWidth": 1252,
+        "nativeHeight": 960,
+        "maximumOneToOneCssWidth": 1252,
+        "maximumTwoXCssWidth": 626,
+        "standardImageColumnCssWidth": 600
+      },
+      "preparation": {
+        "script": "scripts/prepare-oct29-publication-figures.mjs",
+        "outputStem": "chikv-mosq-fig1",
+        "widths": [
+          720,
+          1200,
+          1252
+        ],
+        "transform": "full-frame-resize-only",
+        "encoding": "lossless-webp"
+      },
+      "variants": [
+        {
+          "src": "/assets/images/publications/chikv-mosq-fig1-720.webp",
+          "width": 720,
+          "height": 552,
+          "sha256": "ba757627301c5558a76ece80eed4886adce31e6da0865ded411b773d676c77df"
+        },
+        {
+          "src": "/assets/images/publications/chikv-mosq-fig1-1200.webp",
+          "width": 1200,
+          "height": 920,
+          "sha256": "3788c20a1de39fa75095bc0ac8deeeeaac67900e61318ee16c9baf621ac4a95a"
+        },
+        {
+          "src": "/assets/images/publications/chikv-mosq-fig1-1252.webp",
+          "width": 1252,
+          "height": 960,
+          "sha256": "ecb8d125e4952cad8cdc26562b880926d55e9533db90af039499a024e4108fcb"
+        }
+      ],
+      "userConfirmation": {
+        "confirmedBy": "James Spencer",
+        "confirmedAt": "2026-10-29",
+        "sourceFile": "Fig1 CHIKV structure in comple with Lachesin v24_BG1_JA_BG1.png",
+        "doi": "10.64898/2026.07.28.741352",
+        "figureNumber": "Figure 1",
+        "scope": "Supplied full figure for the lab website."
+      },
+      "downloadsComparison": {
+        "sourceFile": "Fig1 CHIKV structure in comple with Lachesin v24_BG1_JA_BG1.png",
+        "sha256": "af3334ca583e682304f72bd2e14af9174ce17b1fc447b995041c67625e48d994",
+        "status": "byte-identical-to-preserved-source"
+      },
+      "publicComparison": {
+        "sourceUrl": "https://www.biorxiv.org/content/biorxiv/early/2026/07/29/2026.07.28.741352/F1.large.jpg",
+        "status": "visual-content-corroborated-not-pixel-matched"
+      }
     }
-  ]
+  ],
+  "holds": [
+    {
+      "key": "lachesin",
+      "doi": "10.64898/2026.07.28.741058",
+      "figureNumber": "Figure 3",
+      "identityStatus": "conflicting-evidence",
+      "rightsStatus": "license-verified-identity-held",
+      "sourceFile": "Fig3 MIDV structure v19_BG1-2.png",
+      "sourceDirectory": "../Website Figure Review/2026-10-29/sources",
+      "sourceSha256": "dcf29c934d849c9a3e87a4c09e19276cd11b58e065f8e2469888c6595c60ecba",
+      "resolution": {
+        "nativeWidth": 1152,
+        "nativeHeight": 961
+      },
+      "userConfirmation": {
+        "confirmedBy": "James Spencer",
+        "confirmedAt": "2026-10-29",
+        "doi": "10.64898/2026.07.28.741058",
+        "figureNumber": "Figure 3",
+        "sourceFile": "Fig3 MIDV structure v19_BG1-2.png"
+      },
+      "downloadsComparison": {
+        "sha256": "dcf29c934d849c9a3e87a4c09e19276cd11b58e065f8e2469888c6595c60ecba",
+        "status": "byte-identical-to-preserved-source"
+      },
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseEvidence": [
+        "https://www.biorxiv.org/content/early/2026/07/28/2026.07.28.741058.source.xml",
+        "https://api.biorxiv.org/details/biorxiv/10.64898/2026.07.28.741058/na/json"
+      ],
+      "requestedPublicationTitle": "Lachesin is a mosquito receptor for multiple arthritogenic alphaviruses",
+      "postedFigureTitle": "Lachesin immunoglobulin domain 1 mediates attachment and internalization.",
+      "comparisonPublicationTitle": "Molecular basis for chikungunya virus recognition of a mosquito-specific receptor",
+      "comparisonFigureTitle": "MIDV recognition of Aedes albopictus Lachesin.",
+      "conflict": "James explicitly intends this supplied file as Plung Figure 3. Newly accessible posted v1 images show a different eight-panel Plung Figure 3, while the supplied five-panel MIDV artwork visually resembles Fan v1 Figure 3. This is a conflict with the currently public v1, not proof that the user's intended mapping is wrong. No independent byte or pixel match is claimed. The supplied file may be a revised or unpublished figure; its version is not established.",
+      "evidenceUrls": [
+        "https://www.biorxiv.org/content/biorxiv/early/2026/07/29/2026.07.28.741352/F3.large.jpg",
+        "https://www.biorxiv.org/content/biorxiv/early/2026/07/28/2026.07.28.741058/F3.large.jpg"
+      ],
+      "disposition": "Preserve the original and the user's intended Plung mapping privately. Do not reassign the file to Fan or silently substitute a public figure. No public derivative or active figure mapping until the intended version and public-v1 discrepancy are clarified.",
+      "checkedAt": "2026-10-29"
+    }
+  ],
+  "socialPreview": {
+    "key": "arena_spike",
+    "sourceFile": "arena-spike-fig1-master.png",
+    "sourceSha256": "044deccfc18b6e4d2ce32afeea42acb449805e887cfa1edead2d9daeb08c10f6",
+    "image": "/assets/images/social/abraham-lab-science.jpg",
+    "width": 1200,
+    "height": 630,
+    "fit": "contain",
+    "background": "#ffffff",
+    "encoding": "JPEG quality 88, progressive, 4:4:4",
+    "sha256": "793d2ae9ad9d1a6ed8a48eb90b4601e1034b2b22a9488b64ea5fdaf1f1e4e267"
+  }
 }

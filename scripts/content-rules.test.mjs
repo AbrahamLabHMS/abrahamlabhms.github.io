@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { groupPeople, homepagePublication, recentPublicationLabel, publicationSections } from "../src/lib/content.ts";
 import { publications } from "../src/data/publications.ts";
 import { peopleData } from "../src/data/people.ts";
+import { siteData } from "../src/data/site.ts";
+import { newsItems } from "../src/data/news.ts";
 import { alumniSourceError } from "./lib/alumni-sources.mjs";
 
 const article = (doi, publishedAt, articleType = "Research article") => ({
@@ -11,17 +14,36 @@ const article = (doi, publishedAt, articleType = "Research article") => ({
   correspondingAuthor: true, correspondenceSource: `https://doi.org/${doi}`
 });
 
-test("homepage uses the newest research article, independent of hero or curation flags", () => {
+test("homepage uses the newest eligible article or preprint, independent of hero or curation flags", () => {
   const older = { ...article("10.1234/older", "2025-01-01"), image: "/old.webp", leadFeature: true };
   const newer = article("10.1234/newer", "2026-01-01");
   const preprint = article("10.1234/preprint", "2026-08-01", "Preprint");
   const commentary = article("10.1234/commentary", "2026-08-02", "Commentary");
   const review = article("10.1234/review", "2026-09-25", "Review");
-  assert.equal(homepagePublication([preprint, older, review, commentary, newer]), newer);
+  assert.equal(homepagePublication([preprint, older, review, commentary, newer]), preprint);
   older.image = "/another.webp";
-  assert.equal(homepagePublication([older, newer, preprint]), newer);
+  assert.equal(homepagePublication([older, newer, preprint]), preprint);
   const newest = article("10.1234/next", "2026-09-01");
   assert.equal(homepagePublication([older, newest, newer, preprint]), newest);
+});
+
+test("automatic homepage selection requires a date and corresponding-author eligibility", () => {
+  const eligible = article("10.1234/eligible", "2026-01-01");
+  const excluded = ["Research article", "Preprint"].flatMap((type, index) => [
+    { ...article(`10.1234/undated-${index}`, "2027-01-01", type), publishedAt: undefined },
+    { ...article(`10.1234/empty-date-${index}`, "2027-01-01", type), publishedAt: "" },
+    { ...article(`10.1234/coauthored-${index}`, "2027-01-01", type), correspondingAuthor: false },
+    { ...article(`10.1234/unknown-correspondence-${index}`, "2027-01-01", type), correspondingAuthor: undefined }
+  ]);
+  const items = [...excluded, eligible];
+  assert.equal(homepagePublication(items), eligible);
+  assert.deepEqual(items, [...excluded, eligible], "Selection does not mutate source ordering");
+  assert.equal(homepagePublication(excluded), undefined);
+  assert.equal(homepagePublication([]), undefined);
+  assert.equal(homepagePublication([
+    article("10.1234/review", "2027-01-01", "Review"),
+    article("10.1234/commentary", "2027-01-01", "Commentary")
+  ]), undefined);
 });
 
 test("publication sections put preprints before research articles, reviews, and commentaries", () => {
@@ -82,14 +104,61 @@ test("an explicit preprint override retains an explicit preprint label", () => {
   assert.equal(chosen, preprint);
   assert.equal(recentPublicationLabel(chosen), "Recent preprint");
   assert.throws(() => homepagePublication([preprint], "10.1234/missing"), /not in the verified record/);
-  assert.equal(homepagePublication([preprint]), undefined);
+  assert.equal(homepagePublication([preprint]), preprint);
 });
 
-test("the current verified record selects the latest dated journal research article", () => {
-  const expected = publications.filter((item) => item.articleType === "Research article" && item.publishedAt)
+test("the current verified record selects the latest eligible research item without broadening authorship scope", () => {
+  const expected = publications.filter((item) => ["Research article", "Preprint"].includes(item.articleType) && item.correspondingAuthor && item.publishedAt)
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))[0];
   assert.equal(homepagePublication(publications), expected);
+  assert.equal(expected.doi, "10.1038/s41586-026-10937-2");
   assert.equal(recentPublicationLabel(expected), "Recent paper");
+  assert.ok(!publications.some((item) => item.doi === "10.64898/2026.10.22.761119"));
+});
+
+test("homepage preprint presentation keeps clear status and the correct reading link", async () => {
+  const home = await readFile(new URL("../src/pages/index.astro", import.meta.url), "utf8");
+  assert.match(home, /recentPublicationLabel\(recentPaper\)/);
+  assert.match(home, /recentPaper\.articleType === "Preprint" && " · Not peer reviewed"/);
+  assert.match(home, /href=\{recentPaper\.link\}[^>]*>\{recentPaper\.articleType === "Preprint" \? "Read preprint" : "Read paper"\}/);
+});
+
+test("homepage introduction preserves the approved wording including can block", () => {
+  assert.equal(siteData.heroDeck,
+    "We study how viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs can block them.");
+});
+
+test("Chemical Biology is a Contact program without assigning new Team program tags", () => {
+  assert.deepEqual(siteData.graduatePrograms, [
+    { label: "Virology", href: "https://virologyphd.hms.harvard.edu/" },
+    { label: "Biophysics", href: "https://biophysics.fas.harvard.edu/" },
+    { label: "Biological and Biomedical Sciences", href: "https://bbsphd.hms.harvard.edu/" },
+    { label: "Chemical Biology", href: "https://chembiophd.hms.harvard.edu/" }
+  ]);
+  assert.equal(siteData.trainingPrograms["Chemical Biology"], undefined);
+  assert.ok(peopleData.currentMembers.every((person) => !person.programTags?.includes("Chemical Biology")));
+});
+
+test("September HMS coverage leads the existing homepage lookup while retaining the January story", () => {
+  const link = "https://hms.harvard.edu/news/scientists-reveal-how-monkeypox-virus-replicates";
+  const matches = newsItems.filter((item) => item.link === link);
+  assert.equal(matches.length, 1);
+  assert.deepEqual(matches[0], {
+    date: "2026-09-09",
+    category: "Institutional coverage",
+    source: "Harvard Medical School",
+    title: "Scientists Reveal How the Monkeypox Virus Replicates",
+    summary: "HMS reports on Zishuo Yu and colleagues' study of the machinery that copies the monkeypox virus genome.",
+    link,
+    linkLabel: "Read the HMS story",
+    homepageEligible: true,
+    milestoneTier: "major"
+  });
+  const labFilm = newsItems.find((item) => item.link.includes("GFM3KLZCDps"));
+  const hmsCoverage = newsItems.find((item) => item.category === "Institutional coverage" && item.link !== labFilm?.link);
+  assert.equal(hmsCoverage, matches[0]);
+  assert.ok(labFilm);
+  assert.ok(newsItems.some((item) => item.date === "2026-01-08" && item.link === "https://hms.harvard.edu/news/researchers-now-understand-how-new-class-antivirals-works"));
 });
 
 test("directory groups preserve all current members and reject unknown groups", () => {
@@ -103,6 +172,20 @@ test("the three confirmed 2024 graduate starts stay aligned with James's correct
   for (const [name, start] of [["Jessica Oros", "2024-04"], ["Corazón Núñez", "2024-07"], ["Laurentia Vianney Tjang", "2024-07"]]) {
     assert.equal(peopleData.currentMembers.find((person) => person.name === name)?.labStart, start);
   }
+});
+
+test("Pan remains an alumnus with only the confirmed end month and no public destination", async () => {
+  const matches = peopleData.alumni.flatMap((group) => group.entries).filter((person) => person.name === "Pan Yang, Ph.D.");
+  assert.deepEqual(matches, [{ name: "Pan Yang, Ph.D.", labEnd: "2026-09" }]);
+  assert.ok(![...peopleData.currentMembers, ...peopleData.seasonalMembers].some((person) => person.name === "Pan Yang, Ph.D."));
+  const source = await readFile(new URL("../src/data/people.ts", import.meta.url), "utf8");
+  assert.match(source, /\/\/ Last day: September 29, 2026, confirmed by James Spencer\./);
+});
+
+test("Dan remains an alumnus without an unverified timeline", () => {
+  const matches = peopleData.alumni.flatMap((group) => group.entries).filter((person) => person.name === "Dan Olal, Ph.D.");
+  assert.deepEqual(matches, [{ name: "Dan Olal, Ph.D." }]);
+  assert.ok(![...peopleData.currentMembers, ...peopleData.seasonalMembers].some((person) => person.name === "Dan Olal, Ph.D."));
 });
 
 test("alumni links use outside sources and confirmed summer entries use seasons", () => {

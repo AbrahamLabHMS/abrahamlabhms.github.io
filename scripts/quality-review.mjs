@@ -7,7 +7,7 @@ import { collectFitSnapshot, enlargeText, inspectFit, visitLocalImages, waitForL
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 const siteRoot = path.join(repoRoot, "_site");
-const outputRoot = path.join(repoRoot, "output", "quality-review");
+const outputRoot = path.resolve(repoRoot, process.env.QUALITY_REVIEW_OUTPUT || "output/quality-review");
 const port = Number(process.env.QUALITY_REVIEW_PORT || 4174);
 const basePath = normalizeBasePath(process.env.SITE_BASE_PATH);
 const staticSite = createStaticSiteTools({ siteRoot, basePath });

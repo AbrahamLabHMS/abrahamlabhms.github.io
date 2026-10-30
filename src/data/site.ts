@@ -12,7 +12,7 @@ export const siteData = {
   },
   heroTitle: "Mechanisms of viral infection",
   heroDeck:
-    "We study how viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs block them.",
+    "We study how viruses enter cells, evade neutralizing antibodies, and replicate. We use structural biology and virology to define these steps and how antiviral drugs can block them.",
   heroFigures: [
     {
       kind: "photograph",
@@ -102,7 +102,8 @@ export const siteData = {
   graduatePrograms: [
     { label: "Virology", href: "https://virologyphd.hms.harvard.edu/" },
     { label: "Biophysics", href: "https://biophysics.fas.harvard.edu/" },
-    { label: "Biological and Biomedical Sciences", href: "https://bbsphd.hms.harvard.edu/" }
+    { label: "Biological and Biomedical Sciences", href: "https://bbsphd.hms.harvard.edu/" },
+    { label: "Chemical Biology", href: "https://chembiophd.hms.harvard.edu/" }
   ],
   contact: {
     lab: "Abraham Lab",

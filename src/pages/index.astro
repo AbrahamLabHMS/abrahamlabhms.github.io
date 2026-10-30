@@ -83,13 +83,13 @@ const otherRecentPapers = proofPapers.filter((item) => item.title !== recentPape
       <div class="shell publication-feature__grid">
         <header class="publication-feature__heading reveal">
           <p class="overline">{recentPublicationLabel(recentPaper)}</p>
-          <p class="publication-feature__source">{recentPaper.publishedAt ? <time datetime={recentPaper.publishedAt}>{formatDateLabel(recentPaper.publishedAt)}</time> : recentPaper.year}</p>
+          <p class="publication-feature__source">{recentPaper.publishedAt ? <time datetime={recentPaper.publishedAt}>{formatDateLabel(recentPaper.publishedAt)}</time> : recentPaper.year}{recentPaper.articleType === "Preprint" && " · Not peer reviewed"}</p>
         </header>
         <article class="publication-feature__body reveal">
           <h2>{recentPaper.title}</h2>
           {(recentPaper.significanceLine || recentPaper.summary) && <p class="publication-feature__claim">{recentPaper.significanceLine || recentPaper.summary}</p>}
           <div class="button-row">
-            <a class="button button--primary" href={recentPaper.link} target="_blank" rel="noreferrer">Read paper</a>
+            <a class="button button--primary" href={recentPaper.link} target="_blank" rel="noreferrer">{recentPaper.articleType === "Preprint" ? "Read preprint" : "Read paper"}</a>
             <a class="text-link" href={withBase("/publications/")}>View publications <span aria-hidden="true">→</span></a>
           </div>
         </article>

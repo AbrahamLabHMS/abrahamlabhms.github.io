@@ -2,6 +2,17 @@ import type { NewsItem } from "./types";
 
 const newsItemsList: NewsItem[] = [
   {
+    date: "2026-09-09",
+    category: "Institutional coverage",
+    source: "Harvard Medical School",
+    title: "Scientists Reveal How the Monkeypox Virus Replicates",
+    summary: "HMS reports on Zishuo Yu and colleagues' study of the machinery that copies the monkeypox virus genome.",
+    link: "https://hms.harvard.edu/news/scientists-reveal-how-monkeypox-virus-replicates",
+    linkLabel: "Read the HMS story",
+    homepageEligible: true,
+    milestoneTier: "major"
+  },
+  {
     date: "2026-03-03",
     category: "Institutional coverage",
     source: "HMS Office for Graduate Education",

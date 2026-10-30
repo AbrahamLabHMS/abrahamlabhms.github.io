@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 import test from "node:test";
 import sharp from "sharp";
-import { researchEntities, researchTopics } from "../src/data/research.ts";
+import { researchEntities, researchIntro, researchTopics } from "../src/data/research.ts";
 import { publications } from "../src/data/publications.ts";
 import { siteData } from "../src/data/site.ts";
 
@@ -26,7 +27,45 @@ test("illustrations use consistent entity colors and labeled keys", () => {
   };
   for (const topic of researchTopics) {
     assert.deepEqual(topic.imageEntities, expectedKeys[topic.id]);
-    assert.match(topic.image, /-editorial-a2-1536\.webp$/);
+    const revision = { "viral-entry": "a3", "antibody-neutralization": "a6", "genome-replication": "a2" }[topic.id];
+    assert.ok(topic.image.endsWith(`-editorial-${revision}-1536.webp`));
+  }
+});
+
+test("meeting revisions retain the agreed explanation and collaboration credit", () => {
+  const entry = researchTopics.find(topic => topic.id === "viral-entry");
+  const antibody = researchTopics.find(topic => topic.id === "antibody-neutralization");
+  const replication = researchTopics.find(topic => topic.id === "genome-replication");
+  assert.ok(researchIntro.paragraphs[0].startsWith("A virus must bind to a cell and then enter the cell to copy its genome."));
+  assert.doesNotMatch(JSON.stringify(researchTopics), /The virus remains outside the cell/);
+  assert.match(entry.imageAlt, /glycoprotein trimer/);
+  assert.equal(entry.methods, "Genetic screens, cryo-electron microscopy, and biochemical, biophysical, and infectivity assays.");
+  assert.match(antibody.paragraphs[1], /how changes in viral proteins can reduce the activity of antibodies\./);
+  assert.match(antibody.imageAlt, /^One arm tip/);
+  assert.match(antibody.imageAlt, /three-subunit viral protein/);
+  assert.match(antibody.imageAlt, /Its stem points away/);
+  assert.equal(antibody.caption, "An antibody binds a viral surface protein through the tip of one arm. This binding can interfere with viral entry.");
+  assert.equal(antibody.methods, "Antibody isolation, binding and neutralization assays, and cryo-electron microscopy and X-ray crystallography.");
+  assert.equal(replication.relevance, "Knowing how viral replication proteins work helps explain drug action and resistance for existing inhibitors and provides a basis for developing new antivirals.");
+  assert.equal(replication.methods, "Cryo-electron microscopy, protein biochemistry, and single-molecule measurements (in collaboration).");
+});
+
+test("active illustration sources and derivatives are reproducible without replacing the archived sources", async () => {
+  const records = JSON.parse(await readFile(new URL("references/source-assets/research/active-asset-manifest.json", root), "utf8"));
+  assert.deepEqual(records.map(record => record.name), ["entry", "antibody", "replication"]);
+  for (const record of records) {
+    const source = await readFile(new URL(`references/source-assets/research/${record.source}`, root));
+    assert.equal(createHash("sha256").update(source).digest("hex"), record.sha256);
+    const revision = { entry: "a3", antibody: "a6", replication: "a2" }[record.name];
+    for (const width of [960, 1536]) {
+      const expected = await sharp(source).resize({ width, withoutEnlargement: true }).webp({ quality: 90, effort: 5 }).toBuffer();
+      const actual = await readFile(new URL(`public/assets/images/research/${record.name}-editorial-${revision}-${width}.webp`, root));
+      assert.deepEqual(actual, expected);
+    }
+    if (revision !== "a2") {
+      const archived = await readFile(new URL(`references/source-assets/research/editorial-a2/${record.name}.png`, root));
+      assert.notEqual(createHash("sha256").update(archived).digest("hex"), record.sha256);
+    }
   }
 });
 

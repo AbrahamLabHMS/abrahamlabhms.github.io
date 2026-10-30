@@ -155,12 +155,10 @@ export const peopleData: PeopleData = {
       entries: [
         {
           name: "Pan Yang, Ph.D.",
-          destination: "Next position: National Institutes of Health (NIH)",
-          labStart: "2019-07",
           // Last day: September 29, 2026, confirmed by James Spencer.
           labEnd: "2026-09"
         },
-        { name: "Dan Olal, Ph.D.", labStart: "2019-02" },
+        { name: "Dan Olal, Ph.D." },
         {
           name: "Poorna Goswami, Ph.D.",
           destination: "Adjunct Faculty, Lasell University",

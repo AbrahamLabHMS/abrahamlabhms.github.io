@@ -1,0 +1,23 @@
+[
+  {
+    "name": "entry",
+    "source": "editorial-a3/entry.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "4a1e154165cef74a87ce2c8e204055a1a01ef038025cb70c41ecabf34d8263b8"
+  },
+  {
+    "name": "antibody",
+    "source": "editorial-a6/antibody.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "cb7ed5de946ecd15d6aff2bfd4f8abfdcbf291859a30d08a6bddcc30a618a09d"
+  },
+  {
+    "name": "replication",
+    "source": "editorial-a2/replication.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "09dea4183ddecfa281e28262c13c217cdda9f7cc984c2505ba970e7e9deed703"
+  }
+]
