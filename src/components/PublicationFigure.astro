@@ -31,12 +31,15 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     class="publication-figure__thumbnail"
     href={withBase(figure.image)}
     data-figure-viewer={viewerId}
+    data-figure-source={figure.sourceUrl}
+    data-figure-source-label={`Open source ${figure.figureNumber.toLowerCase()} for ${figure.publicationTitle} (opens in a new tab)`}
     target="_blank"
     rel="noreferrer"
     aria-label={`Enlarge ${figure.figureNumber.toLowerCase()} for ${figure.publicationTitle}`}
   >
     <span class="publication-figure__matte">
     <img
+      data-figure-image
       src={withBase(figure.image)}
       srcset={srcset}
       sizes="(max-width: 840px) min(30rem, calc(100vw - 80px)), (max-width: 1180px) 264px, 304px"
@@ -46,8 +49,9 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
       loading="lazy"
       decoding="async"
     />
+    <span class="figure-load-message" data-figure-error role="status" hidden>Preview unavailable. Open the source figure.</span>
     </span>
-    <span class="publication-figure__label"><span>{figure.figureNumber}</span><span class="publication-figure__enlarge">Enlarge <span aria-hidden="true">↗</span></span></span>
+    <span class="publication-figure__label"><span>{figure.figureNumber}</span><span class="publication-figure__enlarge"><span data-figure-action>Enlarge</span> <span aria-hidden="true">↗</span></span></span>
   </a>
   <figcaption>
     <p class="publication-figure__caption" id={captionId}>
@@ -77,6 +81,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
   <div class="figure-viewer__body">
     <div class="figure-viewer__matte">
       <img
+        data-figure-image
         src={withBase(figure.image)}
         width={figure.width}
         height={figure.height}
@@ -85,6 +90,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
         loading="lazy"
         decoding="async"
       />
+      <p class="figure-load-message" data-figure-error role="status" hidden>Image unavailable. Use the Source figure link to view the original.</p>
     </div>
     <div class="figure-viewer__info">
       <p class="figure-viewer__caption">{figure.caption}</p>
@@ -104,6 +110,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     if (!(viewer instanceof HTMLDialogElement) || typeof viewer.showModal !== "function") continue;
     link.setAttribute("aria-haspopup", "dialog");
     link.addEventListener("click", (event) => {
+      if (link.dataset.figureUnavailable === "true") return;
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       // Native dialog focus restoration also needs a focused link after pointer activation.
@@ -146,6 +153,52 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
       controls[next].focus();
     });
   }
+
+  for (const image of document.querySelectorAll<HTMLImageElement>("[data-figure-image]")) {
+    const message = image.parentElement?.querySelector<HTMLElement>("[data-figure-error]");
+    const link = image.closest<HTMLAnchorElement>("[data-figure-viewer]");
+    const action = link?.querySelector<HTMLElement>("[data-figure-action]");
+    const originalLabel = link?.getAttribute("aria-label") ?? "";
+    const originalPopup = link?.getAttribute("aria-haspopup");
+    const originalSrc = image.src;
+    let retried = false;
+    const recover = () => {
+      if (!retried) {
+        retried = true;
+        // Retry the full image once, bypassing a failed responsive variant or cached response.
+        const retryUrl = new URL(originalSrc);
+        retryUrl.searchParams.set("figure_retry", "1");
+        image.srcset = retryUrl.href;
+        image.src = retryUrl.href;
+        image.removeAttribute("srcset");
+        image.removeAttribute("sizes");
+        return;
+      }
+      image.hidden = true;
+      if (message) message.hidden = false;
+      if (link && link.dataset.figureSource) {
+        link.dataset.figureUnavailable = "true";
+        link.href = link.dataset.figureSource;
+        link.setAttribute("aria-label", link.dataset.figureSourceLabel ?? originalLabel);
+        link.removeAttribute("aria-haspopup");
+        if (action) action.textContent = "Source figure";
+      }
+    };
+    image.addEventListener("error", recover);
+    image.addEventListener("load", () => {
+      image.hidden = false;
+      if (message) message.hidden = true;
+      if (link) {
+        delete link.dataset.figureUnavailable;
+        link.href = originalSrc;
+        link.setAttribute("aria-label", originalLabel);
+        if (originalPopup) link.setAttribute("aria-haspopup", originalPopup);
+        if (action) action.textContent = "Enlarge";
+      }
+    });
+    // An eager or cached failure can precede execution of this deferred script.
+    if (image.complete && image.naturalWidth === 0 && image.currentSrc) recover();
+  }
 </script>
 
 <style>
@@ -171,6 +224,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     display: grid;
     place-items: center;
     aspect-ratio: var(--figure-preview-ratio);
+    color: #202727;
   }
 
   .publication-figure__thumbnail img {
@@ -208,8 +262,26 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     font-weight: 600;
   }
 
-  .publication-figure__enlarge > span {
+  .publication-figure__enlarge > span[aria-hidden] {
     font-size: 1rem;
+  }
+
+  .publication-figure__thumbnail[data-figure-unavailable="true"] {
+    cursor: pointer;
+  }
+
+  [data-figure-image][hidden],
+  .figure-load-message[hidden] {
+    display: none;
+  }
+
+  .figure-load-message {
+    max-width: 28ch;
+    padding: 1.25rem;
+    color: #202727;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    text-align: center;
   }
 
   .publication-figure__thumbnail:hover {
@@ -365,6 +437,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     min-height: 24rem;
     padding: 1.5rem;
     background: #fff;
+    color: #202727;
     color-scheme: light;
   }
 

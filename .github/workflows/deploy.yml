@@ -100,7 +100,7 @@ jobs:
 
       - name: Test browser review fixtures
         if: ${{ !cancelled() && steps.browsers.outcome == 'success' }}
-        run: RUN_REVIEW_BROWSER_FIXTURES=1 node --test scripts/review-browser-fixtures.test.mjs scripts/review-lazy-images.test.mjs scripts/team-links.test.mjs 2>&1 | tee output/ci/browser-fixture-tests.log
+        run: RUN_REVIEW_BROWSER_FIXTURES=1 node --test scripts/review-browser-fixtures.test.mjs scripts/review-lazy-images.test.mjs scripts/team-links.test.mjs scripts/figure-loading.test.mjs 2>&1 | tee output/ci/browser-fixture-tests.log
 
       - name: Run accessibility and browser review
         # Run even if screenshot assertions failed, preserving both diagnostics.
