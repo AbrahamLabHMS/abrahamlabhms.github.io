@@ -6,8 +6,8 @@ import sharp from "sharp";
 const root = new URL("../", import.meta.url);
 const asset = (path) => new URL(path, root);
 const diagrams = [
-  { name: "entry", revision: "a3" },
-  { name: "antibody", revision: "a6" },
+  { name: "entry", revision: "a7" },
+  { name: "antibody", revision: "a8" },
   { name: "replication", revision: "a2" }
 ];
 const manifest = [];

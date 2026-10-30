@@ -1,17 +1,17 @@
 [
   {
     "name": "entry",
-    "source": "editorial-a3/entry.png",
+    "source": "editorial-a7/entry.png",
     "width": 1536,
     "height": 1024,
-    "sha256": "4a1e154165cef74a87ce2c8e204055a1a01ef038025cb70c41ecabf34d8263b8"
+    "sha256": "ce31f55ada02125d1b16d691dcb68441f73a7d6679742952e5f1055e91a48bce"
   },
   {
     "name": "antibody",
-    "source": "editorial-a6/antibody.png",
+    "source": "editorial-a8/antibody.png",
     "width": 1536,
     "height": 1024,
-    "sha256": "cb7ed5de946ecd15d6aff2bfd4f8abfdcbf291859a30d08a6bddcc30a618a09d"
+    "sha256": "d020d37429ce6e3182173556a89167f50d0abb371fa90c05b19e791d52b70e53"
   },
   {
     "name": "replication",

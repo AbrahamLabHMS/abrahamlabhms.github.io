@@ -27,7 +27,7 @@ test("illustrations use consistent entity colors and labeled keys", () => {
   };
   for (const topic of researchTopics) {
     assert.deepEqual(topic.imageEntities, expectedKeys[topic.id]);
-    const revision = { "viral-entry": "a3", "antibody-neutralization": "a6", "genome-replication": "a2" }[topic.id];
+    const revision = { "viral-entry": "a7", "antibody-neutralization": "a8", "genome-replication": "a2" }[topic.id];
     assert.ok(topic.image.endsWith(`-editorial-${revision}-1536.webp`));
   }
 });
@@ -56,7 +56,7 @@ test("active illustration sources and derivatives are reproducible without repla
   for (const record of records) {
     const source = await readFile(new URL(`references/source-assets/research/${record.source}`, root));
     assert.equal(createHash("sha256").update(source).digest("hex"), record.sha256);
-    const revision = { entry: "a3", antibody: "a6", replication: "a2" }[record.name];
+    const revision = { entry: "a7", antibody: "a8", replication: "a2" }[record.name];
     for (const width of [960, 1536]) {
       const expected = await sharp(source).resize({ width, withoutEnlargement: true }).webp({ quality: 90, effort: 5 }).toBuffer();
       const actual = await readFile(new URL(`public/assets/images/research/${record.name}-editorial-${revision}-${width}.webp`, root));
@@ -65,6 +65,30 @@ test("active illustration sources and derivatives are reproducible without repla
     if (revision !== "a2") {
       const archived = await readFile(new URL(`references/source-assets/research/editorial-a2/${record.name}.png`, root));
       assert.notEqual(createHash("sha256").update(archived).digest("hex"), record.sha256);
+    }
+  }
+});
+
+test("the three viral-protein subunits retain distinct neutral grays in both web sizes", async () => {
+  // Interior samples avoid outlines, shadows, and the antibody contact point.
+  const samples = {
+    entry: [[650, 400], [870, 370], [770, 415]],
+    antibody: [[615, 355], [785, 275], [715, 350]]
+  };
+  for (const [name, points] of Object.entries(samples)) {
+    const revision = name === "antibody" ? "a8" : "a7";
+    for (const width of [960, 1536]) {
+      const file = fileURLToPath(new URL(`public/assets/images/research/${name}-editorial-${revision}-${width}.webp`, root));
+      const shades = [];
+      for (const [x, y] of points) {
+        const sample = await sharp(file).extract({ left: Math.round(x * width / 1536), top: Math.round(y * width / 1536), width: 12, height: 12 }).toBuffer();
+        const stats = await sharp(sample).stats();
+        const rgb = stats.channels.slice(0, 3).map(channel => channel.mean);
+        assert.ok(Math.max(...rgb) - Math.min(...rgb) < 16, `${name}: neutral gray`);
+        shades.push(rgb.reduce((sum, value) => sum + value, 0) / 3);
+      }
+      assert.ok(shades[1] - shades[0] > 20, `${name} ${width}: medium and dark subunits remain distinct`);
+      assert.ok(shades[2] - shades[1] > 20, `${name} ${width}: light and medium subunits remain distinct`);
     }
   }
 });
