@@ -500,5 +500,37 @@
         "height": 960
       }
     ]
+  },
+  {
+    "key": "lachesin",
+    "doi": "10.64898/2026.07.28.741058",
+    "publicationTitle": "Lachesin is a mosquito receptor for multiple arthritogenic alphaviruses",
+    "figureNumber": "Figure 3",
+    "caption": "Figure 3, revised version.",
+    "alt": "Ten panels labeled A through J containing a molecular schematic, microscopy images, and quantitative plots.",
+    "attribution": "Plung et al., bioRxiv preprint (2026). DOI: 10.64898/2026.07.28.741058. Revised Figure 3 supplied by the Abraham Lab. Used with permission. This revision differs from the figure in the posted preprint. Complete figure; resized and format-converted without removing panels or labels.",
+    "sourceUrl": "https://www.biorxiv.org/content/10.64898/2026.07.28.741058v1",
+    "sourceLabel": "Preprint",
+    "license": "Used with permission",
+    "image": "/assets/images/publications/lachesin-fig3-revised-1261.webp",
+    "width": 1261,
+    "height": 961,
+    "variants": [
+      {
+        "src": "/assets/images/publications/lachesin-fig3-revised-720.webp",
+        "width": 720,
+        "height": 549
+      },
+      {
+        "src": "/assets/images/publications/lachesin-fig3-revised-1200.webp",
+        "width": 1200,
+        "height": 915
+      },
+      {
+        "src": "/assets/images/publications/lachesin-fig3-revised-1261.webp",
+        "width": 1261,
+        "height": 961
+      }
+    ]
   }
 ]

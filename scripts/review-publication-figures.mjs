@@ -215,11 +215,11 @@ for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
           await page.keyboard.press('Tab');
           assert(await viewer.evaluate(dialog => dialog.contains(document.activeElement)), 'Focus must stay inside the image viewer');
         }
-        if (['mpox_replisome', 'arena_spike'].includes(figure.key)) {
+        if (['mpox_replisome', 'arena_spike', 'lachesin'].includes(figure.key)) {
           await viewer.evaluate(dialog => dialog.scrollTop = 0);
           await page.screenshot({ path: path.join(output, `${name}-${width}-${theme}-${figure.key}-viewer.png`) });
         }
-        if (figure.key === 'mpox_replisome' && [390, 820, 1440].includes(width)) {
+        if (['mpox_replisome', 'lachesin'].includes(figure.key) && [390, 820, 1440].includes(width)) {
           const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
           assert.equal(axe.violations.length, 0, JSON.stringify(axe.violations.map(item => ({ id: item.id, targets: item.nodes.map(node => node.target) }))));
         }

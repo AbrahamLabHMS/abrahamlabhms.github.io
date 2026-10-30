@@ -78,7 +78,7 @@ for (const figure of figures) {
     assert.equal(attribute(image, "height"), String(figure.height));
   }
   assert.ok(text(viewer).includes(figure.attribution));
-  for (const href of [figure.sourceUrl, figure.licenseUrl]) {
+  for (const href of [figure.sourceUrl, figure.licenseUrl].filter(Boolean)) {
     assert.ok(nodes.some((node) => node.tagName === "a" && attribute(node, "href") === href));
   }
 }

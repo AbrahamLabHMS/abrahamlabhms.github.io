@@ -24,13 +24,29 @@ test("publication figures have unique paper matches and resolved reuse evidence"
       assert.equal(approval.userConfirmation.figureNumber, figure.figureNumber);
       assert.equal(approval.userConfirmation.sourceFile, approval.sourceFile);
       assert.equal(approval.downloadsComparison.sha256, approval.sourceSha256);
-      assert.equal(approval.publicComparison.status, "visual-content-corroborated-not-pixel-matched");
+      if (approval.sourceOrigin === "user-supplied-revision") {
+        assert.equal(approval.publicComparison.status, "lab-approved-revision-differs-from-posted-version");
+        assert.equal(approval.userConfirmation.publicWebsiteApproved, true);
+        assert.ok(approval.userConfirmation.statement);
+        assert.match(figure.attribution, /Revised Figure/);
+      } else {
+        assert.equal(approval.publicComparison.status, "visual-content-corroborated-not-pixel-matched");
+      }
     }
     assert.equal(approval.rightsStatus, "resolved");
     for (const field of ["doi", "figureNumber", "license", "licenseUrl"]) assert.equal(figure[field], approval[field]);
     for (const field of ["caption", "alt", "attribution"]) assert.ok(figure[field]?.trim());
     assert.ok(figure.attribution.includes(figure.doi) && figure.attribution.includes(figure.license));
-    assert.ok(approval.licenseEvidence.length && approval.creditCheck && approval.restrictions);
+    assert.ok(approval.creditCheck && approval.restrictions);
+    if (figure.license === "Used with permission") {
+      assert.equal(approval.sourceOrigin, "user-supplied-revision");
+      assert.equal(approval.userConfirmation.publicWebsiteApproved, true);
+      assert.ok(approval.reuseBasis);
+      assert.equal(figure.licenseUrl, undefined);
+      assert.doesNotMatch(figure.attribution, /CC BY|Creative Commons/);
+    } else {
+      assert.ok(approval.licenseEvidence.length && figure.licenseUrl);
+    }
     if (figure.license === "Cell Press author reuse") {
       assert.ok(matches[0].authors.includes("Abraham J"));
       assert.equal(figure.licenseUrl, "https://www.cell.com/cell/information-for-authors/journal-policies#permissions");
@@ -38,7 +54,7 @@ test("publication figures have unique paper matches and resolved reuse evidence"
       assert.ok(approval.reuseBasis && /author/i.test(approval.restrictions));
       assert.doesNotMatch(figure.attribution, /CC BY|Creative Commons/);
     }
-    for (const url of [figure.sourceUrl, figure.licenseUrl, approval.identityEvidence, ...approval.licenseEvidence]) {
+    for (const url of [figure.sourceUrl, figure.licenseUrl, approval.identityEvidence, ...approval.licenseEvidence].filter(Boolean)) {
       assert.equal(new URL(url).protocol, "https:");
     }
   }
@@ -66,7 +82,7 @@ test("web figures match the approved complete-image files and dimensions", async
   }
 });
 
-test("October 29 selections stay DOI-matched and preserve the unresolved source conflict", () => {
+test("October 29 selections stay DOI-matched and the old conflicting file remains excluded", () => {
   const expected = {
     arena_neut_2015: ["10.1016/j.chom.2015.11.005", "Figure 2", 800, 669],
     sars2_immunocomp: ["10.1016/j.cell.2021.03.027", "Figure 3", 738, 490],
@@ -81,16 +97,34 @@ test("October 29 selections stay DOI-matched and preserve the unresolved source 
   for (const key of ["orthoflavi_ldlr", "chikv_mosq"]) {
     assert.match(figures.find(item => item.key === key).attribution, /bioRxiv preprint.*version 1/);
   }
-  const hold = evidence.holds.find(item => item.key === "lachesin");
+  const hold = evidence.supersededHolds.find(item => item.key === "lachesin");
   assert.equal(hold.identityStatus, "conflicting-evidence");
   assert.equal(hold.userConfirmation.doi, "10.64898/2026.07.28.741058");
-  assert.ok(!figures.some(item => item.key === hold.key));
+  assert.ok(!evidence.figures.some(item => item.sourceSha256 === hold.sourceSha256));
   const mann = publications.find(paper => paper.doi === expected.arena_spike[0]);
   const figure = figures.find(item => item.key === "arena_spike");
   assert.equal(mann.image, figure.image);
   assert.equal(mann.imageAlt, figure.alt);
   assert.equal(mann.figureNumber, figure.figureNumber);
   assert.equal(mann.visualSource, figure.sourceUrl);
+});
+
+test("Jesse's approved revised Figure 3 uses only the newly supplied file", () => {
+  const figure = figures.find(item => item.key === "lachesin");
+  const approval = evidence.figures.find(item => item.key === "lachesin");
+  assert.equal(figure.doi, "10.64898/2026.07.28.741058");
+  assert.equal(figure.figureNumber, "Figure 3");
+  assert.equal(figure.sourceLabel, "Preprint");
+  assert.equal(figure.license, "Used with permission");
+  assert.equal(approval.sourceFile, "Fig_3_revised_v5_BG1.png");
+  assert.equal(approval.sourceSha256, "b8f961f22e8d7f8d30aaafe1689a657a2aa70d16dfc8d8220606f4d1941deeda");
+  assert.equal(approval.userConfirmation.confirmedAt, "2026-10-30");
+  assert.equal(approval.userConfirmation.publicWebsiteApproved, true);
+  assert.equal(approval.publicComparison.suppliedPanelCount, 10);
+  assert.deepEqual([figure.width, figure.height], [1261, 961]);
+  assert.deepEqual(figure.variants.map(item => item.width), [720, 1200, 1261]);
+  assert.ok(figure.variants.every(item => item.src.includes("/lachesin-fig3-revised-")));
+  assert.ok(!evidence.holds.some(item => item.key === "lachesin"));
 });
 
 test("the science social preview uses the complete replacement figure on a white matte", async () => {

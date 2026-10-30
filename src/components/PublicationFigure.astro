@@ -10,8 +10,9 @@ interface Props {
     alt: string;
     attribution: string;
     sourceUrl: string;
+    sourceLabel?: string;
     license: string;
-    licenseUrl: string;
+    licenseUrl?: string;
     image: string;
     width: number;
     height: number;
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const { figure } = Astro.props;
+const sourceLabel = figure.sourceLabel ?? "Source figure";
 const srcset = figure.variants.map(variant => `${withBase(variant.src)} ${variant.width}w`).join(", ");
 const viewerId = `figure-viewer-${figure.key}`;
 const captionId = `figure-caption-${figure.key}`;
@@ -32,7 +34,8 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     href={withBase(figure.image)}
     data-figure-viewer={viewerId}
     data-figure-source={figure.sourceUrl}
-    data-figure-source-label={`Open source ${figure.figureNumber.toLowerCase()} for ${figure.publicationTitle} (opens in a new tab)`}
+    data-figure-source-action={sourceLabel}
+    data-figure-source-label={`Open ${figure.sourceLabel?.toLowerCase() ?? `source ${figure.figureNumber.toLowerCase()}`} for ${figure.publicationTitle} (opens in a new tab)`}
     target="_blank"
     rel="noreferrer"
     aria-label={`Enlarge ${figure.figureNumber.toLowerCase()} for ${figure.publicationTitle}`}
@@ -49,7 +52,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
       loading="lazy"
       decoding="async"
     />
-    <span class="figure-load-message" data-figure-error role="status" hidden>Preview unavailable. Open the source figure.</span>
+    <span class="figure-load-message" data-figure-error role="status" hidden>Preview unavailable. Open the {sourceLabel.toLowerCase()}.</span>
     </span>
     <span class="publication-figure__label"><span>{figure.figureNumber}</span><span class="publication-figure__enlarge"><span data-figure-action>Enlarge</span> <span aria-hidden="true">↗</span></span></span>
   </a>
@@ -61,8 +64,8 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
       <summary>Image credit</summary>
       <p>{figure.attribution}</p>
       <div class="publication-figure__sources">
-        <a href={figure.sourceUrl} target="_blank" rel="noreferrer">Source figure <span aria-hidden="true">↗</span></a>
-        <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a>
+        <a href={figure.sourceUrl} target="_blank" rel="noreferrer">{sourceLabel} <span aria-hidden="true">↗</span></a>
+        {figure.licenseUrl ? <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a> : <span>{figure.license}</span>}
       </div>
     </details>
   </figcaption>
@@ -90,15 +93,15 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
         loading="lazy"
         decoding="async"
       />
-      <p class="figure-load-message" data-figure-error role="status" hidden>Image unavailable. Use the Source figure link to view the original.</p>
+      <p class="figure-load-message" data-figure-error role="status" hidden>Image unavailable. Use the {sourceLabel} link for the source.</p>
     </div>
     <div class="figure-viewer__info">
       <p class="figure-viewer__caption">{figure.caption}</p>
       <p class="figure-viewer__credit">{figure.attribution}</p>
       <div class="publication-figure__sources">
         <a href={withBase(figure.image)} target="_blank" rel="noreferrer">Open full-size image <span aria-hidden="true">↗</span></a>
-        <a href={figure.sourceUrl} target="_blank" rel="noreferrer">Source figure <span aria-hidden="true">↗</span></a>
-        <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a>
+        <a href={figure.sourceUrl} target="_blank" rel="noreferrer">{sourceLabel} <span aria-hidden="true">↗</span></a>
+        {figure.licenseUrl ? <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a> : <span>{figure.license}</span>}
       </div>
     </div>
   </div>
@@ -181,7 +184,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
         link.href = link.dataset.figureSource;
         link.setAttribute("aria-label", link.dataset.figureSourceLabel ?? originalLabel);
         link.removeAttribute("aria-haspopup");
-        if (action) action.textContent = "Source figure";
+        if (action) action.textContent = link.dataset.figureSourceAction ?? "Source figure";
       }
     };
     image.addEventListener("error", recover);
