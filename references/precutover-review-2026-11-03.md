@@ -22,6 +22,9 @@
 - Native browser zoom spot checks: Firefox Home at 200% and 400%, Firefox Publications at 400%, and Safari Home at 200%. The inspected content remained readable and within the viewport. Browser zoom was restored to 100%.
 - Live Google Map in Firefox: loaded successfully; keyboard focus entered the map controls, exited to footer navigation, returned to Hide map and closed it without a trap.
 - Earlier live checks in this review confirmed all 17 publication thumbnails and enlarged viewers loaded, Escape closed the viewer, and the CV download matched the local file.
+- Fresh GitHub publication check [41754264443](https://github.com/AbrahamLabHMS/abrahamlabhms.github.io/actions/runs/41754264443) passed on commit `525af71`, including the external-link check.
+- The first deployment attempt stopped on an immediate visibility assertion after Escape in the figure-loading fixture. The test now waits for native dialog cancellation to finish, then checks that the viewer is hidden and focus returns to its link. The existing timeout still fails a viewer that does not close. No website behavior or release gate was removed.
+- The corrected browser-fixture group passed all 12 tests locally, including 27 figure-loading/recovery cases across Chromium, Firefox and WebKit and the full team-contact-link matrix.
 
 Local test artifacts are under `output/playwright/precutover-review-2026-11-03/`, `output/playwright/precutover-fixes-2026-11-03/` and `output/playwright/precutover-final-2026-11-03/`. These are not public site assets. The release workflow uploads its own review artifacts.
 

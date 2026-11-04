@@ -111,8 +111,10 @@ test("publication figures recover from failed requests without trapping readers 
               });
             }
             await page.keyboard.press("Escape");
-            assert.equal(await viewer.isVisible(), false);
-            assert(await link.evaluate(node => document.activeElement === node));
+            // Native dialog cancellation can finish after the key event returns.
+            await viewer.waitFor({ state: "hidden" });
+            assert.equal(await viewer.isVisible(), false, `${engineName}: ${scenario.name} viewer closes`);
+            assert(await link.evaluate(node => document.activeElement === node), `${engineName}: ${scenario.name} restores focus`);
           }
 
           if (!scenario.noJs) {
