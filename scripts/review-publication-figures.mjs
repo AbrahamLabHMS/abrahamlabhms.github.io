@@ -35,6 +35,13 @@ async function waitForImage(image) {
 }
 
 async function assertLayout(page, label) {
+  for (const figure of figures) {
+    const caption = page.locator(`[data-figure-key="${figure.key}"] figcaption`);
+    const source = caption.locator(`:scope > .publication-figure__sources a`);
+    assert(await source.isVisible(), `${label}: figure context must not be hidden in a disclosure`);
+    assert.equal(await source.getAttribute('href'), figure.sourceUrl);
+    assert((await source.getAttribute('aria-label')).includes(figure.publicationTitle));
+  }
   const result = await page.evaluate(() => ({
     overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - innerWidth,
     textOnlyRows: [...document.querySelectorAll('.publication-row:not(.publication-row--with-figure)')].map(row => {

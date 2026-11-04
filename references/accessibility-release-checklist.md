@@ -38,6 +38,7 @@ GitHub Actions runs the same checks and uploads `output/quality-review` as an ar
 - Confirm that the HMS film has accurate captions and that any future video or audio content includes captions or a transcript.
 - Confirm that paper-derived figures have meaningful alt text and that captions identify the paper and figure source.
 - Check complex figures against their linked full captions or equivalent text. A short visual description alone may not convey all the information in a multi-panel figure.
+- Keep the figure's text/source link visible beside its caption, not only inside Image credit. A revised figure needs a matching description; do not label an older source caption as the revised figure's text equivalent.
 - Check the current CV PDF's reading order, headings, links, and text extraction with a screen reader, including pages with columns or long publication lists.
 - Activate the Contact map with a keyboard, enter and leave the loaded frame, and confirm that the directions link works without loading Google. A simulated or blocked frame does not complete this check.
 - Check both light and dark system settings on an actual phone and tablet.
@@ -49,6 +50,10 @@ GitHub Actions runs the same checks and uploads `output/quality-review` as an ar
 Automated tools can find many WCAG failures, but they cannot prove full conformance. A release can be described as having passed the automated WCAG 2.1 AA review only after the automated report has no violations. Full WCAG 2.1 AA conformance also requires the manual checks above and a review of future content as it is added.
 
 For each release, keep the dated results with the review output and distinguish passed, failed, and not tested items. Browser-engine checks and simulated small viewports do not replace physical-device or screen-reader testing.
+
+Do not change James's macOS accessibility settings or enable VoiceOver without separate permission. Use isolated browser tests for routine checks and arrange the remaining assistive-technology review with a willing tester.
+
+The [November 3 follow-up](accessibility-followup-2026-11-03.md) records the latest browser, CV and caption checks and the remaining human-review tasks.
 
 ## Sources
 

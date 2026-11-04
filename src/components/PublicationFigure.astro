@@ -22,6 +22,7 @@ interface Props {
 
 const { figure } = Astro.props;
 const sourceLabel = figure.sourceLabel ?? "Source figure";
+const descriptionLabel = figure.sourceLabel ? "Preprint and figure context" : "Figure and full caption";
 const srcset = figure.variants.map(variant => `${withBase(variant.src)} ${variant.width}w`).join(", ");
 const viewerId = `figure-viewer-${figure.key}`;
 const captionId = `figure-caption-${figure.key}`;
@@ -60,11 +61,13 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
     <p class="publication-figure__caption" id={captionId}>
       {figure.caption}
     </p>
+    <div class="publication-figure__sources">
+      <a href={figure.sourceUrl} target="_blank" rel="noreferrer" aria-label={`${descriptionLabel}: ${figure.figureNumber}, ${figure.publicationTitle} (opens in a new tab)`}>{descriptionLabel} <span aria-hidden="true">↗</span></a>
+    </div>
     <details class="publication-figure__credit">
       <summary>Image credit</summary>
       <p>{figure.attribution}</p>
       <div class="publication-figure__sources">
-        <a href={figure.sourceUrl} target="_blank" rel="noreferrer">{sourceLabel} <span aria-hidden="true">↗</span></a>
         {figure.licenseUrl ? <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a> : <span>{figure.license}</span>}
       </div>
     </details>
@@ -100,7 +103,7 @@ const previewRatio = Math.max(1, Math.min(1.6, figure.width / figure.height));
       <p class="figure-viewer__credit">{figure.attribution}</p>
       <div class="publication-figure__sources">
         <a href={withBase(figure.image)} target="_blank" rel="noreferrer">Open full-size image <span aria-hidden="true">↗</span></a>
-        <a href={figure.sourceUrl} target="_blank" rel="noreferrer">{sourceLabel} <span aria-hidden="true">↗</span></a>
+        <a href={figure.sourceUrl} target="_blank" rel="noreferrer" aria-label={`${descriptionLabel}: ${figure.figureNumber}, ${figure.publicationTitle} (opens in a new tab)`}>{descriptionLabel} <span aria-hidden="true">↗</span></a>
         {figure.licenseUrl ? <a href={figure.licenseUrl} target="_blank" rel="noreferrer">{figure.license}</a> : <span>{figure.license}</span>}
       </div>
     </div>

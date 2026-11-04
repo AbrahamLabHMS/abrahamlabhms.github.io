@@ -78,6 +78,13 @@ for (const figure of figures) {
     assert.equal(attribute(image, "height"), String(figure.height));
   }
   assert.ok(text(viewer).includes(figure.attribution));
+  const caption = nodes.find((node) => node.tagName === "figcaption");
+  const visibleCaptionLinks = caption.childNodes
+    .filter((node) => node.tagName !== "details")
+    .flatMap(descendants)
+    .filter((node) => node.tagName === "a" && attribute(node, "href") === figure.sourceUrl);
+  assert.equal(visibleCaptionLinks.length, 1, "The figure source must be reachable without opening its credit disclosure");
+  assert.ok(attribute(visibleCaptionLinks[0], "aria-label").includes(figure.publicationTitle), "Figure source links need paper-specific accessible names");
   for (const href of [figure.sourceUrl, figure.licenseUrl].filter(Boolean)) {
     assert.ok(nodes.some((node) => node.tagName === "a" && attribute(node, "href") === href));
   }
