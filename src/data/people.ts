@@ -47,6 +47,7 @@ export const peopleData: PeopleData = {
     {
       name: "Biswajit Das, Ph.D.",
       title: "Postdoctoral Fellow",
+      labStart: "2025-03",
       group: "Postdoctoral Fellows & Instructors",
       order: 8
     },
