@@ -100,7 +100,10 @@ test("publication figures recover from failed requests without trapping readers 
             if (scenario.fail === "viewer" && !scenario.recover) {
               await viewer.locator("[data-figure-error]").waitFor({ state: "visible" });
               assert.equal(await viewer.locator("img").isVisible(), false);
-              assert(await viewer.getByRole("link", { name: "Source figure" }).isVisible());
+              const source = viewer.getByRole("link", { name: /^Figure and full caption: Figure 3,/ });
+              assert(await source.isVisible());
+              assert.equal(await source.getAttribute("href"), await link.getAttribute("data-figure-source"));
+              assert.match(await viewer.locator("[data-figure-error]").textContent(), /Use the Figure and full caption link/);
               const axe = await new AxeBuilder({ page }).include("#figure-viewer-submergence").withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze();
               assert.equal(axe.violations.length, 0, JSON.stringify(axe.violations));
               await viewer.screenshot({ path: path.join(output, `${engineName}-${scenario.name}-dialog.png`) });
