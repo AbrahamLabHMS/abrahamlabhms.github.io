@@ -167,7 +167,7 @@ export type NewsItem = {
 
 export const CURRENT_TEAM_GROUPS = [
   "Leadership",
-  "Postdoctoral Fellows & Instructors",
+  "Postdoctoral Fellows",
   "Graduate Students",
   "Research Staff",
   "Operations & Strategy"

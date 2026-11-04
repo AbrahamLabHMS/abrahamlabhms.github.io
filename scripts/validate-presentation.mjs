@@ -194,12 +194,33 @@ for (const person of [...peopleData.currentMembers, ...peopleData.seasonalMember
 for (const node of team.filter((node) => node.tagName === "time")) {
   assert.match(attribute(node, "datetime") || "", /^\d{4}(?:-(0[1-9]|1[0-2]))?$/);
 }
-for (const person of peopleData.alumni.flatMap((group) => group.entries).filter((entry) => entry.summers?.length)) {
-  const row = team.find((node) => node.tagName === "li" && node.childNodes.some((child) => child.tagName === "span" && text(child) === person.name));
-  assert.ok(row, `Missing summer student: ${person.name}`);
-  const dates = descendants(row).filter((node) => node.tagName === "time");
-  assert.deepEqual(dates.map(text), person.summers.map((year) => `Summer ${year}`));
-  assert.deepEqual(dates.map((node) => attribute(node, "datetime")), person.summers.map(String));
+const alumniRows = descendants(team.find((node) => attribute(node, "id") === "alumni"))
+  .filter((node) => node.tagName === "li");
+const alumni = peopleData.alumni.flatMap((group) => group.entries);
+assert.equal(alumniRows.length, alumni.length, "Keep every alumnus, including those without confirmed dates");
+const membershipMonth = (value) => new Intl.DateTimeFormat("en-US", {
+  month: "long", year: "numeric", timeZone: "UTC"
+}).format(new Date(`${value}-01T00:00:00Z`));
+for (const person of alumni) {
+  const row = alumniRows.find((node) => node.childNodes.some((child) => child.tagName === "span" && text(child) === person.name));
+  assert.ok(row, `Missing alumnus: ${person.name}`);
+  const nodes = descendants(row);
+  assert.ok(!nodes.some((node) => node.tagName === "a"), "Alumni rows must not link next positions");
+  const expectedValues = person.summers?.length
+    ? person.summers.map(String)
+    : [person.labStart, person.labEnd].filter(Boolean);
+  const dates = nodes.filter((node) => node.tagName === "time");
+  assert.deepEqual(dates.map((node) => attribute(node, "datetime")), expectedValues);
+  const expectedDateText = person.summers?.length
+    ? person.summers.map((year) => `Summer ${year}`).join(", ")
+    : person.labStart && person.labEnd
+      ? `${membershipMonth(person.labStart)} – ${membershipMonth(person.labEnd)}`
+      : person.labStart ? `Started ${membershipMonth(person.labStart)}`
+        : person.labEnd ? `Ended ${membershipMonth(person.labEnd)}` : "";
+  const details = nodes.find((node) => hasClass(node, "alumni-group__details"));
+  assert.equal(details ? text(details).trim() : "", expectedDateText, `Alumni details must contain dates only: ${person.name}`);
+  const rowText = row.childNodes.filter((node) => node.tagName).map(text).join(" ").replace(/\s+/g, " ").trim();
+  assert.equal(rowText, `${person.name} ${expectedDateText}`.trim());
 }
 
 for (const route of ["index.html", "publications/index.html", "team/index.html", "contact/index.html"]) {

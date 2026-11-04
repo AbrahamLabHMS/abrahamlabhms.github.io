@@ -1831,18 +1831,7 @@ html:not(.js) .site-header {
   text-align: right;
 }
 
-.alumni-group__details a {
-  color: var(--ink-muted);
-  text-decoration-color: var(--line-strong);
-}
-
-.alumni-group__details a:hover {
-  color: var(--accent);
-  text-decoration-color: currentColor;
-}
-
-.alumni-group__details time,
-.alumni-group__details small {
+.alumni-group__details time {
   font: inherit;
 }
 

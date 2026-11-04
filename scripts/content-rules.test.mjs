@@ -178,9 +178,9 @@ test("October 30 roster corrections include Mingyu and Jesse's confirmed start d
   const mingyu = peopleData.currentMembers.filter((person) => person.name === "Mingyu Jung");
   assert.equal(mingyu.length, 1);
   assert.equal(mingyu[0].title, "Postdoctoral Fellow");
-  assert.equal(mingyu[0].group, "Postdoctoral Fellows & Instructors");
+  assert.equal(mingyu[0].group, "Postdoctoral Fellows");
   assert.equal(mingyu[0].labStart, "2026-10");
-  const postdocs = groupPeople(peopleData.currentMembers).find((group) => group.label === "Postdoctoral Fellows & Instructors");
+  const postdocs = groupPeople(peopleData.currentMembers).find((group) => group.label === "Postdoctoral Fellows");
   assert.ok(postdocs.entries.includes(mingyu[0]));
   assert.equal(peopleData.currentMembers.find((person) => person.name === "Jesse Plung")?.labStart, "2023-08");
 });

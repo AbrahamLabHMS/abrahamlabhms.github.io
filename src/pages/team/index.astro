@@ -95,12 +95,9 @@ const directoryIndex = [
               {group.entries.map((entry) => (
                 <li>
                   <span>{entry.name}</span>
-                  <span class="alumni-group__details">
+                  {(entry.labStart || entry.labEnd || entry.summers?.length) && <span class="alumni-group__details">
                     <MembershipDates start={entry.labStart} end={entry.labEnd} summers={entry.summers} />
-                    {entry.destination && <small>{entry.destinationSource ? (
-                      <a href={entry.destinationSource} target="_blank" rel="noreferrer">{entry.destination}</a>
-                    ) : entry.destination}</small>}
-                  </span>
+                  </span>}
                 </li>
               ))}
             </ul>

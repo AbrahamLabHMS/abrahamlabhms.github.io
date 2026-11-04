@@ -116,3 +116,9 @@ test("membership dates use valid month values and keep single-date labels", asyn
   assert.doesNotMatch(team, /<time>/);
   assert.match(team, /team-row__appointment/);
 });
+
+test("alumni entries show membership dates without next-position details", async () => {
+  const team = await source("src/pages/team/index.astro");
+  assert.doesNotMatch(team, /entry\.destination(?:Source)?/);
+  assert.match(team, /<MembershipDates start=\{entry\.labStart\} end=\{entry\.labEnd\} summers=\{entry\.summers\}/);
+});

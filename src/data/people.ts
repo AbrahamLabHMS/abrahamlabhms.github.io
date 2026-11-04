@@ -13,63 +13,63 @@ export const peopleData: PeopleData = {
       name: "Wanyu Li, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2023-07",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 3
     },
     {
       name: "Side Hu, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2022-10",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 4
     },
     {
       name: "Chenggong Ji, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2024-09",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 5
     },
     {
       name: "Zishuo Yu, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2022-11",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 6
     },
     {
       name: "Cristina Gutierrez-Vargas, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2020-04",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 7
     },
     {
       name: "Biswajit Das, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2025-03",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 8
     },
     {
       name: "Judy Huang, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2025-08",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 9
     },
     {
       name: "Colin Mann, Ph.D.",
       title: "Postdoctoral Fellow",
       labStart: "2023-07",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 10
     },
     {
       name: "Mingyu Jung",
       title: "Postdoctoral Fellow",
       labStart: "2026-10",
-      group: "Postdoctoral Fellows & Instructors",
+      group: "Postdoctoral Fellows",
       order: 20
     },
     {
