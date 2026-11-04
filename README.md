@@ -25,7 +25,7 @@ The GitHub Actions workflow in `.github/workflows/deploy.yml` validates and buil
 
 Pull requests run the same checks without publishing. A manual run is review-only by default; enable its `publish` input on `main` to publish after all checks pass. The former separate visual-review workflow is consolidated into this release workflow to avoid duplicate runs.
 
-Run `npm run audit:dependencies` for the release dependency gate. It retains npm's high/critical blocking threshold, with one [approved, time-limited exception](references/security-exception-2026-10-02.md) ending October 16, 2026, Eastern time. Raw audit evidence and the separate decision are saved to `output/ci/`; an accepted exception is not a clean audit. All other release checks remain required.
+Run `npm run audit:dependencies` for the release dependency gate. It retains npm's high/critical blocking threshold. No exception is active; the [October 2 exception](references/security-exception-2026-10-02.md) is historical and has expired. Raw audit evidence and the separate decision are saved to `output/ci/`. Passing this gate does not mean the report contains no lower-severity advisories. All other release checks remain required.
 
 ## GitHub Pages configuration
 
@@ -77,11 +77,23 @@ Check every exported PDF page and its links, add the new dated PDF, and update t
 npm run check:publications
 ```
 
-The checker compares the local record with PubMed and bioRxiv and writes a read-only report to `output/publication-check/`. Update `siteData.publicationRecord.checkedAt` only after both sources complete successfully and any candidate records have been reviewed.
+The checker compares the local record with PubMed, bioRxiv and Crossref and writes a read-only report to `output/publication-check/`. Update `siteData.publicationRecord.checkedAt` only after all required sources complete successfully and all findings have been reviewed. It is not a page modification date.
 
 The check date is internal review metadata, not a visible page label. Publications has no custom print/PDF control; ordinary browser printing still has a readable stylesheet.
 
 Unavailable or incomplete sources produce a partial report and a failed check, not a successful "no changes" result. The checker never edits the public record or its review date.
+
+Reviewed preprint-to-journal relationships belong in `scripts/lib/reviewed-preprint-relationships.mjs`, with exact DOIs, the preprint PMID and version, the review date, and primary bibliographic evidence. The November 3 review verified the two flagged preprints against bioRxiv's `published` field and Crossref's deposited version relationships. Their Cell entries remain the sole public citations; authors and summaries are not merged. Every check revalidates those relationships and retains them in the report. New versions, changed identifiers or titles, missing journal entries, and missing or conflicting provider evidence stay actionable. Title similarity alone never resolves a candidate.
+
+The same review confirmed PMID `42686903` / PMCID `PMC13645618` in [PubMed](https://pubmed.ncbi.nlm.nih.gov/42686903/). This identifier correction does not certify a new full publication review or advance `checkedAt`.
+
+## Page modification dates
+
+Sitemap `lastmod` and WebPage `dateModified` share `scripts/lib/source-modified.mjs`. Each date is the committer date of the last Git commit touching that page's source paths: its template, rendered data, relevant assets, or shared layout. Deployment time, file modification times, publication dates, and the publication review date are not substitutes.
+
+Both CI builds fetch full Git history. Shallow checkouts, source archives, and pages with staged, unstaged or untracked source changes omit modification dates rather than invent them. Local uncommitted previews therefore may have no dates; normal clean releases derive them automatically. README changes and generated review output do not advance page dates.
+
+When adding a page or a rendered dependency, update `pageSourcePaths` and run `node --test scripts/source-modified.test.mjs scripts/build-targets.test.mjs` plus `npm run build`. Asset and shared-source directory scopes are deliberately conservative. Build validation checks that sitemap and structured-data dates agree with the same source history. Never advance these fields just to make a deployment look recent.
 
 ## Image optimization
 
@@ -148,6 +160,8 @@ Local macOS WebKit may skip links when using Tab unless full keyboard navigation
 On macOS with Safari's default keyboard preference, run `QUALITY_REVIEW_WEBKIT_OPTION_TAB=1 npm run quality:review` to use Option-Tab for WebKit. This changes only the test keystroke, not system preferences. The report records the key used; Chromium, Firefox, and Linux CI continue to use ordinary Tab. Text enlargement and spacing checks cover all seven primary routes, and the review verifies that the shared editorial font loads rather than falling back.
 
 Reports are written to `output/quality-review/`. The release workflow runs these checks against the build it will publish and uploads screenshots, reports, and logs under `site-review-<commit>`, including when a check fails.
+
+The report also preserves axe's incomplete results as `manualReview` findings, including affected elements and the reason a rule could not finish. Review these findings before sign-off; zero automated violations does not mean those elements passed.
 
 ## Contact map
 

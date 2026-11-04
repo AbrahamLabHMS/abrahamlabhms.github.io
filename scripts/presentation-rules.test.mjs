@@ -5,8 +5,14 @@ import sharp from "sharp";
 import { publicationAnchor } from "../src/lib/content.ts";
 import { publications } from "../src/data/publications.ts";
 import { siteData } from "../src/data/site.ts";
+import { jonathanProfile } from "../src/data/jonathan.ts";
 
 const source = (file) => readFile(new URL(`../${file}`, import.meta.url), "utf8");
+
+test("Jonathan's overview and focus area retain the requested plain wording", () => {
+  assert.equal(jonathanProfile.overview, "Jonathan Abraham studies the molecular mechanisms of viral infection.");
+  assert.equal(jonathanProfile.focusAreas[0], "Host receptor recognition");
+});
 
 test("citation anchors are unique and do not change with a title correction", () => {
   const anchors = publications.map(publicationAnchor);
@@ -16,6 +22,18 @@ test("citation anchors are unique and do not change with a title correction", ()
     assert.equal(publicationAnchor({ ...item, title: "Corrected title" }), anchor);
     assert.equal(decodeURIComponent(encodeURIComponent(anchor)), anchor);
   }
+});
+
+test("publication output labels name an accessible group", async () => {
+  const page = await source("src/pages/publications/index.astro");
+  assert.match(page, /class="publication-row__outputs" role="group" aria-label=/);
+});
+
+test("quality reports retain axe findings that need manual review", async () => {
+  const review = await source("scripts/quality-review.mjs");
+  assert.match(review, /results\.incomplete\.map/);
+  assert.match(review, /violations: compactViolations, manualReview/);
+  assert.match(review, /A clean automated scan does not establish WCAG conformance/);
 });
 
 test("hero uses the licensed leafy campus photograph without a paper-panel crop", async () => {

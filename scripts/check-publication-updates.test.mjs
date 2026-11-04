@@ -11,6 +11,7 @@ import {
   writePublicationReport
 } from "./check-publication-updates.mjs";
 import { acceptedSourceVariations } from "./lib/publication-metadata-variations.mjs";
+import { reviewedPreprintRelationships } from "./lib/reviewed-preprint-relationships.mjs";
 
 const now = new Date("2026-09-05T12:00:00.000Z");
 const journal = { title: "Existing journal fixture", authors: "Example A, Abraham J", journal: "Nature", doi: "10.1000/journal", pmid: "1", articleType: "Research article" };
@@ -432,6 +433,98 @@ test("same title alone never proves identity or suppresses a different DOI", asy
   });
   assert.equal(report.candidates[0].kind, "possible-version");
   assert.equal(report.candidates[0].publicationStatus, "preprint");
+});
+
+function reviewedFixture(rule) {
+  const local = { ...journal, doi: rule.publishedDoi, title: rule.title };
+  const relation = { "id-type": "doi", id: rule.crossrefRelation === "is-preprint-of" ? rule.publishedDoi : rule.preprintDoi };
+  const relationDoi = rule.crossrefRelation === "is-preprint-of" ? rule.preprintDoi : rule.publishedDoi;
+  return {
+    publications: [local],
+    overrides: {
+      pubmedSearch: { esearchresult: { count: "1", idlist: [rule.preprintPmid] } },
+      pubmedSummary: { result: {
+        "1": pubmedRecord({ title: rule.title, articleids: [{ idtype: "doi", value: rule.publishedDoi }] }),
+        [rule.preprintPmid]: pubmedRecord({ title: rule.title, source: "bioRxiv", pubtype: ["Preprint"],
+          articleids: [{ idtype: "doi", value: rule.preprintDoi }] })
+      } },
+      details: { collection: [bioRxivRecord(rule.preprintDoi, { title: rule.title, published: rule.publishedDoi })] },
+      crossref: (url) => {
+        const doi = url.pathname.replace("/works/", "");
+        return crossrefRecord(doi, { title: [rule.title], relation: doi === relationDoi ? { [rule.crossrefRelation]: [relation] } : {} });
+      }
+    }
+  };
+}
+
+test("reviewed DOI/PMID relationships remain visible without duplicate candidates or data edits", async () => {
+  for (const rule of reviewedPreprintRelationships) {
+    const { overrides, publications } = reviewedFixture(rule);
+    const before = structuredClone(publications);
+    const { report } = await check(overrides, publications);
+    assert.equal(reportExitCode(report), 0);
+    assert.deepEqual(report.candidates, []);
+    assert.equal(report.reviewedPreprints.length, 1);
+    assert.equal(report.reviewedPreprints[0].preprintPmid, rule.preprintPmid);
+    assert.equal(report.reviewedPreprints[0].publishedDoi, rule.publishedDoi);
+    assert.match(renderMarkdown(report), /bioRxiv and Crossref relationships rechecked/);
+    assert.deepEqual(publications, before);
+  }
+});
+
+test("new versions, wrong PMIDs, missing local journal entries and changed titles stay pending", async () => {
+  const rule = reviewedPreprintRelationships[0];
+  for (const change of ["version", "pmid", "local", "title", "crossref-title"]) {
+    const fixture = reviewedFixture(rule);
+    if (change === "version") fixture.overrides.details.collection[0].version = "2";
+    if (change === "pmid") {
+      fixture.overrides.pubmedSearch.esearchresult.idlist = ["99"];
+      fixture.overrides.pubmedSummary.result["99"] = fixture.overrides.pubmedSummary.result[rule.preprintPmid];
+    }
+    if (change === "local") fixture.publications = [];
+    if (change === "title") fixture.overrides.pubmedSummary.result[rule.preprintPmid].title = "Changed title";
+    if (change === "crossref-title") {
+      const original = fixture.overrides.crossref;
+      fixture.overrides.crossref = (url) => {
+        const data = original(url);
+        if (data.message.DOI === rule.preprintDoi) data.message.title = ["Changed title"];
+        return data;
+      };
+    }
+    const { report } = await check(fixture.overrides, fixture.publications);
+    assert.equal(report.reviewedPreprints.length, 0, change);
+    assert.equal(report.candidates.length, 1, change);
+  }
+});
+
+test("missing or conflicting live relationship evidence cannot silently suppress a candidate", async () => {
+  for (const rule of reviewedPreprintRelationships) {
+    for (const change of ["unavailable", "published", "crossref"]) {
+      const { overrides, publications } = reviewedFixture(rule);
+      if (change === "unavailable") overrides.details = () => new Response("Unavailable", { status: 503 });
+      if (change === "published") overrides.details.collection[0].published = "10.1000/different";
+      if (change === "crossref") {
+        const original = overrides.crossref;
+        overrides.crossref = (url) => { const data = original(url); data.message.relation = {}; return data; };
+      }
+      const { report } = await check(overrides, publications);
+      assert.equal(reportExitCode(report), 1, change);
+      assert.equal(report.candidates.length, 1, change);
+      assert.equal(report.reviewedPreprints.length, 0, change);
+    }
+  }
+});
+
+test("the confirmed PMCID is retained and conflicting future identifiers still fail", async () => {
+  const { publications } = await import("../src/data/publications.ts");
+  assert.equal(publications.find((item) => item.pmid === "42686903").pmcid, "PMC13645618");
+  const local = { ...journal, pmcid: "PMC13645618" };
+  for (const pmcid of [local.pmcid, "PMC99999999"]) {
+    const { report } = await check({ pubmedSummary: { result: { "1": pubmedRecord({
+      articleids: [{ idtype: "doi", value: local.doi }, { idtype: "pmc", value: pmcid }]
+    }) } } }, [local]);
+    assert.equal(reportExitCode(report), pmcid === local.pmcid ? 0 : 1);
+  }
 });
 
 test("matching identifiers do not hide title, author or journal mismatches", async () => {

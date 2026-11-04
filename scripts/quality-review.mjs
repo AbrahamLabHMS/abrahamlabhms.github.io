@@ -702,7 +702,14 @@ async function runAxe(browser, AxeBuilder, origin, failures, axeResults) {
           helpUrl: violation.helpUrl,
           nodes: violation.nodes.map((node) => ({ target: node.target, summary: node.failureSummary }))
         }));
-        axeResults.push({ route: route.slug, viewport, theme, violations: compactViolations });
+        const manualReview = results.incomplete.map((result) => ({
+          id: result.id,
+          impact: result.impact,
+          help: result.help,
+          helpUrl: result.helpUrl,
+          nodes: result.nodes.map((node) => ({ target: node.target, summary: node.failureSummary }))
+        }));
+        axeResults.push({ route: route.slug, viewport, theme, violations: compactViolations, manualReview });
         for (const violation of compactViolations) {
           failures.push(
             `axe ${route.slug} ${viewport.name} ${theme}: ${violation.id} (${violation.impact || "unrated"}) at ${violation.nodes.map((node) => node.target.join(" ")).join(", ")}.`
@@ -749,6 +756,7 @@ async function writeReports({ failures, records, axeResults, interactionChecks }
   await fs.writeFile(path.join(outputRoot, "quality-report.json"), JSON.stringify(report, null, 2), "utf8");
 
   const axeViolationCount = axeResults.reduce((sum, result) => sum + result.violations.length, 0);
+  const manualReviewCount = axeResults.reduce((sum, result) => sum + result.manualReview.length, 0);
   const summary = [
     "# Abraham Lab Site Quality Review",
     "",
@@ -758,9 +766,11 @@ async function writeReports({ failures, records, axeResults, interactionChecks }
     `- Navigation and logo-focus checks: ${interactionChecks.length}`,
     `- Automated WCAG 2.1 AA scans: ${axeResults.length}`,
     `- Axe violations: ${axeViolationCount}`,
+    `- Automated results requiring human review: ${manualReviewCount}`,
     `- Total failures: ${failures.length}`,
     "",
     "Text enlargement uses doubled computed font sizes; the 320px reflow case models 1280px at 400% zoom. Native browser zoom and device checks remain manual.",
+    "A clean automated scan does not establish WCAG conformance. The JSON report preserves manualReview findings; also review screen-reader behavior, documents, media, and complex figures.",
     "",
     failures.length ? "## Failures" : "All automated release checks passed.",
     "",

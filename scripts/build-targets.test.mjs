@@ -6,6 +6,7 @@ import test from "node:test";
 import ts from "typescript";
 import { createBuildTargetValidator, srcsetUrls } from "./lib/build-targets.mjs";
 import * as sitePaths from "./lib/site-paths.mjs";
+import { pageSourcePaths } from "./lib/source-modified.mjs";
 import { staticFixture } from "./test-helpers/static-fixture.mjs";
 
 const origin = "https://example.test";
@@ -83,6 +84,7 @@ test("actual config and endpoint code agree for explicit root and project builds
         exports, process: { env }, Response,
         require: (name) => {
           if (name.endsWith("site-paths.mjs")) return sitePaths;
+          if (name.endsWith("source-modified.mjs")) return { pageSourcePaths, pageModifiedAt: () => "2026-10-30" };
           if (name === "astro/config") return { defineConfig: (config) => config };
           if (name === "../data/site") return { siteData: { url: origin, publicationRecord: { checkedAt: "2026-09-07" } } };
           throw new Error(`Unexpected endpoint dependency: ${name}`);
@@ -93,6 +95,8 @@ test("actual config and endpoint code agree for explicit root and project builds
     const config = await load("../astro.config.mjs");
     assert.equal(config.default.base, sitePaths.normalizeBasePath(basePath) || undefined);
     const sitemap = await (await load("../src/pages/sitemap.xml.ts")).GET().text();
+    assert.equal((sitemap.match(/<lastmod>2026-10-30<\/lastmod>/g) || []).length, 7);
+    assert.doesNotMatch(sitemap, /2026-09-07/);
     const robots = await (await load("../src/pages/robots.txt.ts")).GET().text();
     const validator = createBuildTargetValidator({ siteRoot, basePath, origin });
     assert.deepEqual(await validator.validateSitemap(sitemap, robots), [], basePath);

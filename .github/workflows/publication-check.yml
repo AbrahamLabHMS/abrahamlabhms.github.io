@@ -27,6 +27,7 @@ jobs:
         # Pinned to immutable action commit; update intentionally after review.
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up Node.js

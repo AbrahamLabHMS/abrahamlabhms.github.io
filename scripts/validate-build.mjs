@@ -6,6 +6,7 @@ import { attribute, createBuildTargetValidator, elements } from "./lib/build-tar
 import { siteData } from "../src/data/site.ts";
 import { jonathanProfile } from "../src/data/jonathan.ts";
 import { alumniSourceError } from "./lib/alumni-sources.mjs";
+import { readSourceModificationDates } from "./lib/source-modified.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -126,8 +127,18 @@ if (
 ) {
   failures.push("Sitemap includes a legacy route.");
 }
-if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(sitemap)) {
-  failures.push("Sitemap is missing the publication record check date.");
+const textValue = (node) => (node?.childNodes || []).map((child) => child.value || "").join("").trim();
+for (const [route, expected] of Object.entries(readSourceModificationDates(repoRoot))) {
+  const url = new URL(`${basePath}${route}`, siteData.url).href;
+  const entry = elements(sitemap).find((node) => node.tagName === "url" &&
+    node.childNodes.some((child) => child.tagName === "loc" && textValue(child) === url));
+  const lastmod = entry?.childNodes.find((child) => child.tagName === "lastmod");
+  if ((lastmod ? textValue(lastmod) : undefined) !== expected) failures.push(`${route}: sitemap lastmod must match source history, or be omitted when unknown.`);
+  const html = await fs.readFile(path.join(siteRoot, route, "index.html"), "utf8");
+  const graph = elements(html).filter((node) => node.tagName === "script" && attribute(node, "type") === "application/ld+json")
+    .flatMap((node) => JSON.parse(textValue(node))["@graph"] || []);
+  const webPage = graph.find((node) => node["@type"] === "WebPage");
+  if (!webPage || webPage.dateModified !== expected) failures.push(`${route}: WebPage dateModified must match source history, or be omitted when unknown.`);
 }
 
 const publicationsPage = await fs.readFile(path.join(siteRoot, "publications", "index.html"), "utf8");

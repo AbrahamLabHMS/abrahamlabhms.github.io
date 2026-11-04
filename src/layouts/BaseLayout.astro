@@ -3,6 +3,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import { siteData } from "../data/site";
 import { withBase } from "../lib/content";
+import { pageModifiedAt } from "../../scripts/lib/source-modified.mjs";
 import "@fontsource-variable/inter/wght.css";
 import "@fontsource-variable/inter-tight/wght.css";
 import "@fontsource-variable/newsreader/wght.css";
@@ -21,7 +22,6 @@ interface Props {
   socialImageWidth?: number;
   socialImageHeight?: number;
   ogType?: "website" | "profile";
-  modifiedAt?: string;
   noIndex?: boolean;
   redirectTo?: string;
   structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
@@ -37,7 +37,6 @@ const {
   socialImageWidth = siteData.shareImages.campus.width,
   socialImageHeight = siteData.shareImages.campus.height,
   ogType = "website",
-  modifiedAt,
   noIndex = false,
   redirectTo,
   structuredData
@@ -46,6 +45,7 @@ const pageTitle = title ? `${title} | ${siteData.fullName}` : siteData.fullName;
 const metaDescription = description ?? siteData.description;
 const canonicalTarget = canonicalPath ? withBase(canonicalPath) : Astro.url.pathname;
 const canonical = new URL(canonicalTarget, siteData.url).toString();
+const modifiedAt = noIndex ? undefined : pageModifiedAt(Astro.url.pathname, import.meta.env.BASE_URL);
 const socialImage = new URL(withBase(socialImagePath ?? siteData.shareImages.campus.image), siteData.url).toString();
 const socialImageType = socialImage.endsWith(".webp") ? "image/webp" : socialImage.endsWith(".png") ? "image/png" : "image/jpeg";
 const themeDefaultMode = siteData.theme.defaultMode;

@@ -8,7 +8,7 @@ export const jonathanProfile = {
   pubmedUrl: "https://pubmed.ncbi.nlm.nih.gov/?term=Abraham+Jonathan%5BFull+Author+Name%5D&sort=date",
   cvUrl: "/assets/documents/jonathan-abraham-cv-2026-10-21.pdf",
   overview:
-    "Jonathan Abraham studies the molecular mechanisms of viral infection in medically important viruses.",
+    "Jonathan Abraham studies the molecular mechanisms of viral infection.",
   biography: [
     "Jonathan Abraham started the laboratory at Harvard Medical School in 2017.",
     "His group uses structural biology and virology to study viral entry and antibody recognition. It also studies replication complexes and antiviral mechanisms.",
@@ -34,7 +34,7 @@ export const jonathanProfile = {
     "NIH Director's Early Independence Award"
   ],
   focusAreas: [
-    "Host receptor recognition in medically important viruses",
+    "Host receptor recognition",
     "Antibody neutralization and escape",
     "Replication-complex organization and antiviral mechanism"
   ],

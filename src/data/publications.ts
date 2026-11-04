@@ -27,6 +27,7 @@ export const publications: Publication[] = [
     link: "https://www.nature.com/articles/s41586-026-10937-2",
     doi: "10.1038/s41586-026-10937-2",
     pmid: "42686903",
+    pmcid: "PMC13645618",
     featured: true,
     leadFeature: true,
     homepageProof: true,

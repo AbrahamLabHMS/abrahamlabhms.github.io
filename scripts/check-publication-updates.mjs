@@ -4,6 +4,7 @@ import { promises as fs } from "node:fs";
 import { createRequire } from "node:module";
 import ts from "typescript";
 import { acceptedSourceVariations } from "./lib/publication-metadata-variations.mjs";
+import { reviewedPreprintRelationships } from "./lib/reviewed-preprint-relationships.mjs";
 import { createMetadataReader } from "./lib/metadata-json.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -322,13 +323,14 @@ function requireCrossrefRecord(data, doi) {
   };
 }
 
-async function verifyCrossrefMetadata(publications, candidates, publishedPreprints, getJson, sourceErrors, issues, acceptedVariations) {
+async function verifyCrossrefMetadata(publications, candidates, publishedPreprints, getJson, sourceErrors, issues, acceptedVariations, records) {
   const dates = [];
   const dois = new Set([...publications.map((item) => item.doi), ...candidates.map((item) => item.doi),
     ...publishedPreprints.map((item) => item.publishedDoi)].filter(Boolean).map(normalizeDoi));
   for (const doi of dois) {
     try {
       const remote = requireCrossrefRecord(await getJson(`https://api.crossref.org/works/${doi}`), doi);
+      records.set(doi, remote);
       dates.push({ doi, onlineDate: remote.onlineDate, issueDate: remote.issueDate, postedDate: remote.postedDate });
       for (const publication of publications.filter((item) => normalizeDoi(item.doi) === doi)) {
         issues.push(...compareBibliography(publication, remote, "Crossref", acceptedVariations));
@@ -365,6 +367,47 @@ async function verifyCrossrefMetadata(publications, candidates, publishedPreprin
     }
   }
   return dates;
+}
+
+async function resolveReviewedPreprints(publications, candidates, records, getJson, sourceErrors, issues) {
+  const resolved = [];
+  const pending = [];
+  for (const candidate of candidates) {
+    const rule = reviewedPreprintRelationships.find((item) => item.preprintDoi === candidate.doi &&
+      (!candidate.pmid || candidate.pmid === item.preprintPmid) && normalizeTitle(candidate.title) === normalizeTitle(item.title));
+    const local = rule && publications.find((item) => normalizeDoi(item.doi) === rule.publishedDoi && item.articleType !== "Preprint");
+    if (!local || candidate.kind === "identifier-update" || candidate.publicationStatus !== "preprint" || candidate.crossref?.status !== "preprint" ||
+      normalizeTitle(candidate.crossref.title) !== normalizeTitle(rule.title) ||
+      (candidate.version && candidate.version !== rule.version) ||
+      records.get(rule.publishedDoi)?.status !== "journal") {
+      pending.push(candidate);
+      continue;
+    }
+    let latest;
+    try {
+      latest = requireBioRxivRecord(await getJson(`https://api.biorxiv.org/details/biorxiv/${rule.preprintDoi}/na/json`), rule.preprintDoi);
+    } catch (error) {
+      sourceErrors.push(`Reviewed preprint relationship check failed for ${rule.preprintDoi}: ${error.message}`);
+      pending.push(candidate);
+      continue;
+    }
+    // New versions and metadata changes require review even when the DOI is familiar.
+    if (Number(latest.version) !== rule.version || normalizeTitle(latest.title) !== normalizeTitle(rule.title)) {
+      pending.push(candidate);
+      continue;
+    }
+    const forward = rule.crossrefRelation === "is-preprint-of";
+    const relations = records.get(forward ? rule.preprintDoi : rule.publishedDoi)?.relations[rule.crossrefRelation];
+    const target = forward ? rule.publishedDoi : rule.preprintDoi;
+    if (normalizeDoi(latest.published) !== rule.publishedDoi || !Array.isArray(relations) || !relations.length ||
+      !relations.every((item) => item["id-type"] === "doi" && normalizeDoi(item.id) === target)) {
+      issues.push(`Reviewed preprint relationship no longer agrees across bioRxiv and Crossref: ${rule.preprintDoi} -> ${rule.publishedDoi}`);
+      pending.push(candidate);
+      continue;
+    }
+    resolved.push({ ...rule, sources: candidate.sources });
+  }
+  return { pending, resolved };
 }
 
 async function findPublishedPreprints(publications, getJson, sourceErrors, issues, versionUpdates, acceptedVariations) {
@@ -415,6 +458,7 @@ export function renderMarkdown(report) {
     `Local metadata issues: ${report.localIssues.length}`,
     `Remote metadata differences: ${report.remoteMetadataIssues.length}`,
     `Previously reviewed source variations: ${(report.acceptedMetadataVariations || []).length}`,
+    `Reviewed preprint relationships: ${(report.reviewedPreprints || []).length}`,
     "",
     "The report is read-only. Human approval is required for every citation, status, authorship and summary change. Confirm corresponding-author eligibility and version-specific publisher front matter before changing the site. A PMID does not establish peer review. Never advance the publication review date from an automated run."
   ];
@@ -430,6 +474,14 @@ export function renderMarkdown(report) {
       lines.push(`- ${plain(item.title)} - ${plain(item.source)}; ${plain(item.kind)}; status evidence: ${plain(item.publicationStatus)}${item.date ? `; ${plain(item.date)}` : ""}${ids ? `; ${plain(ids)}` : ""}`);
       if (item.relatedLocalDois.length) lines.push(`  Possible same work, separate version: ${item.relatedLocalDois.map(plain).join(", ")}. Title similarity alone is not confirmation.`);
       if (item.crossref) lines.push(`  Crossref: ${plain(item.crossref.journals.join(" / "))}; online ${plain(item.crossref.onlineDate || "unassigned")}; issue ${plain(item.crossref.issueDate || "unassigned")}.`);
+    }
+  }
+
+  if (report.reviewedPreprints?.length) {
+    lines.push("", "## Preprints already represented by journal records");
+    for (const item of report.reviewedPreprints) {
+      lines.push(`- PMID ${plain(item.preprintPmid)}; ${plain(item.preprintDoi)} v${item.version} -> ${plain(item.publishedDoi)}. Reviewed ${plain(item.reviewedAt)}; bioRxiv and Crossref relationships rechecked. No duplicate public entry.`);
+      lines.push(`  Evidence: ${item.evidence.map(plain).join("; ")}`);
     }
   }
 
@@ -538,14 +590,17 @@ export async function collectPublicationReport({ publications, fetchImpl = globa
     } else candidateMap.set(key, { ...item, sources: [item.source] });
   }
   const candidates = [...candidateMap.values()].sort((left, right) => (Date.parse(right.date) || 0) - (Date.parse(left.date) || 0));
-  const remoteDates = await verifyCrossrefMetadata(publications, candidates, publishedPreprints, getJson, sourceErrors, remoteMetadataIssues, acceptedMetadataVariations);
+  const crossrefRecords = new Map();
+  const remoteDates = await verifyCrossrefMetadata(publications, candidates, publishedPreprints, getJson, sourceErrors, remoteMetadataIssues, acceptedMetadataVariations, crossrefRecords);
+  const reviewed = await resolveReviewedPreprints(publications, candidates, crossrefRecords, getJson, sourceErrors, remoteMetadataIssues);
 
   return {
     status: sourceErrors.length ? "incomplete" : "complete",
     generatedAt: now.toISOString(),
     queryWindow: { from: fromDate, to: toDate },
     localRecordCount: publications.length,
-    candidates,
+    candidates: reviewed.pending,
+    reviewedPreprints: reviewed.resolved,
     publishedPreprints,
     versionUpdates,
     remoteDates,

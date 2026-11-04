@@ -26,7 +26,6 @@ const isPrimaryDestination = (link: string, primary: string) => {
   socialImageAlt={siteData.shareImages.science.alt}
   socialImageWidth={siteData.shareImages.science.width}
   socialImageHeight={siteData.shareImages.science.height}
-  modifiedAt={siteData.publicationRecord.checkedAt}
 >
   <section class="page-intro page-intro--publications">
     <div class="shell page-intro__grid">
@@ -92,7 +91,7 @@ const isPrimaryDestination = (link: string, primary: string) => {
                     <a class="publication-row__permalink" href={`#${encodeURIComponent(publicationAnchor(item))}`} aria-label={`Link to citation: ${item.title}`}>Link to citation</a>
                   </div>
                   {(item.structures?.pdb?.length || item.structures?.emdb?.length || item.resourceLinks?.length || item.coverageLinks?.length) && (
-                    <div class="publication-row__outputs" aria-label={`Research outputs for ${item.title}`}>
+                    <div class="publication-row__outputs" role="group" aria-label={`Research outputs for ${item.title}`}>
                       {item.structures?.pdb?.length && (
                         <div class="publication-output">
                           <span>PDB</span>
