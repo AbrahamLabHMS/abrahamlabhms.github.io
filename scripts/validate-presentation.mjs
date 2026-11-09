@@ -183,6 +183,8 @@ for (const row of teamRows) {
 for (const person of [...peopleData.currentMembers, ...peopleData.seasonalMembers]) {
   const row = teamRows.find((node) => descendants(node).some((child) => child.tagName === "h3" && text(child) === person.name));
   assert.ok(row, `Missing team row: ${person.name}`);
+  const dateText = text(descendants(row).find((node) => hasClass(node, "team-row__dates")));
+  assert.doesNotMatch(dateText, /Started|Ended/, "Membership dates should not repeat start/end labels");
   const emailLinks = descendants(row).filter((node) => hasClass(node, "team-email"));
   assert.equal(emailLinks.length, person.publicEmail ? 1 : 0, `Public email visibility for ${person.name}`);
   if (person.publicEmail) {
@@ -215,8 +217,8 @@ for (const person of alumni) {
     ? person.summers.map((year) => `Summer ${year}`).join(", ")
     : person.labStart && person.labEnd
       ? `${membershipMonth(person.labStart)} – ${membershipMonth(person.labEnd)}`
-      : person.labStart ? `Started ${membershipMonth(person.labStart)}`
-        : person.labEnd ? `Ended ${membershipMonth(person.labEnd)}` : "";
+      : person.labStart ? `${membershipMonth(person.labStart)} – End date not recorded`
+        : person.labEnd ? `Start date not recorded – ${membershipMonth(person.labEnd)}` : "";
   const details = nodes.find((node) => hasClass(node, "alumni-group__details"));
   assert.equal(details ? text(details).trim() : "", expectedDateText, `Alumni details must contain dates only: ${person.name}`);
   const rowText = row.childNodes.filter((node) => node.tagName).map(text).join(" ").replace(/\s+/g, " ").trim();

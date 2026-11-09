@@ -106,12 +106,14 @@ test("browser reviews observe theme and navigation state without repairing the p
   }
 });
 
-test("membership dates use valid month values and keep single-date labels", async () => {
+test("membership dates use month values without visible start and end labels", async () => {
   const dates = await source("src/components/MembershipDates.astro");
   assert.match(dates, /datetime=\{start\}/);
   assert.match(dates, /datetime=\{end\}/);
-  assert.match(dates, /Started <time/);
-  assert.match(dates, /Ended <time/);
+  assert.doesNotMatch(dates, /Started|Ended/);
+  assert.match(dates, /End date not recorded/);
+  assert.match(dates, /Start date not recorded/);
+  assert.match(dates, /\.membership-dates__note[\s\S]*clip-path: inset\(50%\)/);
   const team = await source("src/pages/team/index.astro");
   assert.doesNotMatch(team, /<time>/);
   assert.match(team, /team-row__appointment/);
@@ -120,5 +122,5 @@ test("membership dates use valid month values and keep single-date labels", asyn
 test("alumni entries show membership dates without next-position details", async () => {
   const team = await source("src/pages/team/index.astro");
   assert.doesNotMatch(team, /entry\.destination(?:Source)?/);
-  assert.match(team, /<MembershipDates start=\{entry\.labStart\} end=\{entry\.labEnd\} summers=\{entry\.summers\}/);
+  assert.match(team, /<MembershipDates start=\{entry\.labStart\} end=\{entry\.labEnd\} summers=\{entry\.summers\} alumni/);
 });

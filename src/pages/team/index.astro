@@ -96,7 +96,7 @@ const directoryIndex = [
                 <li>
                   <span>{entry.name}</span>
                   {(entry.labStart || entry.labEnd || entry.summers?.length) && <span class="alumni-group__details">
-                    <MembershipDates start={entry.labStart} end={entry.labEnd} summers={entry.summers} />
+                    <MembershipDates start={entry.labStart} end={entry.labEnd} summers={entry.summers} alumni />
                   </span>}
                 </li>
               ))}
